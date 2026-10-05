@@ -28,21 +28,29 @@ window/vsync/vsync_mode=1
 
 [input]
 
-move_left={
+thrust={
 "deadzone": 0.2,
-"events": [Object(InputEventKey,"device":-1,"physical_keycode":65), Object(InputEventKey,"device":-1,"physical_keycode":4194319), Object(InputEventJoypadMotion,"device":-1,"axis":0,"axis_value":-1.0)]
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":87), Object(InputEventKey,"device":-1,"physical_keycode":4194320), Object(InputEventJoypadMotion,"device":-1,"axis":5,"axis_value":1.0)]
 }
-move_right={
+brake={
 "deadzone": 0.2,
-"events": [Object(InputEventKey,"device":-1,"physical_keycode":68), Object(InputEventKey,"device":-1,"physical_keycode":4194321), Object(InputEventJoypadMotion,"device":-1,"axis":0,"axis_value":1.0)]
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":83), Object(InputEventKey,"device":-1,"physical_keycode":4194322), Object(InputEventJoypadMotion,"device":-1,"axis":4,"axis_value":1.0)]
 }
-move_up={
+steer_left={
 "deadzone": 0.2,
-"events": [Object(InputEventKey,"device":-1,"physical_keycode":87), Object(InputEventKey,"device":-1,"physical_keycode":4194320), Object(InputEventJoypadMotion,"device":-1,"axis":1,"axis_value":-1.0)]
+"events": [Object(InputEventJoypadMotion,"device":-1,"axis":0,"axis_value":-1.0)]
 }
-move_down={
+steer_right={
 "deadzone": 0.2,
-"events": [Object(InputEventKey,"device":-1,"physical_keycode":83), Object(InputEventKey,"device":-1,"physical_keycode":4194322), Object(InputEventJoypadMotion,"device":-1,"axis":1,"axis_value":1.0)]
+"events": [Object(InputEventJoypadMotion,"device":-1,"axis":0,"axis_value":1.0)]
+}
+steer_up={
+"deadzone": 0.2,
+"events": [Object(InputEventJoypadMotion,"device":-1,"axis":1,"axis_value":-1.0)]
+}
+steer_down={
+"deadzone": 0.2,
+"events": [Object(InputEventJoypadMotion,"device":-1,"axis":1,"axis_value":1.0)]
 }
 aim_left={
 "deadzone": 0.25,
@@ -62,19 +70,15 @@ aim_down={
 }
 boost={
 "deadzone": 0.3,
-"events": [Object(InputEventKey,"device":-1,"physical_keycode":4194325), Object(InputEventJoypadMotion,"device":-1,"axis":4,"axis_value":1.0)]
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":4194325), Object(InputEventJoypadButton,"device":-1,"button_index":0)]
 }
 drift={
 "deadzone": 0.3,
-"events": [Object(InputEventKey,"device":-1,"physical_keycode":32), Object(InputEventJoypadButton,"device":-1,"button_index":9)]
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":32), Object(InputEventJoypadButton,"device":-1,"button_index":1), Object(InputEventJoypadButton,"device":-1,"button_index":9)]
 }
 fire={
 "deadzone": 0.3,
-"events": [Object(InputEventMouseButton,"device":-1,"button_index":1), Object(InputEventJoypadMotion,"device":-1,"axis":5,"axis_value":1.0)]
-}
-grapple={
-"deadzone": 0.3,
-"events": [Object(InputEventKey,"device":-1,"physical_keycode":69), Object(InputEventMouseButton,"device":-1,"button_index":2), Object(InputEventJoypadButton,"device":-1,"button_index":10)]
+"events": [Object(InputEventMouseButton,"device":-1,"button_index":1), Object(InputEventJoypadButton,"device":-1,"button_index":10)]
 }
 restart={
 "deadzone": 0.3,

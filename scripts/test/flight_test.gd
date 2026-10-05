@@ -1,6 +1,11 @@
 extends Node3D
 ## Flight-feel test arena (milestone 1). Grey-box only: fly, boost, drift,
-## grapple asteroids, shoot dummies. R / Start restarts.
+## shoot dummies. R / Start restarts.
+
+
+func _ready() -> void:
+	# The ship's aim reticle replaces the system cursor.
+	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 
 
 func _unhandled_input(event: InputEvent) -> void:

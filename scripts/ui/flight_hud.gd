@@ -20,7 +20,7 @@ var _shots: int = 0
 func _ready() -> void:
 	if ship == null:
 		return
-	ship.perfect_drift.connect(func(): _callout("PERFECT DRIFT  +BOOST"))
+	ship.drift_kicked.connect(func(tier): _callout("DRIFT KICK " + "I".repeat(tier)))
 	ship.rammed.connect(func(_t): _callout("RAM!"))
 	if ship.cannon != null:
 		ship.cannon.fired.connect(func(_p): _shots += 1)
@@ -37,16 +37,14 @@ func _unhandled_input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	if ship == null:
 		return
-	_boost_bar.value = ship.boost_meter * 100.0
+	_boost_bar.value = ship.boost_fuel * 100.0
 	_speed_label.text = "SPEED  %4.1f m/s" % ship.speed()
 
 	var states: PackedStringArray = []
 	if ship.is_boosting():
 		states.append("BOOST")
 	if ship.is_drifting:
-		states.append("DRIFT")
-	if ship.grapple != null and ship.grapple.is_attached():
-		states.append("GRAPPLED")
+		states.append(["DRIFT", "DRIFT  >", "DRIFT  >>"][ship.drift_tier()])
 	if _callout_time > 0.0:
 		_callout_time -= delta
 		states.append(_callout_text)

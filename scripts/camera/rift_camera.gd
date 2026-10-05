@@ -10,7 +10,7 @@ extends Camera3D
 ## touches gameplay state, so split-screen or a shared co-op camera can
 ## reuse it later.
 
-## Ship to follow. Needs `velocity`, `aim_direction` and `is_boosting()`.
+## Ship to follow. Reads `velocity`, `aim_direction` and `is_fast()`.
 @export var target: ShipController
 
 @export_group("Framing")
@@ -53,7 +53,8 @@ func _ready() -> void:
 	_distance = base_distance
 	if target != null:
 		_focus = target.global_position
-		target.boost_fired.connect(func(): add_shake(0.25))
+		target.boost_started.connect(func(): add_shake(0.2))
+		target.drift_kicked.connect(func(tier): add_shake(0.2 + 0.15 * tier))
 		target.rammed.connect(func(_t): add_shake(0.5))
 	_apply_transform(Vector3.ZERO)
 
@@ -77,7 +78,7 @@ func _physics_process(delta: float) -> void:
 
 	var speed_frac := clampf(target.speed() / maxf(target.stats.max_speed, 1.0), 0.0, 1.5)
 	var desired_distance := base_distance * (1.0 + speed_zoom * speed_frac)
-	if target.is_boosting():
+	if target.is_fast():
 		desired_distance += base_distance * boost_zoom
 	_distance = lerpf(_distance, desired_distance, 1.0 - exp(-zoom_smoothing * delta))
 

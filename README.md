@@ -14,22 +14,25 @@ The first open takes a few seconds while Godot imports the project.
 
 ## Controls (flight test)
 
+One engine pushes the ship along its nose; you point the nose.
+
 | Action | Keyboard + mouse | Gamepad |
 | --- | --- | --- |
-| Fly | WASD or arrows | Left stick |
-| Aim | Mouse | Right stick |
-| Fire | Left click | RT |
-| Boost | Shift | LT |
-| Drift | Hold Space | LB |
-| Grapple | E or right click | RB |
+| Steer (point the nose) | Mouse | Left stick |
+| Thrust | W | RT |
+| Brake | S | LT |
+| Aim cannon | Mouse (same as steering) | Right stick |
+| Fire | Left click | RB |
+| Boost (hold, burns fuel) | Shift | A |
+| Drift (hold) | Space | B or LB |
 | Restart | R | Start |
 | Show/hide help | F1 | Back |
 
-Things to try: hold drift through a turn and let go for a **perfect drift** (refills boost), grapple an asteroid and swing round it, ride the blue **wind streams** for extra speed, boost into a target to **ram** it.
+Things to try: hold drift while turning so the ship slides. The sparks turn blue, then orange as the drift charges; let go for a speed kick in the direction you're pointing plus some boost fuel back. Ride the blue **wind streams** for extra speed, and boost into a target to **ram** it.
 
 ## Tuning the feel
 
-All handling numbers live in `resources/ships/sloop_stats.tres`. Open it in the Godot inspector, change values and press F5 again; each one has a tooltip. To tweak live, run the game, open the **Remote** tab in the Scene dock, select `PlayerShip` and edit its `stats` there. Camera numbers (tilt, distance, look-ahead, boost zoom, shake) are on the `RiftCamera` node in `scenes/test/flight_test.tscn`. Grapple and cannon numbers are on the `Grapple` and `Cannon` nodes in `scenes/ship/player_ship.tscn`.
+All handling numbers live in `resources/ships/sloop_stats.tres`. Open it in the Godot inspector, change values and press F5 again; each one has a tooltip. To tweak live, run the game, open the **Remote** tab in the Scene dock, select `PlayerShip` and edit its `stats` there. Camera numbers (tilt, distance, look-ahead, boost zoom, shake) are on the `RiftCamera` node in `scenes/test/flight_test.tscn`. Cannon and reticle numbers are on the `Cannon` and `AimReticle` nodes in `scenes/ship/player_ship.tscn`.
 
 ## Layout
 
@@ -37,12 +40,12 @@ All handling numbers live in `resources/ships/sloop_stats.tres`. Open it in the 
 project.godot            engine settings and input map
 scenes/
   test/flight_test.tscn  milestone 1 grey-box arena (main scene)
-  ship/player_ship.tscn  player ship: hull, turret, cannon, grapple
+  ship/player_ship.tscn  player ship: hull, turret, cannon, effects, aim reticle
   world/                 asteroid, target dummy, wind stream
   combat/                projectiles
   ui/                    debug HUD
 scripts/
-  ship/                  flight model (ShipController), stats, input, grapple
+  ship/                  flight model (ShipController), stats, input, effects, reticle
   camera/                tilted look-ahead camera (RiftCamera)
   combat/                cannon and projectile
   world/                 targets, asteroids, wind streams
@@ -72,11 +75,11 @@ godot --headless --import
 godot --headless --script res://tests/smoke_test.gd
 ```
 
-The smoke test loads the arena and checks thrust, speed caps, boost, perfect drift, shooting and target respawn, grapple orbit, wind streams and camera framing. CI runs all three on every pull request.
+The smoke test loads the arena and checks thrust, braking, steering, hold-to-burn boost, drift charge and kick, shooting and target respawn, the aim reticle, wind streams and camera framing. CI runs all three on every pull request.
 
 ## Milestones (from the GDD)
 
-1. **Flight feel** (this) - movement, boost, drift, grapple, camera in a grey-box arena.
+1. **Flight feel** (this) - movement, boost, drift, camera in a grey-box arena. (The grapple was cut from core movement; it may return as a salvage-grabbing augment.)
 2. Combat and mining - two weapons, two enemy types, mineable asteroids, cargo hold.
 3. One rift - zone-graph generator from grey-box chunks, instability meter, extraction, death and loss.
 4. Dual economy - augment caches and 10 augments, loot tables, run and profile inventories, saving.

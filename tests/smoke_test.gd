@@ -2,8 +2,8 @@ extends SceneTree
 ## Headless smoke test for the flight test arena.
 ##
 ## Loads the real scene, swaps the player's input for scripted intents and
-## checks that thrust, boost, drift, shooting, grapple, wind and the camera
-## all behave. Run from the project folder:
+## checks that thrust, steering, boost, drift kicks, shooting, wind, the aim
+## reticle and the camera all behave. Run from the project folder:
 ##   godot --headless --script res://tests/smoke_test.gd
 ## Exit code 0 = all checks passed.
 
@@ -15,34 +15,34 @@ var _input: ScriptedInput
 
 ## Stands in for PlayerShipInput: returns whatever intent the test sets.
 class ScriptedInput extends Node:
-	var move := Vector2.ZERO
+	var steer := Vector3.ZERO
+	var thrust := 0.0
+	var brake := 0.0
 	var aim := Vector3.ZERO
+	var aim_distance := 0.0
+	var boost := false
 	var drift := false
 	var fire := false
-	var _boost_once := false
-	var _grapple_once := false
-
-	func press_boost() -> void:
-		_boost_once = true
-
-	func press_grapple() -> void:
-		_grapple_once = true
 
 	func get_intent(_ship: Node3D) -> ShipIntent:
 		var intent := ShipIntent.new()
-		intent.move = move
+		intent.steer = steer
+		intent.thrust = thrust
+		intent.brake = brake
 		intent.aim = aim
+		intent.aim_distance = aim_distance
+		intent.boost_held = boost
 		intent.drift_held = drift
 		intent.fire_held = fire
-		intent.boost_pressed = _boost_once
-		intent.grapple_pressed = _grapple_once
-		_boost_once = false
-		_grapple_once = false
 		return intent
 
 	func reset() -> void:
-		move = Vector2.ZERO
+		steer = Vector3.ZERO
+		thrust = 0.0
+		brake = 0.0
 		aim = Vector3.ZERO
+		aim_distance = 0.0
+		boost = false
 		drift = false
 		fire = false
 
@@ -64,10 +64,11 @@ func _run() -> void:
 	ship.input_source = _input
 
 	await _test_thrust(ship)
+	await _test_steering(ship)
 	await _test_boost(ship)
 	await _test_drift(ship)
 	await _test_shooting(ship, level)
-	await _test_grapple(ship, level)
+	await _test_reticle(ship)
 	await _test_wind(ship)
 	await _test_camera(ship, camera)
 
@@ -84,44 +85,90 @@ func _run() -> void:
 
 func _test_thrust(ship: ShipController) -> void:
 	_place(ship, Vector3.ZERO)
-	_input.move = Vector2(0, -1)
+	await _frames(30)
+	_check(ship.speed() < 0.1, "ship sits still with no thrust")
+	_input.thrust = 1.0
 	await _frames(60)
-	_check(ship.global_position.z < -5.0, "thrust up moves the ship north (z=%.2f)" % ship.global_position.z)
-	_check(ship.speed() > 12.0, "ship reaches cruising speed (%.1f m/s)" % ship.speed())
+	_check(ship.global_position.z < -5.0, "thrust pushes the ship along its nose (z=%.2f)" % ship.global_position.z)
+	_check(ship.speed() > 15.0, "ship reaches cruising speed (%.1f m/s)" % ship.speed())
 	_check(ship.speed() <= ship.stats.max_speed + 0.5, "cruise speed respects the cap (%.1f)" % ship.speed())
 	_check(absf(ship.global_position.y) < 0.01, "ship stays on the flight plane")
+	_input.thrust = 0.0
+	_input.brake = 1.0
+	await _frames(60)
+	_check(ship.speed() < 1.0, "brake stops the ship (%.1f m/s)" % ship.speed())
+	_input.reset()
+
+
+func _test_steering(ship: ShipController) -> void:
+	_place(ship, Vector3.ZERO)
+	_input.steer = Vector3.RIGHT
+	await _frames(5)
+	_check(ship.speed() < 0.1, "steering alone turns without moving")
+	await _frames(40)
+	_check(ship.forward().dot(Vector3.RIGHT) > 0.99, "nose turns to the steering direction")
+	_input.thrust = 1.0
+	await _frames(40)
+	_check(ship.velocity.x > 10.0, "thrust follows the new heading (vx %.1f)" % ship.velocity.x)
+	_input.reset()
 
 
 func _test_boost(ship: ShipController) -> void:
-	var meter_before := ship.boost_meter
-	_input.press_boost()
-	await _frames(3)
-	_check(ship.is_boosting(), "boost activates")
-	_check(ship.boost_meter < meter_before, "boost spends meter")
+	_place(ship, Vector3(0, 0, 40))
+	_input.thrust = 1.0
+	await _frames(60)
+	_input.boost = true
+	await _frames(20)
+	_check(ship.is_boosting(), "boost burns while held")
 	_check(ship.speed() > ship.stats.max_speed + 5.0, "boost exceeds cruise speed (%.1f)" % ship.speed())
+	var fuel_mid := ship.boost_fuel
+	await _frames(20)
+	_check(ship.boost_fuel < fuel_mid, "holding boost keeps draining fuel")
+	_input.boost = false
+	await _frames(2)
+	_check(not ship.is_boosting(), "releasing the button ends boost early")
+	_input.boost = true
+	await _frames(2)
+	var frames := 0
+	while ship.is_boosting() and frames < 600:
+		await physics_frame
+		frames += 1
+	_check(not ship.is_boosting() and ship.boost_fuel <= 0.01, "boost cuts out when the tank is empty (fuel %.2f)" % ship.boost_fuel)
+	await _frames(120)
+	_check(not ship.is_boosting(), "boost stays off until the button is pressed again")
+	_input.boost = false
 	await _frames(90)
-	_check(not ship.is_boosting(), "boost wears off")
 	_check(ship.speed() <= ship.stats.max_speed + 1.0, "speed settles back to the cap (%.1f)" % ship.speed())
+	_check(ship.boost_fuel > 0.0, "fuel recharges after boosting")
+	_input.reset()
 
 
 func _test_drift(ship: ShipController) -> void:
 	_place(ship, Vector3(0, 0, 60))
-	ship.boost_meter = 0.2
-	_input.move = Vector2(0, -1)
+	ship.boost_fuel = 0.2
+	_input.thrust = 1.0
+	_input.steer = Vector3.FORWARD
 	await _frames(60)
-	var got_perfect := [false]
-	var on_perfect := func(): got_perfect[0] = true
-	ship.perfect_drift.connect(on_perfect)
-	# Hold drift and swing the stick sideways: the nose turns, the ship slides.
+	var tiers: Array[int] = []
+	var on_kick := func(tier: int): tiers.append(tier)
+	ship.drift_kicked.connect(on_kick)
+	# Hold drift and swing the nose sideways: the ship slides and charges.
 	_input.drift = true
-	_input.move = Vector2(1, 0)
-	await _frames(50)
+	_input.steer = Vector3.RIGHT
+	await _frames(20)
 	_check(ship.is_drifting, "drift engages at speed")
+	var lateral := absf(ship.velocity.dot(ship.forward().cross(Vector3.UP)))
+	_check(lateral > 8.0, "drifting slides sideways (%.1f m/s)" % lateral)
+	await _frames(70)
+	_check(ship.drift_tier() == 2, "a long slide charges to tier 2 (charge %.2fs)" % ship.drift_charge)
+	var speed_before := ship.speed()
 	_input.drift = false
 	await _frames(2)
-	ship.perfect_drift.disconnect(on_perfect)
-	_check(got_perfect[0], "a long sliding drift counts as perfect")
-	_check(ship.boost_meter > 0.5, "perfect drift refills boost (%.2f)" % ship.boost_meter)
+	ship.drift_kicked.disconnect(on_kick)
+	_check(tiers == [2], "releasing a charged drift fires a tier 2 kick (%s)" % [tiers])
+	_check(ship.speed() > speed_before + 10.0, "drift kick adds speed (%.1f -> %.1f)" % [speed_before, ship.speed()])
+	_check(ship.velocity.normalized().dot(ship.forward()) > 0.95, "drift kick sends the ship where the nose points")
+	_check(ship.boost_fuel > 0.5, "drift kick refills boost fuel (%.2f)" % ship.boost_fuel)
 	_input.reset()
 
 
@@ -139,27 +186,21 @@ func _test_shooting(ship: ShipController, level: Node) -> void:
 	_check(dummy.is_alive() and dummy.health == dummy.max_health, "target respawns at full health")
 
 
-func _test_grapple(ship: ShipController, level: Node) -> void:
-	var asteroid := level.get_node("Asteroids/Asteroid01") as Asteroid
-	var start := asteroid.global_position + Vector3(asteroid.anchor_radius + 8.0, 0, 0)
-	_place(ship, start)
-	_input.aim = Vector3(-1, 0, 0)
-	_input.press_grapple()
-	await _frames(2)
-	_check(ship.grapple.is_attached(), "grapple latches onto an asteroid in the aim cone")
-	var rope := ship.grapple.rope_length
-	ship.velocity = Vector3(0, 0, -18)
-	var max_dist := 0.0
-	for i in 60:
-		await physics_frame
-		var d := Vector2(ship.global_position.x - asteroid.global_position.x,
-				ship.global_position.z - asteroid.global_position.z).length()
-		max_dist = maxf(max_dist, d)
-	_check(max_dist < rope + 1.5, "rope holds the ship in orbit (max %.1f, rope %.1f)" % [max_dist, rope])
-	_check(ship.speed() > 10.0, "swinging keeps momentum (%.1f m/s)" % ship.speed())
-	_input.press_grapple()
-	await _frames(2)
-	_check(not ship.grapple.is_attached(), "grapple releases on second press")
+func _test_reticle(ship: ShipController) -> void:
+	var reticle := ship.get_node("AimReticle") as AimReticle
+	_place(ship, Vector3(-20, 0, 0))
+	_input.aim = Vector3.RIGHT
+	_input.aim_distance = 9.0
+	await _frames(3)
+	await process_frame
+	var expected := ship.global_position + Vector3.RIGHT * 9.0
+	_check(reticle.ring.global_position.distance_to(expected) < 0.2, "reticle sits on the cursor point")
+	_input.aim_distance = 0.0
+	_input.aim = Vector3.BACK
+	await _frames(3)
+	await process_frame
+	expected = ship.global_position + Vector3.BACK * reticle.stick_distance
+	_check(reticle.ring.global_position.distance_to(expected) < 0.2, "stick aim puts the reticle a fixed distance out")
 	_input.reset()
 
 
@@ -181,10 +222,10 @@ func _test_camera(ship: ShipController, camera: RiftCamera) -> void:
 	var size := camera.get_viewport().get_visible_rect().size
 	_check(on_screen and Rect2(Vector2.ZERO, size).has_point(screen), "ship is on screen (%s)" % screen)
 	var resting := camera.global_position.distance_to(ship.global_position)
-	_input.move = Vector2(1, 0)
+	_input.thrust = 1.0
 	await _frames(40)
-	_input.press_boost()
-	await _frames(20)
+	_input.boost = true
+	await _frames(30)
 	var boosting := camera.global_position.distance_to(ship.global_position)
 	_check(boosting > resting + 2.0, "camera pulls back at speed (%.1f -> %.1f)" % [resting, boosting])
 	_input.reset()
@@ -196,8 +237,7 @@ func _place(ship: ShipController, pos: Vector3) -> void:
 	ship.global_position = pos
 	ship.velocity = Vector3.ZERO
 	ship.rotation = Vector3.ZERO
-	if ship.grapple != null:
-		ship.grapple.release()
+	ship.boost_fuel = 1.0
 	_input.reset()
 
 

@@ -99,8 +99,8 @@ w('far = 400.0')
 w('script = ExtResource("3_cam")')
 w('target = NodePath("../PlayerShip")\n')
 
-# Asteroids: a ring of grapple anchors around the start plus scattered rocks,
-# keeping a clear spawn area and a clear lane for each wind stream.
+# Asteroids: scattered rocks, keeping a clear spawn area and a clear lane
+# for each wind stream.
 w('[node name="Asteroids" type="Node3D" parent="."]\n')
 placed = []
 def clear(x, z, r):
@@ -126,7 +126,7 @@ for i, (x, z, r) in enumerate(placed):
     w(f'[node name="Asteroid{i + 1:02d}" parent="Asteroids" instance=ExtResource("4_ast")]')
     w(f'position = Vector3({x:.1f}, 0, {z:.1f})')
     w(f'rotation = Vector3({rng.uniform(0, 3):.2f}, {rng.uniform(0, 6):.2f}, 0)')
-    w(f'anchor_radius = {r:.1f}\n')
+    w(f'radius = {r:.1f}\n')
 
 # Target dummies: a static gallery north of spawn, movers further out.
 w('[node name="Targets" type="Node3D" parent="."]\n')

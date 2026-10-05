@@ -50,7 +50,7 @@ theme_override_constants/separation = 6
 [node name="BoostTitle" type="Label" parent="Gauges"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.8, 0.5, 1)
-text = "BOOST"
+text = "BOOST FUEL"
 
 [node name="BoostBar" type="ProgressBar" parent="Gauges"]
 unique_name_in_owner = true
@@ -97,15 +97,17 @@ theme_override_colors/font_color = Color(0.95, 0.88, 0.75, 1)
 theme_override_font_sizes/font_size = 15
 text = "FLIGHT TEST  (keyboard + mouse  |  gamepad)
 
-Fly: WASD or arrows  |  left stick
+Steer: mouse  |  left stick
+Thrust: W  |  RT
+Brake: S  |  LT
 Aim: mouse  |  right stick
-Fire: left click  |  RT
-Boost: Shift  |  LT
-Drift: hold Space  |  LB
-Grapple: E or right click  |  RB
+Fire: left click  |  RB
+Boost (hold): Shift  |  A
+Drift (hold): Space  |  B or LB
 Restart: R  |  Start
 Hide this: F1  |  Back
 
-Hold drift through a turn, then let go:
-a long slide refills boost.
+Hold drift while turning to slide. Sparks
+turn blue, then orange: let go for a speed
+kick and some boost fuel back.
 Boost into a target to ram it."
