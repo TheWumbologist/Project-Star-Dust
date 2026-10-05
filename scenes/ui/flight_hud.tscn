@@ -14,6 +14,20 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
+[sub_resource type="StyleBoxFlat" id="Style_hull_fill"]
+bg_color = Color(1, 0.55, 0.25, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="Style_shield_fill"]
+bg_color = Color(0.45, 0.65, 1, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
 [sub_resource type="StyleBoxFlat" id="Style_bar_fill"]
 bg_color = Color(0.4, 0.9, 1, 1)
 corner_radius_top_left = 3
@@ -44,8 +58,35 @@ script = ExtResource("1_hud")
 offset_left = 24.0
 offset_top = 20.0
 offset_right = 384.0
-offset_bottom = 200.0
+offset_bottom = 300.0
 theme_override_constants/separation = 6
+
+[node name="Defense" type="VBoxContainer" parent="Gauges" unique_id=1704947455]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HullTitle" type="Label" parent="Gauges/Defense" unique_id=1725867328]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.8, 0.5, 1)
+text = "HULL / SHIELD"
+
+[node name="HullBar" type="ProgressBar" parent="Gauges/Defense" unique_id=890283701]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 22)
+layout_mode = 2
+theme_override_styles/background = SubResource("Style_bar_bg")
+theme_override_styles/fill = SubResource("Style_hull_fill")
+value = 100.0
+show_percentage = false
+
+[node name="ShieldBar" type="ProgressBar" parent="Gauges/Defense" unique_id=2132903476]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("Style_bar_bg")
+theme_override_styles/fill = SubResource("Style_shield_fill")
+value = 100.0
+show_percentage = false
 
 [node name="BoostTitle" type="Label" parent="Gauges" unique_id=399495248]
 layout_mode = 2
@@ -60,6 +101,12 @@ theme_override_styles/background = SubResource("Style_bar_bg")
 theme_override_styles/fill = SubResource("Style_bar_fill")
 value = 100.0
 show_percentage = false
+
+[node name="HeavyLabel" type="Label" parent="Gauges" unique_id=1657947985]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.6, 0.35, 1)
+text = "TORPEDOES"
 
 [node name="SpeedLabel" type="Label" parent="Gauges" unique_id=58180351]
 unique_name_in_owner = true
@@ -79,6 +126,45 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.8, 1)
 theme_override_font_sizes/font_size = 14
 
+[node name="Cargo" type="VBoxContainer" parent="." unique_id=273035263]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -100.0
+offset_right = 424.0
+offset_bottom = -20.0
+grow_vertical = 0
+theme_override_constants/separation = 6
+
+[node name="CargoTitle" type="Label" parent="Cargo" unique_id=1677747313]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.8, 0.5, 1)
+text = "CARGO"
+
+[node name="CargoSlots" type="HBoxContainer" parent="Cargo" unique_id=1329470568]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Banner" type="Label" parent="." unique_id=1883047685]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -400.0
+offset_top = 120.0
+offset_right = 400.0
+offset_bottom = 180.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.05, 0.02, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 40
+horizontal_alignment = 1
+
 [node name="HelpPanel" type="PanelContainer" parent="." unique_id=541700339]
 unique_name_in_owner = true
 anchors_preset = 1
@@ -87,7 +173,7 @@ anchor_right = 1.0
 offset_left = -440.0
 offset_top = 20.0
 offset_right = -24.0
-offset_bottom = 300.0
+offset_bottom = 360.0
 grow_horizontal = 0
 theme_override_styles/panel = SubResource("Style_panel")
 
@@ -95,18 +181,20 @@ theme_override_styles/panel = SubResource("Style_panel")
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.88, 0.75, 1)
 theme_override_font_sizes/font_size = 15
-text = "FLIGHT TEST  (keyboard + mouse  |  gamepad)
+text = "CONTROLS  (keyboard + mouse  |  gamepad)
 
 Fly: WASD or arrows  |  left stick
 Aim: mouse  |  right stick
-Fire: left click  |  RT
+Cannon: left click  |  RT
+Torpedo: right click  |  RB
 Brake: Ctrl  |  LT
 Boost (hold): Shift  |  A
 Drift (hold): Space  |  B or LB
+Jettison cargo: X  |  X
 Restart: R  |  Start
 Hide this: F1  |  Back
 
-Hold drift while turning to slide. Sparks
-turn blue, then orange: let go for a speed
-kick and some boost fuel back.
-Boost into a target to ram it."
+Shoot glowing asteroids to chip ore loose,
+fly close to scoop it up. Torpedoes crack
+rocks fast. Die and you lose your cargo.
+Drift kicks and boost-rams still work."

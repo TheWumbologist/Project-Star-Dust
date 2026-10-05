@@ -3,10 +3,16 @@
 [ext_resource type="Script" uid="uid://duufc53tahx5k" path="res://scripts/ship/ship_controller.gd" id="1_ship"]
 [ext_resource type="Resource" path="res://resources/ships/sloop_stats.tres" id="2_stats"]
 [ext_resource type="Script" uid="uid://beld052atfpxy" path="res://scripts/ship/player_ship_input.gd" id="3_input"]
-[ext_resource type="Script" uid="uid://v410ppqu6f0x" path="res://scripts/combat/ship_cannon.gd" id="4_cannon"]
+[ext_resource type="Script" uid="uid://v410ppqu6f0x" path="res://scripts/combat/ship_weapon.gd" id="4_cannon"]
 [ext_resource type="PackedScene" uid="uid://dpkmovogul11w" path="res://scenes/combat/cannonball.tscn" id="5_ball"]
 [ext_resource type="Script" uid="uid://2bxoroysfv4t" path="res://scripts/ship/ship_fx.gd" id="6_fx"]
 [ext_resource type="Script" uid="uid://c6d12atr27f62" path="res://scripts/ship/aim_reticle.gd" id="7_reticle"]
+[ext_resource type="PackedScene" uid="uid://t4e2w6bjxrh0" path="res://scenes/combat/torpedo.tscn" id="8_torp"]
+[ext_resource type="Script" uid="uid://c4qplq4m7lxh1" path="res://scripts/combat/health.gd" id="9_health"]
+[ext_resource type="Script" uid="uid://jkf35wl2oiur" path="res://scripts/cargo/cargo_hold.gd" id="10_cargo"]
+[ext_resource type="Script" uid="uid://cvlhlxpb1nkur" path="res://scripts/combat/hit_flash.gd" id="11_flash"]
+[ext_resource type="PackedScene" uid="uid://yh6ia4pyaayf" path="res://scenes/combat/explosion.tscn" id="12_boom"]
+[ext_resource type="PackedScene" uid="uid://bdeowowjpld5l" path="res://scenes/cargo/pickup.tscn" id="13_pick"]
 
 [sub_resource type="SphereShape3D" id="Shape_hull"]
 radius = 1.25
@@ -111,6 +117,21 @@ rings = 1
 material = SubResource("Mat_brass")
 size = Vector3(0.28, 0.28, 1.5)
 
+[sub_resource type="StandardMaterial3D" id="Mat_shield"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(0.45, 0.65, 1, 0.5)
+
+[sub_resource type="SphereMesh" id="Mesh_shield"]
+material = SubResource("Mat_shield")
+radius = 2.4
+height = 2.4
+radial_segments = 16
+rings = 8
+is_hemisphere = true
+
 [sub_resource type="StandardMaterial3D" id="Mat_reticle"]
 render_priority = 10
 transparency = 1
@@ -142,13 +163,15 @@ size = Vector3(0.08, 0.02, 1)
 
 [node name="PlayerShip" type="CharacterBody3D" unique_id=4590418 node_paths=PackedStringArray("input_source", "visual_root", "turret")]
 collision_layer = 2
-collision_mask = 5
+collision_mask = 21
 motion_mode = 1
 script = ExtResource("1_ship")
 stats = ExtResource("2_stats")
 input_source = NodePath("Input")
 visual_root = NodePath("Visual")
 turret = NodePath("Turret")
+death_explosion = ExtResource("12_boom")
+jettison_pickup = ExtResource("13_pick")
 
 [node name="Collision" type="CollisionShape3D" parent="." unique_id=960820802]
 shape = SubResource("Shape_hull")
@@ -218,6 +241,37 @@ script = ExtResource("3_input")
 [node name="Cannon" type="Node3D" parent="." unique_id=638368796]
 script = ExtResource("4_cannon")
 projectile_scene = ExtResource("5_ball")
+
+[node name="Torpedoes" type="Node3D" parent="." unique_id=1408693954]
+script = ExtResource("4_cannon")
+slot = 1
+projectile_scene = ExtResource("8_torp")
+fire_rate = 2.0
+spread_deg = 0.0
+projectile_speed = 38.0
+damage = 60.0
+inherit_velocity = 0.6
+muzzle_offset = 2.6
+detonate_at_aim_point = true
+max_charges = 3
+charge_time = 5.0
+
+[node name="Health" type="Node" parent="." unique_id=50395502]
+script = ExtResource("9_health")
+max_shield = 50.0
+
+[node name="Cargo" type="Node" parent="." unique_id=470237799]
+script = ExtResource("10_cargo")
+
+[node name="Shield" type="MeshInstance3D" parent="." unique_id=1002842947]
+cast_shadow = 0
+mesh = SubResource("Mesh_shield")
+
+[node name="HitFlash" type="Node" parent="." unique_id=1632300658 node_paths=PackedStringArray("health", "body_meshes", "shield_mesh")]
+script = ExtResource("11_flash")
+health = NodePath("../Health")
+body_meshes = [NodePath("../Visual/Hull"), NodePath("../Visual/Deck"), NodePath("../Visual/SailLeft"), NodePath("../Visual/SailRight")]
+shield_mesh = NodePath("../Shield")
 
 [node name="Fx" type="Node3D" parent="." unique_id=223092096 node_paths=PackedStringArray("ship", "engine_glow", "trail", "sparks")]
 script = ExtResource("6_fx")

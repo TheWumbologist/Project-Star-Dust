@@ -8,43 +8,10 @@ extends SceneTree
 ## Exit code 0 = all checks passed.
 
 const SCENE := "res://scenes/test/flight_test.tscn"
+const ScriptedInput := preload("res://tests/scripted_input.gd")
 
 var _failures: PackedStringArray = []
 var _input: ScriptedInput
-
-
-## Stands in for PlayerShipInput: returns whatever intent the test sets.
-class ScriptedInput extends Node:
-	var steer := Vector3.ZERO
-	var thrust := 0.0
-	var brake := 0.0
-	var aim := Vector3.ZERO
-	var aim_distance := 0.0
-	var boost := false
-	var drift := false
-	var fire := false
-
-	func get_intent(_ship: Node3D) -> ShipIntent:
-		var intent := ShipIntent.new()
-		intent.steer = steer
-		intent.thrust = thrust
-		intent.brake = brake
-		intent.aim = aim
-		intent.aim_distance = aim_distance
-		intent.boost_held = boost
-		intent.drift_held = drift
-		intent.fire_held = fire
-		return intent
-
-	func reset() -> void:
-		steer = Vector3.ZERO
-		thrust = 0.0
-		brake = 0.0
-		aim = Vector3.ZERO
-		aim_distance = 0.0
-		boost = false
-		drift = false
-		fire = false
 
 
 func _initialize() -> void:

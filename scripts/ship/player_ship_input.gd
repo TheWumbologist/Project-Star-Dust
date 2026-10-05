@@ -6,7 +6,8 @@ extends Node
 ## - WASD / left stick: the direction to fly. The nose turns toward it and
 ##   the engine pushes, so a light stick push is a light throttle.
 ## - Mouse / right stick: aim the cannon anywhere, independent of flight.
-## - Ctrl / LT brakes.
+## - Ctrl / LT brakes. Left click / RT fires the cannon, right click / RB
+##   fires a torpedo, X / gamepad X jettisons the last cargo slot.
 ## Aim follows whichever device was touched last: moving the mouse switches
 ## to cursor aim, pushing the right stick switches to stick aim.
 
@@ -33,6 +34,8 @@ func get_intent(ship: Node3D) -> ShipIntent:
 	intent.boost_held = Input.is_action_pressed("boost")
 	intent.drift_held = Input.is_action_pressed("drift")
 	intent.fire_held = Input.is_action_pressed("fire")
+	intent.heavy_held = Input.is_action_pressed("fire_heavy")
+	intent.jettison = Input.is_action_just_pressed("jettison")
 	_read_aim(ship, intent)
 	return intent
 

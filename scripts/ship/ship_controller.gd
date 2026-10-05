@@ -8,13 +8,18 @@ extends CharacterBody3D
 ## The ship reads a ShipIntent each physics tick from `input_source` (any
 ## node with `get_intent(ship) -> ShipIntent`). It owns no input or camera
 ## code, so a second player or an AI pilot is just another input source.
-## Weapons are child components that the ship drives.
+## Optional child components the ship drives or exposes: ShipWeapon nodes,
+## a Health named "Health" and a CargoHold named "Cargo".
 
 signal boost_started
 signal boost_ended
 ## Emitted when a charged drift is released. tier is 1 or 2.
 signal drift_kicked(tier: int)
 signal rammed(target: Node)
+signal damaged(amount: float, source: Node)
+signal destroyed(ship: ShipController)
+## Cargo collected from a pickup.
+signal picked_up(item: ItemDefinition, count: int)
 
 @export var stats: ShipStats
 ## Node providing `get_intent(ship)`. Defaults to a child named "Input".
@@ -23,6 +28,15 @@ signal rammed(target: Node)
 @export var visual_root: Node3D
 ## Optional turret node that yaws toward the aim direction.
 @export var turret: Node3D
+## Ships only hurt ships on other teams (0 = player crews, 1 = hostiles).
+@export var team: int = 0
+## Free the ship when destroyed (enemies). Otherwise it is disabled and
+## waits for respawn() (players).
+@export var free_on_death: bool = false
+## Visual spawned where the ship is destroyed.
+@export var death_explosion: PackedScene
+## Pickup scene used when jettisoning cargo.
+@export var jettison_pickup: PackedScene
 
 ## Boost fuel, 0..1.
 var boost_fuel: float = 1.0
@@ -45,7 +59,13 @@ var _rammed_this_boost: Array[Node] = []
 var _wind_accel: Vector3 = Vector3.ZERO
 var _wind_cap_bonus: float = 0.0
 
-@onready var cannon: ShipCannon = get_node_or_null("Cannon") as ShipCannon
+var _alive: bool = true
+
+@onready var health: Health = get_node_or_null("Health") as Health
+@onready var cargo: CargoHold = get_node_or_null("Cargo") as CargoHold
+## The primary and heavy weapons, if fitted (for HUDs and tests).
+@onready var primary: ShipWeapon = _find_weapon(ShipWeapon.Slot.PRIMARY)
+@onready var heavy: ShipWeapon = _find_weapon(ShipWeapon.Slot.HEAVY)
 
 
 func _ready() -> void:
@@ -55,9 +75,15 @@ func _ready() -> void:
 	if input_source == null:
 		input_source = get_node_or_null("Input")
 	aim_direction = forward()
+	add_to_group("ships")
+	if health != null:
+		health.damaged.connect(func(amount, source): damaged.emit(amount, source))
+		health.died.connect(_on_died)
 
 
 func _physics_process(delta: float) -> void:
+	if not _alive:
+		return
 	var intent: ShipIntent = ShipIntent.new()
 	if input_source != null and input_source.has_method("get_intent"):
 		intent = input_source.get_intent(self)
@@ -74,8 +100,11 @@ func _physics_process(delta: float) -> void:
 	_apply_grip(delta)
 	_apply_speed_cap(delta)
 
-	if cannon != null:
-		cannon.tick(self, intent, delta)
+	for child in get_children():
+		if child is ShipWeapon:
+			child.tick(self, intent, delta)
+	if intent.jettison and cargo != null:
+		_jettison()
 
 	velocity.y = 0.0
 	move_and_slide()
@@ -125,6 +154,38 @@ func apply_wind(accel: Vector3, cap_bonus: float) -> void:
 ## Adds boost fuel (drift kicks now; pickups and augments later).
 func add_fuel(amount: float) -> void:
 	boost_fuel = clampf(boost_fuel + amount, 0.0, 1.0)
+
+
+## Instant change of velocity, from blasts and other shoves.
+func apply_impulse(delta_v: Vector3) -> void:
+	velocity += Vector3(delta_v.x, 0.0, delta_v.z)
+
+
+## Damage from shots, blasts and rams. Ignored without a Health child.
+func take_damage(amount: float, source: Node = null) -> void:
+	if not _alive or health == null:
+		return
+	if source is ShipController and source.team == team:
+		return
+	health.take_damage(amount, source)
+
+
+func is_alive() -> bool:
+	return _alive
+
+
+## Brings a disabled (destroyed) ship back at `at` with full health.
+func respawn(at: Vector3) -> void:
+	global_position = Vector3(at.x, 0.0, at.z)
+	velocity = Vector3.ZERO
+	boost_fuel = 1.0
+	_boosting = false
+	is_drifting = false
+	drift_charge = 0.0
+	if health != null:
+		health.reset()
+	_set_alive(true)
+	reset_physics_interpolation()
 
 
 # --- Flight model ------------------------------------------------------------
@@ -255,6 +316,8 @@ func _handle_ram_collisions() -> void:
 		var target := get_slide_collision(i).get_collider() as Node
 		if target == null or target in _rammed_this_boost:
 			continue
+		if target is ShipController and target.team == team:
+			continue
 		if target.has_method("take_damage"):
 			_rammed_this_boost.append(target)
 			target.take_damage(stats.ram_damage, self)
@@ -276,3 +339,48 @@ func _update_visuals(delta: float) -> void:
 	var blend := 1.0 - exp(-8.0 * delta)
 	visual_root.rotation.z = lerpf(visual_root.rotation.z, lateral * bank, blend)
 	visual_root.rotation.y = lerpf(visual_root.rotation.y, lateral * swing, blend)
+
+
+# --- Damage, death and cargo -----------------------------------------------------
+
+func _on_died(_source: Node) -> void:
+	if death_explosion != null:
+		var boom := death_explosion.instantiate() as Node3D
+		get_parent().add_child(boom)
+		boom.global_position = global_position
+	_set_alive(false)
+	destroyed.emit(self)
+	if free_on_death:
+		queue_free()
+
+
+func _set_alive(alive: bool) -> void:
+	_alive = alive
+	visible = alive
+	# Layers are kept in the scene; toggling the shape keeps them intact.
+	for child in get_children():
+		if child is CollisionShape3D:
+			child.set_deferred("disabled", not alive)
+	if not alive:
+		velocity = Vector3.ZERO
+		if _boosting:
+			_stop_boost()
+
+
+## Throws the last cargo slot out behind the ship.
+func _jettison() -> void:
+	if jettison_pickup == null:
+		return
+	var slot := cargo.take_last_slot()
+	if slot.is_empty():
+		return
+	for p in Pickup.scatter(jettison_pickup, get_parent(), slot.item, slot.count, global_position - forward() * 2.5, -forward(), 7.0):
+		p.velocity += velocity * 0.5
+		p.pickup_delay = 2.0
+
+
+func _find_weapon(slot: ShipWeapon.Slot) -> ShipWeapon:
+	for child in get_children():
+		if child is ShipWeapon and child.slot == slot:
+			return child
+	return null

@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://bli67hfl6l71o"]
+
+[ext_resource type="Script" uid="uid://dsohhd6svus2g" path="res://scripts/world/mineable_asteroid.gd" id="1_ore"]
+[ext_resource type="Resource" path="res://resources/items/ore.tres" id="2_item"]
+[ext_resource type="PackedScene" uid="uid://bdeowowjpld5l" path="res://scenes/cargo/pickup.tscn" id="3_pick"]
+[ext_resource type="PackedScene" uid="uid://yh6ia4pyaayf" path="res://scenes/combat/explosion.tscn" id="4_boom"]
+
+[sub_resource type="SphereShape3D" id="Shape_ast"]
+resource_local_to_scene = true
+radius = 3.0
+
+[sub_resource type="StandardMaterial3D" id="Mat_ast"]
+albedo_color = Color(0.32, 0.3, 0.36, 1)
+roughness = 0.9
+rim_enabled = true
+rim = 0.4
+
+[sub_resource type="SphereMesh" id="Mesh_ast"]
+resource_local_to_scene = true
+material = SubResource("Mat_ast")
+radius = 3.0
+height = 6.0
+radial_segments = 9
+rings = 5
+
+[node name="OreAsteroid" type="StaticBody3D" unique_id=962621042]
+collision_mask = 0
+script = ExtResource("1_ore")
+ore_item = ExtResource("2_item")
+pickup_scene = ExtResource("3_pick")
+crumble_explosion = ExtResource("4_boom")
+
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=1841481260]
+shape = SubResource("Shape_ast")
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1188603112]
+mesh = SubResource("Mesh_ast")
