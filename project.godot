@@ -1,0 +1,103 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Rift Runners"
+config/description="Sci-fi roguelike looter. Milestone 1: flight feel test arena."
+run/main_scene="res://scenes/test/flight_test.tscn"
+config/features=PackedStringArray("4.4", "Forward Plus")
+config/icon="res://assets/_ai_generated/ui/icon__AI.svg"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/window_width_override=1600
+window/size/window_height_override=900
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/vsync/vsync_mode=1
+
+[input]
+
+move_left={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":65), Object(InputEventKey,"device":-1,"physical_keycode":4194319), Object(InputEventJoypadMotion,"device":-1,"axis":0,"axis_value":-1.0)]
+}
+move_right={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":68), Object(InputEventKey,"device":-1,"physical_keycode":4194321), Object(InputEventJoypadMotion,"device":-1,"axis":0,"axis_value":1.0)]
+}
+move_up={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":87), Object(InputEventKey,"device":-1,"physical_keycode":4194320), Object(InputEventJoypadMotion,"device":-1,"axis":1,"axis_value":-1.0)]
+}
+move_down={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":83), Object(InputEventKey,"device":-1,"physical_keycode":4194322), Object(InputEventJoypadMotion,"device":-1,"axis":1,"axis_value":1.0)]
+}
+aim_left={
+"deadzone": 0.25,
+"events": [Object(InputEventJoypadMotion,"device":-1,"axis":2,"axis_value":-1.0)]
+}
+aim_right={
+"deadzone": 0.25,
+"events": [Object(InputEventJoypadMotion,"device":-1,"axis":2,"axis_value":1.0)]
+}
+aim_up={
+"deadzone": 0.25,
+"events": [Object(InputEventJoypadMotion,"device":-1,"axis":3,"axis_value":-1.0)]
+}
+aim_down={
+"deadzone": 0.25,
+"events": [Object(InputEventJoypadMotion,"device":-1,"axis":3,"axis_value":1.0)]
+}
+boost={
+"deadzone": 0.3,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":4194325), Object(InputEventJoypadMotion,"device":-1,"axis":4,"axis_value":1.0)]
+}
+drift={
+"deadzone": 0.3,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":32), Object(InputEventJoypadButton,"device":-1,"button_index":9)]
+}
+fire={
+"deadzone": 0.3,
+"events": [Object(InputEventMouseButton,"device":-1,"button_index":1), Object(InputEventJoypadMotion,"device":-1,"axis":5,"axis_value":1.0)]
+}
+grapple={
+"deadzone": 0.3,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":69), Object(InputEventMouseButton,"device":-1,"button_index":2), Object(InputEventJoypadButton,"device":-1,"button_index":10)]
+}
+restart={
+"deadzone": 0.3,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":82), Object(InputEventJoypadButton,"device":-1,"button_index":6)]
+}
+toggle_help={
+"deadzone": 0.3,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":4194332), Object(InputEventJoypadButton,"device":-1,"button_index":4)]
+}
+
+[layer_names]
+
+3d_physics/layer_1="world"
+3d_physics/layer_2="player_ship"
+3d_physics/layer_3="targets"
+3d_physics/layer_4="projectiles"
+
+[physics]
+
+common/physics_ticks_per_second=60
+common/physics_interpolation=true
+
+[rendering]
+
+anti_aliasing/quality/msaa_3d=1
+environment/defaults/default_clear_color=Color(0.02, 0.016, 0.05, 1)
