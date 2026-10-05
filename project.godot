@@ -13,7 +13,7 @@ config_version=5
 config/name="Rift Runners"
 config/description="Sci-fi roguelike looter. Milestone 1: flight feel test arena."
 run/main_scene="res://scenes/test/flight_test.tscn"
-config/features=PackedStringArray("4.4", "Forward Plus")
+config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://assets/_ai_generated/ui/icon__AI.svg"
 
 [display]
@@ -28,29 +28,25 @@ window/vsync/vsync_mode=1
 
 [input]
 
-thrust={
+move_left={
 "deadzone": 0.2,
-"events": [Object(InputEventKey,"device":-1,"physical_keycode":87), Object(InputEventKey,"device":-1,"physical_keycode":4194320), Object(InputEventJoypadMotion,"device":-1,"axis":5,"axis_value":1.0)]
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":65), Object(InputEventKey,"device":-1,"physical_keycode":4194319), Object(InputEventJoypadMotion,"device":-1,"axis":0,"axis_value":-1.0)]
+}
+move_right={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":68), Object(InputEventKey,"device":-1,"physical_keycode":4194321), Object(InputEventJoypadMotion,"device":-1,"axis":0,"axis_value":1.0)]
+}
+move_up={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":87), Object(InputEventKey,"device":-1,"physical_keycode":4194320), Object(InputEventJoypadMotion,"device":-1,"axis":1,"axis_value":-1.0)]
+}
+move_down={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":83), Object(InputEventKey,"device":-1,"physical_keycode":4194322), Object(InputEventJoypadMotion,"device":-1,"axis":1,"axis_value":1.0)]
 }
 brake={
 "deadzone": 0.2,
-"events": [Object(InputEventKey,"device":-1,"physical_keycode":83), Object(InputEventKey,"device":-1,"physical_keycode":4194322), Object(InputEventJoypadMotion,"device":-1,"axis":4,"axis_value":1.0)]
-}
-steer_left={
-"deadzone": 0.2,
-"events": [Object(InputEventJoypadMotion,"device":-1,"axis":0,"axis_value":-1.0)]
-}
-steer_right={
-"deadzone": 0.2,
-"events": [Object(InputEventJoypadMotion,"device":-1,"axis":0,"axis_value":1.0)]
-}
-steer_up={
-"deadzone": 0.2,
-"events": [Object(InputEventJoypadMotion,"device":-1,"axis":1,"axis_value":-1.0)]
-}
-steer_down={
-"deadzone": 0.2,
-"events": [Object(InputEventJoypadMotion,"device":-1,"axis":1,"axis_value":1.0)]
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":4194326), Object(InputEventJoypadMotion,"device":-1,"axis":4,"axis_value":1.0)]
 }
 aim_left={
 "deadzone": 0.25,
@@ -78,7 +74,7 @@ drift={
 }
 fire={
 "deadzone": 0.3,
-"events": [Object(InputEventMouseButton,"device":-1,"button_index":1), Object(InputEventJoypadButton,"device":-1,"button_index":10)]
+"events": [Object(InputEventMouseButton,"device":-1,"button_index":1), Object(InputEventJoypadMotion,"device":-1,"axis":5,"axis_value":1.0)]
 }
 restart={
 "deadzone": 0.3,

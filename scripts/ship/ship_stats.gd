@@ -20,7 +20,7 @@ extends Resource
 
 @export_group("Steering")
 ## How fast the nose turns toward the steering direction, degrees per second.
-@export var turn_rate_deg: float = 300.0
+@export var turn_rate_deg: float = 380.0
 ## How strongly sideways slide is cancelled (per second). High = grippy.
 @export var grip: float = 6.0
 

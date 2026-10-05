@@ -11,7 +11,7 @@ jobs:
     timeout-minutes: 10
     env:
       # Oldest Godot version the project supports (see project.godot features).
-      GODOT_VERSION: 4.4.1
+      GODOT_VERSION: 4.6.3
     steps:
       - uses: actions/checkout@v4
 

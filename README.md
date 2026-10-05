@@ -6,7 +6,7 @@ A sci-fi roguelike looter with space-pirate aesthetics, fast movement and proced
 
 ## Run it
 
-1. Install **Godot 4.4 or newer** (standard build, not .NET). 4.4 through 4.7 are tested.
+1. Install **Godot 4.6 or newer** (standard build, not .NET). 4.6 and 4.7 are tested.
 2. Open Godot, click **Import**, pick `project.godot` in this folder, then **Import & Edit**.
 3. Press **F5** (or the ▶ button top right). The flight test arena starts.
 
@@ -14,15 +14,14 @@ The first open takes a few seconds while Godot imports the project.
 
 ## Controls (flight test)
 
-One engine pushes the ship along its nose; you point the nose.
+Twin-stick: fly with one hand, aim with the other.
 
 | Action | Keyboard + mouse | Gamepad |
 | --- | --- | --- |
-| Steer (point the nose) | Mouse | Left stick |
-| Thrust | W | RT |
-| Brake | S | LT |
-| Aim cannon | Mouse (same as steering) | Right stick |
-| Fire | Left click | RB |
+| Fly (the nose turns toward this direction) | WASD or arrows | Left stick |
+| Aim cannon | Mouse | Right stick |
+| Fire | Left click | RT |
+| Brake | Ctrl | LT |
 | Boost (hold, burns fuel) | Shift | A |
 | Drift (hold) | Space | B or LB |
 | Restart | R | Start |

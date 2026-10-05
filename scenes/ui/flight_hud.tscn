@@ -22,6 +22,10 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
 [sub_resource type="StyleBoxFlat" id="Style_panel"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
 bg_color = Color(0.12, 0.08, 0.05, 0.82)
 border_width_left = 2
 border_width_top = 2
@@ -32,10 +36,6 @@ corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
-content_margin_left = 14.0
-content_margin_top = 10.0
-content_margin_right = 14.0
-content_margin_bottom = 10.0
 
 [node name="FlightHud" type="CanvasLayer"]
 script = ExtResource("1_hud")
@@ -97,11 +97,10 @@ theme_override_colors/font_color = Color(0.95, 0.88, 0.75, 1)
 theme_override_font_sizes/font_size = 15
 text = "FLIGHT TEST  (keyboard + mouse  |  gamepad)
 
-Steer: mouse  |  left stick
-Thrust: W  |  RT
-Brake: S  |  LT
+Fly: WASD or arrows  |  left stick
 Aim: mouse  |  right stick
-Fire: left click  |  RB
+Fire: left click  |  RT
+Brake: Ctrl  |  LT
 Boost (hold): Shift  |  A
 Drift (hold): Space  |  B or LB
 Restart: R  |  Start
