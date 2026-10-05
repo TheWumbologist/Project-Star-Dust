@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://h8jwjbgny8xj"]
+
+[ext_resource type="Script" uid="uid://msiy6v0l7s81" path="res://scripts/world/asteroid.gd" id="1_ast"]
+
+[sub_resource type="SphereShape3D" id="Shape_ast"]
+resource_local_to_scene = true
+radius = 3.0
+
+[sub_resource type="StandardMaterial3D" id="Mat_ast"]
+albedo_color = Color(0.42, 0.36, 0.33, 1)
+roughness = 0.95
+rim_enabled = true
+rim = 0.35
+
+[sub_resource type="SphereMesh" id="Mesh_ast"]
+resource_local_to_scene = true
+material = SubResource("Mat_ast")
+radius = 3.0
+height = 6.0
+radial_segments = 9
+rings = 5
+
+[node name="Asteroid" type="StaticBody3D" unique_id=1347180761]
+collision_mask = 0
+script = ExtResource("1_ast")
+
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=1631038020]
+shape = SubResource("Shape_ast")
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1729344632]
+mesh = SubResource("Mesh_ast")

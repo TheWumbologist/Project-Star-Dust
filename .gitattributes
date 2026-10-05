@@ -1,0 +1,9 @@
+# Normalize line endings so Godot files diff cleanly between Windows and Linux.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.wav binary
+*.ogg binary
+*.mp3 binary
+*.glb binary
+*.blend binary

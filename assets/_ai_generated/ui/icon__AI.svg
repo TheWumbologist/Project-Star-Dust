@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Placeholder project icon (AI-generated): brass compass rose over a void rift. -->
+  <rect width="128" height="128" rx="24" fill="#140c24"/>
+  <ellipse cx="64" cy="64" rx="46" ry="20" fill="none" stroke="#8a4dff" stroke-width="5" transform="rotate(-25 64 64)"/>
+  <circle cx="64" cy="64" r="30" fill="#2a1a10" stroke="#d9a94a" stroke-width="5"/>
+  <path d="M64 30 L72 64 L64 98 L56 64 Z" fill="#f2c96b"/>
+  <path d="M30 64 L64 58 L98 64 L64 70 Z" fill="#b8862e"/>
+  <circle cx="64" cy="64" r="5" fill="#7fe8ff"/>
+</svg>

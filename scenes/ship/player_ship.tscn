@@ -1,0 +1,263 @@
+[gd_scene format=3 uid="uid://luedaqe5tiiw"]
+
+[ext_resource type="Script" uid="uid://duufc53tahx5k" path="res://scripts/ship/ship_controller.gd" id="1_ship"]
+[ext_resource type="Resource" path="res://resources/ships/sloop_stats.tres" id="2_stats"]
+[ext_resource type="Script" uid="uid://beld052atfpxy" path="res://scripts/ship/player_ship_input.gd" id="3_input"]
+[ext_resource type="Script" uid="uid://v410ppqu6f0x" path="res://scripts/combat/ship_cannon.gd" id="4_cannon"]
+[ext_resource type="PackedScene" uid="uid://dpkmovogul11w" path="res://scenes/combat/cannonball.tscn" id="5_ball"]
+[ext_resource type="Script" uid="uid://2bxoroysfv4t" path="res://scripts/ship/ship_fx.gd" id="6_fx"]
+[ext_resource type="Script" uid="uid://c6d12atr27f62" path="res://scripts/ship/aim_reticle.gd" id="7_reticle"]
+
+[sub_resource type="SphereShape3D" id="Shape_hull"]
+radius = 1.25
+
+[sub_resource type="StandardMaterial3D" id="Mat_wood"]
+albedo_color = Color(0.55, 0.33, 0.18, 1)
+roughness = 0.8
+rim_enabled = true
+rim = 0.7
+rim_tint = 0.3
+
+[sub_resource type="PrismMesh" id="Mesh_hull"]
+material = SubResource("Mat_wood")
+size = Vector3(1.8, 3.6, 0.9)
+
+[sub_resource type="StandardMaterial3D" id="Mat_brass"]
+albedo_color = Color(0.85, 0.66, 0.3, 1)
+metallic = 0.7
+roughness = 0.35
+rim_enabled = true
+rim = 0.5
+
+[sub_resource type="BoxMesh" id="Mesh_deck"]
+material = SubResource("Mat_brass")
+size = Vector3(0.9, 0.25, 1.6)
+
+[sub_resource type="StandardMaterial3D" id="Mat_sail"]
+cull_mode = 2
+albedo_color = Color(1, 0.82, 0.5, 1)
+emission_enabled = true
+emission = Color(1, 0.62, 0.22, 1)
+emission_energy_multiplier = 0.45
+
+[sub_resource type="BoxMesh" id="Mesh_sail"]
+material = SubResource("Mat_sail")
+size = Vector3(1.8, 0.06, 1.3)
+
+[sub_resource type="StandardMaterial3D" id="Mat_engine"]
+shading_mode = 0
+albedo_color = Color(0.5, 0.9, 1, 1)
+
+[sub_resource type="SphereMesh" id="Mesh_engine"]
+material = SubResource("Mat_engine")
+radius = 0.35
+height = 0.7
+radial_segments = 8
+rings = 4
+
+[sub_resource type="ParticleProcessMaterial" id="Trail_process"]
+direction = Vector3(0, 0, 1)
+spread = 8.0
+initial_velocity_min = 1.0
+initial_velocity_max = 2.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.6
+scale_max = 1.2
+color = Color(1, 0.75, 0.4, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_particle"]
+shading_mode = 0
+vertex_color_use_as_albedo = true
+
+[sub_resource type="SphereMesh" id="Mesh_trail"]
+material = SubResource("Mat_particle")
+radius = 0.14
+height = 0.28
+radial_segments = 6
+rings = 3
+
+[sub_resource type="ParticleProcessMaterial" id="Spark_process_left"]
+resource_local_to_scene = true
+direction = Vector3(-1, 0.6, 0.6)
+spread = 25.0
+initial_velocity_min = 5.0
+initial_velocity_max = 10.0
+gravity = Vector3(0, -6, 0)
+scale_min = 0.5
+color = Color(0.85, 0.85, 0.95, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_spark"]
+material = SubResource("Mat_particle")
+size = Vector3(0.1, 0.1, 0.35)
+
+[sub_resource type="ParticleProcessMaterial" id="Spark_process_right"]
+resource_local_to_scene = true
+direction = Vector3(1, 0.6, 0.6)
+spread = 25.0
+initial_velocity_min = 5.0
+initial_velocity_max = 10.0
+gravity = Vector3(0, -6, 0)
+scale_min = 0.5
+color = Color(0.85, 0.85, 0.95, 1)
+
+[sub_resource type="CylinderMesh" id="Mesh_turret_base"]
+material = SubResource("Mat_brass")
+top_radius = 0.4
+height = 0.3
+radial_segments = 10
+rings = 1
+
+[sub_resource type="BoxMesh" id="Mesh_barrel"]
+material = SubResource("Mat_brass")
+size = Vector3(0.28, 0.28, 1.5)
+
+[sub_resource type="StandardMaterial3D" id="Mat_reticle"]
+render_priority = 10
+transparency = 1
+no_depth_test = true
+shading_mode = 0
+albedo_color = Color(1, 0.8, 0.4, 0.95)
+
+[sub_resource type="TorusMesh" id="Mesh_reticle_ring"]
+material = SubResource("Mat_reticle")
+inner_radius = 0.75
+outer_radius = 0.95
+rings = 24
+ring_segments = 4
+
+[sub_resource type="BoxMesh" id="Mesh_reticle_tick"]
+material = SubResource("Mat_reticle")
+size = Vector3(0.12, 0.05, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="Mat_aim_line"]
+render_priority = 9
+transparency = 1
+no_depth_test = true
+shading_mode = 0
+albedo_color = Color(1, 0.8, 0.4, 0.45)
+
+[sub_resource type="BoxMesh" id="Mesh_aim_line"]
+material = SubResource("Mat_aim_line")
+size = Vector3(0.08, 0.02, 1)
+
+[node name="PlayerShip" type="CharacterBody3D" unique_id=4590418 node_paths=PackedStringArray("input_source", "visual_root", "turret")]
+collision_layer = 2
+collision_mask = 5
+motion_mode = 1
+script = ExtResource("1_ship")
+stats = ExtResource("2_stats")
+input_source = NodePath("Input")
+visual_root = NodePath("Visual")
+turret = NodePath("Turret")
+
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=960820802]
+shape = SubResource("Shape_hull")
+
+[node name="Visual" type="Node3D" parent="." unique_id=595620764]
+
+[node name="Hull" type="MeshInstance3D" parent="Visual" unique_id=1460219198]
+transform = Transform3D(1, 0, 0, 0, -3.6199901e-06, 1, 0, -1, -3.6199901e-06, 0, 0, 0)
+mesh = SubResource("Mesh_hull")
+
+[node name="Deck" type="MeshInstance3D" parent="Visual" unique_id=1873108626]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0.6)
+mesh = SubResource("Mesh_deck")
+
+[node name="SailLeft" type="MeshInstance3D" parent="Visual" unique_id=1814753055]
+transform = Transform3D(0.9553365, -0.29552022, 0, 0.29552022, 0.9553365, 0, 0, 0, 1, -1.55, 0.25, 0.4)
+mesh = SubResource("Mesh_sail")
+
+[node name="SailRight" type="MeshInstance3D" parent="Visual" unique_id=1969278182]
+transform = Transform3D(0.9553365, 0.29552022, 0, -0.29552022, 0.9553365, 0, 0, 0, 1, 1.55, 0.25, 0.4)
+mesh = SubResource("Mesh_sail")
+
+[node name="Engine" type="MeshInstance3D" parent="Visual" unique_id=310778916]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 1.7)
+cast_shadow = 0
+mesh = SubResource("Mesh_engine")
+
+[node name="Trail" type="GPUParticles3D" parent="Visual" unique_id=1982821988]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 1.9)
+cast_shadow = 0
+amount = 64
+lifetime = 0.6
+process_material = SubResource("Trail_process")
+draw_pass_1 = SubResource("Mesh_trail")
+
+[node name="SparksLeft" type="GPUParticles3D" parent="Visual" unique_id=207863721]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -0.2, 1.2)
+cast_shadow = 0
+emitting = false
+amount = 48
+lifetime = 0.35
+process_material = SubResource("Spark_process_left")
+draw_pass_1 = SubResource("Mesh_spark")
+
+[node name="SparksRight" type="GPUParticles3D" parent="Visual" unique_id=1094160523]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -0.2, 1.2)
+cast_shadow = 0
+emitting = false
+amount = 48
+lifetime = 0.35
+process_material = SubResource("Spark_process_right")
+draw_pass_1 = SubResource("Mesh_spark")
+
+[node name="Turret" type="Node3D" parent="." unique_id=1213541412]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, -0.2)
+
+[node name="Base" type="MeshInstance3D" parent="Turret" unique_id=1455624958]
+mesh = SubResource("Mesh_turret_base")
+
+[node name="Barrel" type="MeshInstance3D" parent="Turret" unique_id=1723709269]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -0.7)
+mesh = SubResource("Mesh_barrel")
+
+[node name="Input" type="Node" parent="." unique_id=835732759]
+script = ExtResource("3_input")
+
+[node name="Cannon" type="Node3D" parent="." unique_id=638368796]
+script = ExtResource("4_cannon")
+projectile_scene = ExtResource("5_ball")
+
+[node name="Fx" type="Node3D" parent="." unique_id=223092096 node_paths=PackedStringArray("ship", "engine_glow", "trail", "sparks")]
+script = ExtResource("6_fx")
+ship = NodePath("..")
+engine_glow = NodePath("../Visual/Engine")
+trail = NodePath("../Visual/Trail")
+sparks = [NodePath("../Visual/SparksLeft"), NodePath("../Visual/SparksRight")]
+
+[node name="AimReticle" type="Node3D" parent="." unique_id=115020709 node_paths=PackedStringArray("ship", "ring", "aim_line")]
+script = ExtResource("7_reticle")
+ship = NodePath("..")
+ring = NodePath("Ring")
+aim_line = NodePath("AimLine")
+
+[node name="Ring" type="Node3D" parent="AimReticle" unique_id=151167871]
+
+[node name="Circle" type="MeshInstance3D" parent="AimReticle/Ring" unique_id=205598179]
+cast_shadow = 0
+mesh = SubResource("Mesh_reticle_ring")
+
+[node name="TickN" type="MeshInstance3D" parent="AimReticle/Ring" unique_id=1866910364]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.25)
+cast_shadow = 0
+mesh = SubResource("Mesh_reticle_tick")
+
+[node name="TickS" type="MeshInstance3D" parent="AimReticle/Ring" unique_id=1289918477]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.25)
+cast_shadow = 0
+mesh = SubResource("Mesh_reticle_tick")
+
+[node name="TickE" type="MeshInstance3D" parent="AimReticle/Ring" unique_id=773525452]
+transform = Transform3D(-3.6199901e-06, 0, 1, 0, 1, 0, -1, 0, -3.6199901e-06, 1.25, 0, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_reticle_tick")
+
+[node name="TickW" type="MeshInstance3D" parent="AimReticle/Ring" unique_id=229205726]
+transform = Transform3D(-3.6199901e-06, 0, 1, 0, 1, 0, -1, 0, -3.6199901e-06, -1.25, 0, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_reticle_tick")
+
+[node name="AimLine" type="MeshInstance3D" parent="AimReticle" unique_id=1518029000]
+cast_shadow = 0
+mesh = SubResource("Mesh_aim_line")

@@ -1,0 +1,33 @@
+name: Godot checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      # Oldest Godot version the project supports (see project.godot features).
+      GODOT_VERSION: 4.6.3
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check asset ledger and AI tagging
+        run: python3 tools/check_asset_ledger.py
+
+      - name: Download Godot
+        run: |
+          curl -sSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot
+          ./godot --version
+
+      - name: Import project
+        run: ./godot --headless --import
+
+      - name: Run flight smoke test
+        # timeout guards against a script error leaving the test hanging.
+        run: timeout 180 ./godot --headless --script res://tests/smoke_test.gd
