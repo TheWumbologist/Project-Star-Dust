@@ -1,13 +1,13 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bf1d8bqn3fte7"]
 
-[ext_resource type="Script" path="res://scripts/test/flight_test.gd" id="1_level"]
-[ext_resource type="PackedScene" path="res://scenes/ship/player_ship.tscn" id="2_ship"]
-[ext_resource type="Script" path="res://scripts/camera/rift_camera.gd" id="3_cam"]
-[ext_resource type="PackedScene" path="res://scenes/world/asteroid.tscn" id="4_ast"]
-[ext_resource type="PackedScene" path="res://scenes/world/target_dummy.tscn" id="5_dummy"]
-[ext_resource type="PackedScene" path="res://scenes/world/wind_stream.tscn" id="6_wind"]
-[ext_resource type="PackedScene" path="res://scenes/ui/flight_hud.tscn" id="7_hud"]
-[ext_resource type="Shader" path="res://shaders/space_grid.gdshader" id="8_grid"]
+[ext_resource type="Script" uid="uid://b0l61sxikv0k8" path="res://scripts/test/flight_test.gd" id="1_level"]
+[ext_resource type="PackedScene" uid="uid://luedaqe5tiiw" path="res://scenes/ship/player_ship.tscn" id="2_ship"]
+[ext_resource type="Script" uid="uid://cjqqgtdno4s7b" path="res://scripts/camera/rift_camera.gd" id="3_cam"]
+[ext_resource type="PackedScene" uid="uid://h8jwjbgny8xj" path="res://scenes/world/asteroid.tscn" id="4_ast"]
+[ext_resource type="PackedScene" uid="uid://cmaukawaj6jyc" path="res://scenes/world/target_dummy.tscn" id="5_dummy"]
+[ext_resource type="PackedScene" uid="uid://cep7yldudp70y" path="res://scenes/world/wind_stream.tscn" id="6_wind"]
+[ext_resource type="PackedScene" uid="uid://djmbuxfr7wgmm" path="res://scenes/ui/flight_hud.tscn" id="7_hud"]
+[ext_resource type="Shader" uid="uid://cvgk0dsj2qwac" path="res://shaders/space_grid.gdshader" id="8_grid"]
 
 [sub_resource type="Environment" id="Env"]
 background_mode = 1
@@ -50,261 +50,233 @@ size = Vector3(4, 6, 228)
 material = SubResource("Mat_wall")
 size = Vector3(4, 0.3, 228)
 
-[node name="FlightTest" type="Node3D"]
+[node name="FlightTest" type="Node3D" unique_id=418062383]
 script = ExtResource("1_level")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=134480597]
 environment = SubResource("Env")
 
-[node name="StarLight" type="DirectionalLight3D" parent="."]
-rotation = Vector3(-0.95, 0.6, 0)
+[node name="StarLight" type="DirectionalLight3D" parent="." unique_id=1631291779]
+transform = Transform3D(0.8253356, -0.45928895, 0.328443, 0, 0.5816831, 0.8134155, -0.5646425, -0.6713408, 0.4800838, 0, 0, 0)
 light_color = Color(1, 0.9, 0.75, 1)
 light_energy = 1.2
 shadow_enabled = true
 directional_shadow_max_distance = 120.0
 
-[node name="Grid" type="MeshInstance3D" parent="."]
-position = Vector3(0, -2.5, 0)
+[node name="Grid" type="MeshInstance3D" parent="." unique_id=797733791]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.5, 0)
 cast_shadow = 0
 mesh = SubResource("Mesh_grid")
 
-[node name="Walls" type="Node3D" parent="."]
+[node name="Walls" type="Node3D" parent="." unique_id=1090357569]
 
-[node name="North" type="StaticBody3D" parent="Walls"]
-position = Vector3(0, 0, -112)
+[node name="North" type="StaticBody3D" parent="Walls" unique_id=967535484]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -112)
 collision_mask = 0
 
-[node name="Collision" type="CollisionShape3D" parent="Walls/North"]
+[node name="Collision" type="CollisionShape3D" parent="Walls/North" unique_id=165478990]
 shape = SubResource("Shape_wall_x")
 
-[node name="Mesh" type="MeshInstance3D" parent="Walls/North"]
-position = Vector3(0, -1.5, 0)
+[node name="Mesh" type="MeshInstance3D" parent="Walls/North" unique_id=2033729082]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
 cast_shadow = 0
 mesh = SubResource("Mesh_wall_x")
 
-[node name="South" type="StaticBody3D" parent="Walls"]
-position = Vector3(0, 0, 112)
+[node name="South" type="StaticBody3D" parent="Walls" unique_id=895608730]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 112)
 collision_mask = 0
 
-[node name="Collision" type="CollisionShape3D" parent="Walls/South"]
+[node name="Collision" type="CollisionShape3D" parent="Walls/South" unique_id=1785569597]
 shape = SubResource("Shape_wall_x")
 
-[node name="Mesh" type="MeshInstance3D" parent="Walls/South"]
-position = Vector3(0, -1.5, 0)
+[node name="Mesh" type="MeshInstance3D" parent="Walls/South" unique_id=601813232]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
 cast_shadow = 0
 mesh = SubResource("Mesh_wall_x")
 
-[node name="West" type="StaticBody3D" parent="Walls"]
-position = Vector3(-112, 0, 0)
+[node name="West" type="StaticBody3D" parent="Walls" unique_id=1329715843]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -112, 0, 0)
 collision_mask = 0
 
-[node name="Collision" type="CollisionShape3D" parent="Walls/West"]
+[node name="Collision" type="CollisionShape3D" parent="Walls/West" unique_id=998845130]
 shape = SubResource("Shape_wall_z")
 
-[node name="Mesh" type="MeshInstance3D" parent="Walls/West"]
-position = Vector3(0, -1.5, 0)
+[node name="Mesh" type="MeshInstance3D" parent="Walls/West" unique_id=1818484281]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
 cast_shadow = 0
 mesh = SubResource("Mesh_wall_z")
 
-[node name="East" type="StaticBody3D" parent="Walls"]
-position = Vector3(112, 0, 0)
+[node name="East" type="StaticBody3D" parent="Walls" unique_id=306880169]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 112, 0, 0)
 collision_mask = 0
 
-[node name="Collision" type="CollisionShape3D" parent="Walls/East"]
+[node name="Collision" type="CollisionShape3D" parent="Walls/East" unique_id=1328827215]
 shape = SubResource("Shape_wall_z")
 
-[node name="Mesh" type="MeshInstance3D" parent="Walls/East"]
-position = Vector3(0, -1.5, 0)
+[node name="Mesh" type="MeshInstance3D" parent="Walls/East" unique_id=2115488194]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
 cast_shadow = 0
 mesh = SubResource("Mesh_wall_z")
 
-[node name="PlayerShip" parent="." instance=ExtResource("2_ship")]
+[node name="PlayerShip" parent="." unique_id=134071031 instance=ExtResource("2_ship")]
 
-[node name="RiftCamera" type="Camera3D" parent="." node_paths=PackedStringArray("target")]
+[node name="RiftCamera" type="Camera3D" parent="." unique_id=1538690293 node_paths=PackedStringArray("target")]
 fov = 50.0
 far = 400.0
 script = ExtResource("3_cam")
 target = NodePath("../PlayerShip")
 
-[node name="Asteroids" type="Node3D" parent="."]
+[node name="Asteroids" type="Node3D" parent="." unique_id=480672867]
 
-[node name="Asteroid01" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(-69.8, 0, 30.2)
-rotation = Vector3(1.11, 3.4, 0)
-radius = 3.0
+[node name="Asteroid01" parent="Asteroids" unique_id=1642180548 instance=ExtResource("4_ast")]
+transform = Transform3D(-0.9667982, -0.22888792, -0.11362933, 0, 0.4446615, -0.89569867, 0.2555412, -0.8659598, -0.42989793, -69.8, 0, 30.2)
 
-[node name="Asteroid02" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(7.2, 0, -26.9)
-rotation = Vector3(2.86, 4.14, 0)
+[node name="Asteroid02" parent="Asteroids" unique_id=390410003 instance=ExtResource("4_ast")]
+transform = Transform3D(-0.5416419, -0.23359358, 0.8075011, 0, -0.960614, -0.27788603, 0.8406093, -0.15051472, 0.5203088, 7.2, 0, -26.9)
 radius = 2.1
 
-[node name="Asteroid03" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(1.5, 0, -92.5)
-rotation = Vector3(1.55, 3.71, 0)
+[node name="Asteroid03" parent="Asteroids" unique_id=1927199365 instance=ExtResource("4_ast")]
+transform = Transform3D(-0.8427593, -0.53817415, -0.011193685, 0, 0.020794876, -0.99978375, 0.53829056, -0.84257704, -0.017525075, 1.5, 0, -92.5)
 radius = 2.0
 
-[node name="Asteroid04" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(-86, 0, -81.9)
-rotation = Vector3(2.03, 0.32, 0)
+[node name="Asteroid04" parent="Asteroids" unique_id=1518366572 instance=ExtResource("4_ast")]
+transform = Transform3D(0.94923544, 0.28197926, -0.13942671, 0, -0.44323438, -0.89640576, -0.31456655, 0.8509001, -0.42073378, -86, 0, -81.9)
 radius = 3.4
 
-[node name="Asteroid05" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(25.5, 0, 89.5)
-rotation = Vector3(2.7, 4.68, 0)
+[node name="Asteroid05" parent="Asteroids" unique_id=1753117364 instance=ExtResource("4_ast")]
+transform = Transform3D(-0.03238349, -0.4271557, 0.903598, 0, -0.90407217, -0.42737985, 0.99947554, -0.013840051, 0.029277012, 25.5, 0, 89.5)
 radius = 2.6
 
-[node name="Asteroid06" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(-20.7, 0, 95.3)
-rotation = Vector3(2.62, 4.79, 0)
+[node name="Asteroid06" parent="Asteroids" unique_id=1543623946 instance=ExtResource("4_ast")]
+transform = Transform3D(0.07753309, -0.4967619, 0.8644168, 0, -0.8670267, -0.49826175, 0.9969898, 0.03863177, -0.06722326, -20.7, 0, 95.3)
 radius = 3.9
 
-[node name="Asteroid07" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(71.7, 0, -42.1)
-rotation = Vector3(1.18, 2.39, 0)
+[node name="Asteroid07" parent="Asteroids" unique_id=674992274 instance=ExtResource("4_ast")]
+transform = Transform3D(-0.7306024, 0.6313239, 0.2600967, 0, 0.38092488, -0.92460597, -0.68280315, -0.67551935, -0.27830464, 71.7, 0, -42.1)
 radius = 2.0
 
-[node name="Asteroid08" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(-76.4, 0, -38.3)
-rotation = Vector3(0.31, 3.81, 0)
+[node name="Asteroid08" parent="Asteroids" unique_id=153792051 instance=ExtResource("4_ast")]
+transform = Transform3D(-0.7848097, -0.18905605, -0.59019613, 0, 0.95233357, -0.30505863, 0.6197368, -0.23941298, -0.74740064, -76.4, 0, -38.3)
 radius = 2.3
 
-[node name="Asteroid09" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(-63.9, 0, 16.3)
-rotation = Vector3(0.19, 0.4, 0)
+[node name="Asteroid09" parent="Asteroids" unique_id=973412304 instance=ExtResource("4_ast")]
+transform = Transform3D(0.921061, 0.07354511, 0.38241044, 0, 0.9820042, -0.1888589, -0.38941833, 0.17395055, 0.90448576, -63.9, 0, 16.3)
 radius = 4.8
 
-[node name="Asteroid10" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(-25.5, 0, 9.5)
-rotation = Vector3(0.63, 0.97, 0)
+[node name="Asteroid10" parent="Asteroids" unique_id=202989186 instance=ExtResource("4_ast")]
+transform = Transform3D(0.5652995, 0.4859771, 0.6665304, 0, 0.8080275, -0.58914477, -0.8248857, 0.33304325, 0.45677754, -25.5, 0, 9.5)
 radius = 4.2
 
-[node name="Asteroid11" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(-14.5, 0, -37.2)
-rotation = Vector3(1.02, 0.32, 0)
+[node name="Asteroid11" parent="Asteroids" unique_id=536604364 instance=ExtResource("4_ast")]
+transform = Transform3D(0.94923544, 0.26804468, 0.16463342, 0, 0.523366, -0.852108, -0.31456655, 0.8088511, 0.49679753, -14.5, 0, -37.2)
 radius = 4.3
 
-[node name="Asteroid12" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(39.8, 0, -51.2)
-rotation = Vector3(0, 0.91, 0)
+[node name="Asteroid12" parent="Asteroids" unique_id=1949995699 instance=ExtResource("4_ast")]
+transform = Transform3D(0.61374575, 0, 0.78950375, 0, 1, 0, -0.78950375, 0, 0.61374575, 39.8, 0, -51.2)
 radius = 4.7
 
-[node name="Asteroid13" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(5, 0, 75)
-rotation = Vector3(0.3, 2.18, 0)
+[node name="Asteroid13" parent="Asteroids" unique_id=555097313 instance=ExtResource("4_ast")]
+transform = Transform3D(-0.5722146, 0.24235728, 0.78347516, 0, 0.9553365, -0.29552022, -0.8201039, -0.16910098, -0.5466575, 5, 0, 75)
 radius = 3.9
 
-[node name="Asteroid14" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(-42.4, 0, 96)
-rotation = Vector3(0.08, 5.25, 0)
+[node name="Asteroid14" parent="Asteroids" unique_id=1123542375 instance=ExtResource("4_ast")]
+transform = Transform3D(0.5120855, -0.068641484, -0.8561874, 0, 0.99680173, -0.07991469, 0.8589345, 0.040923152, 0.51044774, -42.4, 0, 96)
 radius = 4.5
 
-[node name="Asteroid15" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(-16.4, 0, 51.4)
-rotation = Vector3(1.84, 0.89, 0)
+[node name="Asteroid15" parent="Asteroids" unique_id=1619779952 instance=ExtResource("4_ast")]
+transform = Transform3D(0.62941206, 0.74908394, -0.20667303, 0, -0.2659639, -0.963983, -0.7770717, 0.6067425, -0.1674009, -16.4, 0, 51.4)
 radius = 2.2
 
-[node name="Asteroid16" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(-37.3, 0, 39.1)
-rotation = Vector3(0.76, 2.08, 0)
+[node name="Asteroid16" parent="Asteroids" unique_id=1668632336 instance=ExtResource("4_ast")]
+transform = Transform3D(-0.48748204, 0.60152006, 0.63287824, 0, 0.724836, -0.68892145, -0.873133, -0.33583683, -0.35334453, -37.3, 0, 39.1)
 radius = 5.0
 
-[node name="Asteroid17" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(88.9, 0, -5.2)
-rotation = Vector3(1.09, 0.74, 0)
+[node name="Asteroid17" parent="Asteroids" unique_id=1531615449 instance=ExtResource("4_ast")]
+transform = Transform3D(0.7384685, 0.59784186, 0.31184828, 0, 0.46248534, -0.88662696, -0.6742879, 0.6547461, 0.34153086, 88.9, 0, -5.2)
 radius = 4.9
 
-[node name="Asteroid18" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(-87.9, 0, 40.3)
-rotation = Vector3(2.55, 5.96, 0)
+[node name="Asteroid18" parent="Asteroids" unique_id=898814006 instance=ExtResource("4_ast")]
+transform = Transform3D(0.9482286, -0.17711397, 0.2636155, 0, -0.8300535, -0.55768377, 0.31758854, 0.5288117, -0.78708047, -87.9, 0, 40.3)
 radius = 4.3
 
-[node name="Asteroid19" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(98.6, 0, 64.4)
-rotation = Vector3(1.4, 2.9, 0)
+[node name="Asteroid19" parent="Asteroids" unique_id=491176568 instance=ExtResource("4_ast")]
+transform = Transform3D(-0.9709582, 0.23576811, 0.040664513, 0, 0.16996716, -0.98544973, -0.23924924, -0.95683044, -0.165031, 98.6, 0, 64.4)
 radius = 4.2
 
-[node name="Asteroid20" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(-22.8, 0, 33.7)
-rotation = Vector3(0.26, 0.61, 0)
+[node name="Asteroid20" parent="Asteroids" unique_id=913937143 instance=ExtResource("4_ast")]
+transform = Transform3D(0.819648, 0.14727308, 0.55361336, 0, 0.96638995, -0.25708055, -0.57286745, 0.21071558, 0.7920996, -22.8, 0, 33.7)
 radius = 2.9
 
-[node name="Asteroid21" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(-7.7, 0, -66.4)
-rotation = Vector3(1.03, 1.59, 0)
+[node name="Asteroid21" parent="Asteroids" unique_id=1544384566 instance=ExtResource("4_ast")]
+transform = Transform3D(-0.019202527, 0.8571409, 0.51472396, 0, 0.51481885, -0.857299, -0.99981564, -0.016462306, -0.009885822, -7.7, 0, -66.4)
 radius = 1.9
 
-[node name="Asteroid22" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(-50.5, 0, -21.8)
-rotation = Vector3(2.49, 0.97, 0)
+[node name="Asteroid22" parent="Asteroids" unique_id=1770018034 instance=ExtResource("4_ast")]
+transform = Transform3D(0.5652995, 0.50025487, -0.65588224, 0, -0.7951189, -0.60645354, -0.8248857, 0.3428279, -0.44948035, -50.5, 0, -21.8)
 radius = 2.3
 
-[node name="Asteroid23" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(-83.9, 0, -10.2)
-rotation = Vector3(0.07, 5.71, 0)
+[node name="Asteroid23" parent="Asteroids" unique_id=1425154677 instance=ExtResource("4_ast")]
+transform = Transform3D(0.84017783, -0.037930775, -0.5409829, 0, 0.997551, -0.06994285, 0.542311, 0.058764428, 0.8381203, -83.9, 0, -10.2)
 radius = 5.0
 
-[node name="Asteroid24" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(76.7, 0, 63.9)
-rotation = Vector3(1.58, 0.88, 0)
+[node name="Asteroid24" parent="Asteroids" unique_id=1632202845 instance=ExtResource("4_ast")]
+transform = Transform3D(0.6371511, 0.77070624, -0.007093562, 0, -0.009203586, -0.9999576, -0.7707389, 0.6371241, -0.005864075, 76.7, 0, 63.9)
 radius = 3.8
 
-[node name="Asteroid25" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(76.8, 0, 91.5)
-rotation = Vector3(1.63, 0.16, 0)
+[node name="Asteroid25" parent="Asteroids" unique_id=1754090741 instance=ExtResource("4_ast")]
+transform = Transform3D(0.98722726, 0.15903908, -0.009426713, 0, -0.059169088, -0.998248, -0.15931821, 0.9854976, -0.058413338, 76.8, 0, 91.5)
 radius = 3.1
 
-[node name="Asteroid26" parent="Asteroids" instance=ExtResource("4_ast")]
-position = Vector3(-99.2, 0, -16.2)
-rotation = Vector3(1.58, 5.87, 0)
+[node name="Asteroid26" parent="Asteroids" unique_id=1413810460 instance=ExtResource("4_ast")]
+transform = Transform3D(0.9158464, -0.4015117, 0.003695504, 0, -0.009203586, -0.9999576, 0.40152872, 0.9158076, -0.008429071, -99.2, 0, -16.2)
 radius = 2.8
 
-[node name="Targets" type="Node3D" parent="."]
+[node name="Targets" type="Node3D" parent="." unique_id=1138834453]
 
-[node name="Dummy01" parent="Targets" instance=ExtResource("5_dummy")]
-position = Vector3(-12, 0, -30)
+[node name="Dummy01" parent="Targets" unique_id=1458827987 instance=ExtResource("5_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -30)
 
-[node name="Dummy02" parent="Targets" instance=ExtResource("5_dummy")]
-position = Vector3(0, 0, -34)
+[node name="Dummy02" parent="Targets" unique_id=280193421 instance=ExtResource("5_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -34)
 
-[node name="Dummy03" parent="Targets" instance=ExtResource("5_dummy")]
-position = Vector3(12, 0, -30)
+[node name="Dummy03" parent="Targets" unique_id=946605695 instance=ExtResource("5_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, -30)
 
-[node name="Dummy04" parent="Targets" instance=ExtResource("5_dummy")]
-position = Vector3(-40, 0, 10)
+[node name="Dummy04" parent="Targets" unique_id=2094743658 instance=ExtResource("5_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 0, 10)
 patrol_distance = 10.0
 
-[node name="Dummy05" parent="Targets" instance=ExtResource("5_dummy")]
-position = Vector3(40, 0, 20)
+[node name="Dummy05" parent="Targets" unique_id=1319498263 instance=ExtResource("5_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 20)
 patrol_distance = 12.0
 
-[node name="Dummy06" parent="Targets" instance=ExtResource("5_dummy")]
-position = Vector3(0, 0, 50)
+[node name="Dummy06" parent="Targets" unique_id=154076769 instance=ExtResource("5_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 50)
 patrol_distance = 14.0
 
-[node name="Dummy07" parent="Targets" instance=ExtResource("5_dummy")]
-position = Vector3(-70, 0, -70)
+[node name="Dummy07" parent="Targets" unique_id=462161046 instance=ExtResource("5_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70, 0, -70)
 
-[node name="Dummy08" parent="Targets" instance=ExtResource("5_dummy")]
-position = Vector3(70, 0, -80)
+[node name="Dummy08" parent="Targets" unique_id=1574551058 instance=ExtResource("5_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 0, -80)
 patrol_distance = 8.0
 
-[node name="Dummy09" parent="Targets" instance=ExtResource("5_dummy")]
-position = Vector3(-80, 0, 70)
+[node name="Dummy09" parent="Targets" unique_id=1527189069 instance=ExtResource("5_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -80, 0, 70)
 
-[node name="Dummy10" parent="Targets" instance=ExtResource("5_dummy")]
-position = Vector3(80, 0, 80)
+[node name="Dummy10" parent="Targets" unique_id=1955432492 instance=ExtResource("5_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 80, 0, 80)
 patrol_distance = 10.0
 
-[node name="WindStreams" type="Node3D" parent="."]
+[node name="WindStreams" type="Node3D" parent="." unique_id=1626075724]
 
-[node name="WindNorth" parent="WindStreams" instance=ExtResource("6_wind")]
-position = Vector3(55, 0, 0)
+[node name="WindNorth" parent="WindStreams" unique_id=1503073935 instance=ExtResource("6_wind")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 0, 0)
 length = 140.0
 
-[node name="WindWest" parent="WindStreams" instance=ExtResource("6_wind")]
-position = Vector3(-50, 0, -55)
-rotation = Vector3(0, 1.5708, 0)
+[node name="WindWest" parent="WindStreams" unique_id=253775366 instance=ExtResource("6_wind")]
+transform = Transform3D(-3.6199901e-06, 0, 1, 0, 1, 0, -1, 0, -3.6199901e-06, -50, 0, -55)
 length = 80.0
 
-[node name="FlightHud" parent="." node_paths=PackedStringArray("ship") instance=ExtResource("7_hud")]
+[node name="FlightHud" parent="." unique_id=1139980843 node_paths=PackedStringArray("ship") instance=ExtResource("7_hud")]
 ship = NodePath("../PlayerShip")

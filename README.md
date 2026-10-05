@@ -53,7 +53,7 @@ resources/ships/         per-hull ShipStats (.tres)
 shaders/                 grid floor and wind stream shaders
 assets/                  art/audio; every file listed in ASSET_LEDGER.csv
 tests/smoke_test.gd      headless gameplay smoke test
-tools/                   asset ledger check, arena layout generator
+tools/                   asset ledger check
 ```
 
 ### Architecture notes

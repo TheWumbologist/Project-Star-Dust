@@ -1,6 +1,6 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dpkmovogul11w"]
 
-[ext_resource type="Script" path="res://scripts/combat/projectile.gd" id="1_proj"]
+[ext_resource type="Script" uid="uid://bhlxub0blb5r5" path="res://scripts/combat/projectile.gd" id="1_proj"]
 
 [sub_resource type="SphereShape3D" id="Shape_ball"]
 radius = 0.4
@@ -16,15 +16,15 @@ height = 0.6
 radial_segments = 8
 rings = 4
 
-[node name="Cannonball" type="Area3D"]
+[node name="Cannonball" type="Area3D" unique_id=1346874472]
 collision_layer = 8
 collision_mask = 5
 monitorable = false
 script = ExtResource("1_proj")
 
-[node name="Collision" type="CollisionShape3D" parent="."]
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=779165182]
 shape = SubResource("Shape_ball")
 
-[node name="Mesh" type="MeshInstance3D" parent="."]
-mesh = SubResource("Mesh_ball")
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1576830310]
 cast_shadow = 0
+mesh = SubResource("Mesh_ball")
