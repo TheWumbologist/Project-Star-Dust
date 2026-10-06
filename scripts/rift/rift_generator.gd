@@ -35,6 +35,15 @@ signal generated
 ## Where generated enemies go (defaults to this node's parent).
 @export var enemies_parent: Node
 
+@export_group("Site rules")
+## Added to every enemy spawn point's chance (negative = emptier).
+@export var spawn_chance_bonus: float = 0.0
+## Allow threat tier 2+ enemies (pirate cutters) at spawn points.
+@export var allow_cutters: bool = true
+@export var allow_caches: bool = true
+## Void crystal rocks and crate bonuses (rift loot) are removed when off.
+@export var allow_void_crystals: bool = true
+
 const DIRS := [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]
 
 ## Vector2i cell -> {"depth": int, "chunk": RiftChunk}
@@ -219,13 +228,21 @@ func _pick(pool: Array[PackedScene], rng: RandomNumberGenerator, depth: int, avo
 func _scan(node: Node, rng: RandomNumberGenerator, enemy_parent: Node, is_start: bool) -> void:
 	for child in node.get_children():
 		if child is EnemySpawnPoint:
-			var enemy: ShipController = child.spawn(rng, enemy_parent)
-			if enemy != null:
+			var enemy: ShipController = child.spawn(rng, enemy_parent, spawn_chance_bonus)
+			if enemy != null and enemy.threat_tier >= 2 and not allow_cutters:
+				enemy.free()
+			elif enemy != null:
 				enemies.append(enemy)
 		elif child is ExtractionPoint:
 			extraction_points.append(child)
+		elif child is MineableAsteroid and not allow_void_crystals and child.ore_item != null \
+				and child.ore_item.grade != ItemDefinition.Grade.COMMON:
+			child.free()
+			continue
+		elif child is SalvageCrate and not allow_void_crystals:
+			child.bonus_chance = 0.0
 		elif child is AugmentCache:
-			if rng.randf() >= child.spawn_chance:
+			if not allow_caches or rng.randf() >= child.spawn_chance:
 				child.free()
 				continue
 			augment_caches.append(child)

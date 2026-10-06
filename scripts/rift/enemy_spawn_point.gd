@@ -8,8 +8,9 @@ extends Marker3D
 @export_range(0.0, 1.0) var chance: float = 1.0
 
 
-func spawn(rng: RandomNumberGenerator, parent: Node) -> ShipController:
-	if enemy == null or rng.randf() > chance:
+## `chance_bonus` raises (or lowers) the chance for harder (easier) sites.
+func spawn(rng: RandomNumberGenerator, parent: Node, chance_bonus: float = 0.0) -> ShipController:
+	if enemy == null or rng.randf() > clampf(chance + chance_bonus, 0.0, 1.0):
 		return null
 	var ship := enemy.instantiate() as ShipController
 	parent.add_child(ship)

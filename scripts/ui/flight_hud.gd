@@ -77,7 +77,7 @@ func bind(target: ShipController) -> void:
 	var director := get_tree().get_first_node_in_group("encounter_director") as EncounterDirector
 	if director != null:
 		director.wave_started.connect(_on_wave_started)
-		director.wave_cleared.connect(func(n): _show_banner("WAVE %d CLEARED" % n, 2.0))
+		director.wave_cleared.connect(func(n): show_banner("WAVE %d CLEARED" % n, 2.0))
 
 
 func _on_node_added(node: Node) -> void:
@@ -91,7 +91,7 @@ func _on_enemy_destroyed(_enemy: ShipController) -> void:
 
 func _on_wave_started(n: int) -> void:
 	_wave = n
-	_show_banner("WAVE %d" % n, 2.0)
+	show_banner("WAVE %d" % n, 2.0)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -136,8 +136,15 @@ func _update_rift() -> void:
 		_rift = get_tree().get_first_node_in_group("rift_run") as RiftRun
 		if _rift == null:
 			return
-		_rift.stage_reached.connect(func(_stage, text): _show_banner(text, 3.0))
+		_rift.stage_reached.connect(func(_stage, text): show_banner(text, 3.0))
 	_rift_panel.visible = true
+	# Debris fields have no rift clock.
+	_instability_bar.visible = _rift.has_instability
+	if not _rift.has_instability:
+		_instability_label.text = str(_rift.site.get("name", "Debris field")).to_upper()
+		_countdown_label.visible = false
+		_update_way_out()
+		return
 	var pct := _rift.instability * 100.0
 	_instability_label.text = "RIFT INSTABILITY  %d%%" % floori(pct)
 	_instability_bar.value = pct
@@ -146,6 +153,15 @@ func _update_rift() -> void:
 	if _countdown_label.visible:
 		var left := _rift.time_to_collapse()
 		_countdown_label.text = "COLLAPSE IN  %s" % _format_time(ceilf(left)) if left > 0.0 else "RIFT COLLAPSING"
+	_update_way_out()
+
+
+## The line under the rift panel: the objective first, then the way out.
+func _update_way_out() -> void:
+	if is_instance_valid(_rift.objective):
+		_extract_label.text = "DERELICT  %d m  (follow the gold arrow)" % roundi(_rift.objective.global_position.distance_to(ship.global_position))
+		_extract_bar.visible = false
+		return
 	var exit := _rift.nearest_extraction(ship.global_position)
 	if exit == null:
 		_extract_label.text = ""
@@ -165,7 +181,7 @@ func _callout(text: String) -> void:
 	_callout_time = 1.2
 
 
-func _show_banner(text: String, seconds: float) -> void:
+func show_banner(text: String, seconds: float) -> void:
 	_banner.text = text
 	_banner.visible = true
 	_banner_time = seconds

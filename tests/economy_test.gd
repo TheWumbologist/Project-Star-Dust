@@ -22,6 +22,7 @@ func _run() -> void:
 	_test_catalog()
 	_test_profile()
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(Profile.path))
+	_test_slots()
 	if _failures.is_empty():
 		print("ECONOMY TEST: all checks passed")
 		quit(0)
@@ -116,6 +117,76 @@ func _test_profile() -> void:
 	_check(Profile.last_run.size() == 2, "the last run report is saved too")
 	Profile.upgrades[&"hull"] = 5
 	_check(Profile.is_maxed(&"hull") and not Profile.can_buy(&"hull") and Profile.next_cost(&"hull") == Vector2i.ZERO, "maxed upgrades can't be bought")
+
+	# Hub state: scrap, hull damage, the compass and unlocked tiers.
+	var ship: Node = load("res://scenes/ship/player_ship.tscn").instantiate()
+	_check(is_equal_approx(Profile.BASE_HULL, ship.get_node("Health").max_hull), "Profile.BASE_HULL matches the player ship's hull")
+	ship.free()
+	Profile.upgrades[&"hull"] = 2
+	_check(is_equal_approx(Profile.max_hull(), Profile.BASE_HULL + 40.0), "max hull counts hull upgrades")
+	Profile.scrap = 7
+	Profile.hull_damage = 33.0
+	Profile.has_compass = true
+	Profile.max_tier = 2
+	Profile.save()
+	Profile.reset()
+	_check(Profile.scrap == 0 and Profile.hull_damage == 0.0 and not Profile.has_compass and Profile.max_tier == 0, "reset clears the hub state")
+	Profile.load_profile()
+	_check(Profile.scrap == 7 and is_equal_approx(Profile.hull_damage, 33.0) and Profile.has_compass and Profile.max_tier == 2, "scrap, hull damage, compass and tiers are saved")
+	_check(Profile.repair_scrap_cost() == 7, "33 hull takes 7 scrap")
+	_check(Deployment.is_unlocked(0) and Deployment.is_unlocked(2) and not Deployment.is_unlocked(3), "tiers open up to the highest earned")
+	Profile.has_compass = false
+	_check(Deployment.is_unlocked(0) and not Deployment.is_unlocked(1), "without the compass only debris fields are open")
+	Deployment.choose(1)
+	_check(Deployment.tutorial and Deployment.site().tier == 0 and not Deployment.site().instability, "without the compass you're sent to the tutorial debris field")
+	Deployment.tutorial = false
+	Deployment.tier = 1
+	var prev := -1.0
+	var ok := true
+	for site in Deployment.SITES.slice(1):
+		ok = ok and site.enemy_health > prev and site.payout >= 1.0
+		prev = site.enemy_health
+	_check(ok, "each rift tier is tougher than the last")
+
+
+## Save slots, old-version saves and the pre-slots save file.
+func _test_slots() -> void:
+	Profile.save_dir = "user://test_economy_saves"
+	Profile.legacy_path = "user://test_economy_legacy.json"
+	for n in range(1, Profile.SLOTS + 1):
+		Profile.delete_slot(n)
+	_check(Profile.latest_slot() == 0 and Profile.slot_info(1).is_empty(), "no saves to start with")
+	Profile.new_game(1)
+	Profile.credits = 77
+	Profile.has_compass = true
+	Profile.max_tier = 2
+	Profile.save()
+	var info := Profile.slot_info(1)
+	_check(info.get("compatible", false) and info.credits == 77 and info.max_tier == 2 and info.saved_at > 0, "a slot can be read without loading it")
+	_check(Profile.latest_slot() == 1, "the only save is the one to continue")
+	# A save from before this version (no version number).
+	var old := FileAccess.open(Profile.slot_path(2), FileAccess.WRITE)
+	old.store_string(JSON.stringify({"credits": 500, "upgrades": {}}))
+	old.close()
+	_check(Profile.slot_info(2) == {"compatible": false}, "older saves are flagged as incompatible")
+	_check(Profile.latest_slot() == 1, "an incompatible save is never offered to continue")
+	Profile.select_slot(2)
+	_check(Profile.credits == 0 and Profile.path == Profile.slot_path(2), "loading an incompatible save starts fresh")
+	Profile.new_game(2)
+	_check(Profile.slot_info(2).get("compatible", false), "a new game overwrites an old save")
+	Profile.select_slot(1)
+	_check(Profile.credits == 77 and Profile.has_compass and Profile.slot == 1, "selecting a slot loads it")
+	Profile.new_game(1)
+	_check(Profile.credits == 0 and not Profile.has_compass and Profile.slot_info(1).credits == 0, "a new game in a used slot starts over")
+	Profile.delete_slot(1)
+	Profile.delete_slot(2)
+	_check(Profile.slot_info(1).is_empty() and Profile.latest_slot() == 0, "deleting slots empties them")
+	var legacy := FileAccess.open(Profile.legacy_path, FileAccess.WRITE)
+	legacy.store_string("{}")
+	legacy.close()
+	_check(Profile.remove_legacy_save() and not FileAccess.file_exists(Profile.legacy_path), "the old single save file is removed")
+	_check(not Profile.remove_legacy_save(), "and only once")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(Profile.save_dir))
 
 
 func _aug(id: String) -> AugmentDefinition:
