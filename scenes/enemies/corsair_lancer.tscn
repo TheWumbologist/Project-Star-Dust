@@ -10,11 +10,8 @@
 [ext_resource type="Resource" path="res://resources/items/scrap.tres" id="9_loot"]
 [ext_resource type="Script" uid="uid://cvlhlxpb1nkur" path="res://scripts/combat/hit_flash.gd" id="10_flash"]
 [ext_resource type="PackedScene" uid="uid://yh6ia4pyaayf" path="res://scenes/combat/explosion.tscn" id="11_boom"]
-[ext_resource type="Material" uid="uid://y8q6emcas1lb" path="res://resources/materials/dark_iron.tres" id="mat_dark_iron"]
-[ext_resource type="Material" uid="uid://b0vdt8b6kk441" path="res://resources/materials/pirate_deck.tres" id="mat_pirate_deck"]
-[ext_resource type="Material" uid="uid://bk6fptpn5gpo3" path="res://resources/materials/pirate_hull.tres" id="mat_pirate_hull"]
-[ext_resource type="Material" uid="uid://d31krw0necrer" path="res://resources/materials/pirate_sail.tres" id="mat_pirate_sail"]
-[ext_resource type="ArrayMesh" uid="uid://dqeuwtwj1wu6p" path="res://assets/_ai_generated/models/corsair_lancer__AI.obj" id="mdl"]
+[ext_resource type="Material" path="res://resources/materials/kenney_ship_pirate.tres" id="mat_kenney_ship_pirate"]
+[ext_resource type="ArrayMesh" uid="uid://b67ccksfn0owo" path="res://assets/models/kenney_pirate_kit/ship-pirate-medium.obj" id="mdl"]
 [ext_resource type="PackedScene" uid="uid://cc3p7hnd0rs0h" path="res://scenes/combat/lance_slug.tscn" id="p_0"]
 
 [sub_resource type="SphereShape3D" id="Shape_body"]
@@ -54,11 +51,9 @@ shape = SubResource("Shape_body")
 [node name="Visual" type="Node3D" parent="." unique_id=1797228512]
 
 [node name="Hull" type="MeshInstance3D" parent="Visual" unique_id=81622665]
+transform = Transform3D(-0.62, 0, 0, 0, 0.496, 0, 0, 0, -0.62, 0, -0.5, 0)
 mesh = ExtResource("mdl")
-surface_material_override/0 = ExtResource("mat_pirate_deck")
-surface_material_override/1 = ExtResource("mat_pirate_hull")
-surface_material_override/2 = ExtResource("mat_dark_iron")
-surface_material_override/3 = ExtResource("mat_pirate_sail")
+material_override = ExtResource("mat_kenney_ship_pirate")
 
 [node name="Shield" type="MeshInstance3D" parent="." unique_id=686006101]
 cast_shadow = 0

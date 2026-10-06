@@ -8,12 +8,12 @@ extends Node
 ## there's no autoload to set up. It survives scene changes and keeps
 ## playing while the game is paused (menus click too).
 ##
-## Sounds live in assets/_ai_generated/audio/ as sfx_<name>__AI.wav and
-## music_<name>__AI.wav (placeholders made by tools/make_sounds.py). Drop
-## a replacement over a file, or add a name to OVERRIDES, to swap one.
+## Sounds live in assets/audio/ as sfx_<name>.ogg and music_<name>.ogg
+## (open-source; sources and licenses are in assets/ASSET_LEDGER.csv).
+## Drop a replacement over a file, or add a name to OVERRIDES, to swap one.
 ## Volumes are saved in user://settings.cfg.
 
-const DIR := "res://assets/_ai_generated/audio/"
+const DIR := "res://assets/audio/"
 ## name -> res:// path, for sounds that don't follow the naming pattern.
 const OVERRIDES := {}
 ## Tests point this somewhere else so they never touch the real settings.
@@ -24,12 +24,15 @@ const FLAT_VOICES := 8
 ## The same sound won't restart more often than this (seconds), so a
 ## burst of hits doesn't turn into a wall of noise.
 const MIN_GAP := 0.045
-## Per-sound volume trims in dB.
+## Per-sound volume trims in dB, set so the open-source sounds sit at
+## roughly the loudness the mix was tuned for.
 const TRIM := {
-	&"cannon": -9.0, &"enemy_shot": -11.0, &"rock_chip": -8.0, &"hit_shield": -6.0,
-	&"hit_hull": -5.0, &"pickup": -7.0, &"ui_click": -10.0, &"ui_confirm": -6.0,
-	&"boost": -6.0, &"explosion_small": -3.0, &"broadside": -5.0, &"lance": -3.0,
-	&"fuse": -5.0, &"charge": -7.0, &"mine_drop": -6.0, &"blink": -4.0,
+	&"alarm": -1.0, &"blink": -7.0, &"boost": -5.0, &"broadside": -2.0, &"cache": -2.0,
+	&"cannon": -14.0, &"charge": -3.0, &"compass": -1.0, &"drift_kick": 4.0,
+	&"enemy_shot": -6.0, &"explosion_big": 4.0, &"extracted": 3.0, &"fuse": -10.0,
+	&"hit_hull": -7.0, &"hit_shield": -14.0, &"lance": 3.0, &"mine_drop": -9.0,
+	&"rock_chip": -8.0, &"shield_break": 4.0, &"torpedo": 4.0, &"ui_click": -1.0,
+	&"ui_confirm": -10.0, &"warp_in": 3.0,
 }
 
 static var music_volume: float = 0.6
@@ -231,7 +234,7 @@ func _play(sound: StringName, at: Vector3, volume_db: float, pitch_jitter: float
 func _stream(sound: StringName) -> AudioStream:
 	if _streams.has(sound):
 		return _streams[sound]
-	var path: String = OVERRIDES.get(sound, DIR + "sfx_%s__AI.wav" % sound)
+	var path: String = OVERRIDES.get(sound, DIR + "sfx_%s.ogg" % sound)
 	var stream: AudioStream = load(path) if ResourceLoader.exists(path) else null
 	if stream == null:
 		push_warning("Sfx: no sound called '%s' (%s)" % [sound, path])
@@ -253,9 +256,13 @@ func _play_music(track: StringName) -> void:
 	_fade = create_tween().set_parallel(true)
 	_fade.tween_property(outgoing, "volume_db", -80.0, 1.5)
 	if track != &"":
-		var path := DIR + "music_%s__AI.wav" % track
+		var path := DIR + "music_%s.ogg" % track
 		if ResourceLoader.exists(path):
-			incoming.stream = load(path)
+			var stream: AudioStream = load(path)
+			if stream is AudioStreamOggVorbis:
+				stream.loop = true
+			incoming.stream = stream
 			incoming.volume_db = -40.0
 			incoming.play()
 			_fade.tween_property(incoming, "volume_db", 0.0, 2.0)
+

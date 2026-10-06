@@ -13,7 +13,7 @@
 [ext_resource type="Material" uid="uid://y8q6emcas1lb" path="res://resources/materials/dark_iron.tres" id="mat_dark_iron"]
 [ext_resource type="Material" uid="uid://ktm7h2hjpl0f" path="res://resources/materials/drone_metal.tres" id="mat_drone_metal"]
 [ext_resource type="Material" uid="uid://42xvg584je7g" path="res://resources/materials/void_glow.tres" id="mat_void_glow"]
-[ext_resource type="ArrayMesh" uid="uid://b75myugkknr8j" path="res://assets/_ai_generated/models/void_wasp__AI.obj" id="mdl"]
+[ext_resource type="ArrayMesh" uid="uid://8dbhvomwvbf" path="res://assets/models/kenney_space_kit/craft_speederD.obj" id="mdl"]
 [ext_resource type="PackedScene" uid="uid://5ryltq1n3cvv" path="res://scenes/combat/enemy_bolt.tscn" id="p_0"]
 
 [sub_resource type="SphereShape3D" id="Shape_body"]
@@ -53,10 +53,12 @@ shape = SubResource("Shape_body")
 [node name="Visual" type="Node3D" parent="." unique_id=1755269616]
 
 [node name="Hull" type="MeshInstance3D" parent="Visual" unique_id=88197783]
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 0, -0.3, 0)
 mesh = ExtResource("mdl")
 surface_material_override/0 = ExtResource("mat_dark_iron")
-surface_material_override/1 = ExtResource("mat_void_glow")
-surface_material_override/2 = ExtResource("mat_drone_metal")
+surface_material_override/1 = ExtResource("mat_drone_metal")
+surface_material_override/2 = ExtResource("mat_dark_iron")
+surface_material_override/3 = ExtResource("mat_void_glow")
 
 [node name="Shield" type="MeshInstance3D" parent="." unique_id=1059476762]
 cast_shadow = 0

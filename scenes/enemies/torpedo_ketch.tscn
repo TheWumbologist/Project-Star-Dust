@@ -12,10 +12,9 @@
 [ext_resource type="PackedScene" uid="uid://yh6ia4pyaayf" path="res://scenes/combat/explosion.tscn" id="11_boom"]
 [ext_resource type="Material" uid="uid://c1481fo4d6uq5" path="res://resources/materials/brass.tres" id="mat_brass"]
 [ext_resource type="Material" uid="uid://y8q6emcas1lb" path="res://resources/materials/dark_iron.tres" id="mat_dark_iron"]
-[ext_resource type="Material" uid="uid://b0vdt8b6kk441" path="res://resources/materials/pirate_deck.tres" id="mat_pirate_deck"]
 [ext_resource type="Material" uid="uid://bk6fptpn5gpo3" path="res://resources/materials/pirate_hull.tres" id="mat_pirate_hull"]
 [ext_resource type="Material" uid="uid://d31krw0necrer" path="res://resources/materials/pirate_sail.tres" id="mat_pirate_sail"]
-[ext_resource type="ArrayMesh" uid="uid://dfiuqdftqaf87" path="res://assets/_ai_generated/models/torpedo_ketch__AI.obj" id="mdl"]
+[ext_resource type="ArrayMesh" uid="uid://canfdhi8xpb7j" path="res://assets/models/kenney_space_kit/craft_miner.obj" id="mdl"]
 [ext_resource type="PackedScene" uid="uid://beq2oo4csragp" path="res://scenes/combat/enemy_torpedo.tscn" id="p_0"]
 
 [sub_resource type="SphereShape3D" id="Shape_body"]
@@ -55,12 +54,12 @@ shape = SubResource("Shape_body")
 [node name="Visual" type="Node3D" parent="." unique_id=1160437005]
 
 [node name="Hull" type="MeshInstance3D" parent="Visual" unique_id=2031844514]
+transform = Transform3D(1.8, 0, 0, 0, 1.8, 0, 0, 0, 1.8, 0, -0.5, 0)
 mesh = ExtResource("mdl")
-surface_material_override/0 = ExtResource("mat_brass")
-surface_material_override/1 = ExtResource("mat_pirate_deck")
-surface_material_override/2 = ExtResource("mat_pirate_hull")
-surface_material_override/3 = ExtResource("mat_dark_iron")
-surface_material_override/4 = ExtResource("mat_pirate_sail")
+surface_material_override/0 = ExtResource("mat_dark_iron")
+surface_material_override/1 = ExtResource("mat_pirate_hull")
+surface_material_override/2 = ExtResource("mat_brass")
+surface_material_override/3 = ExtResource("mat_pirate_sail")
 
 [node name="Shield" type="MeshInstance3D" parent="." unique_id=728712512]
 cast_shadow = 0

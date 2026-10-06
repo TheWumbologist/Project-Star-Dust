@@ -11,11 +11,8 @@
 [ext_resource type="Resource" path="res://resources/items/scrap.tres" id="9_scrap"]
 [ext_resource type="Script" uid="uid://cvlhlxpb1nkur" path="res://scripts/combat/hit_flash.gd" id="10_flash"]
 [ext_resource type="PackedScene" uid="uid://yh6ia4pyaayf" path="res://scenes/combat/explosion.tscn" id="11_boom"]
-[ext_resource type="Material" uid="uid://y8q6emcas1lb" path="res://resources/materials/dark_iron.tres" id="mat_dark_iron"]
-[ext_resource type="Material" uid="uid://b0vdt8b6kk441" path="res://resources/materials/pirate_deck.tres" id="mat_pirate_deck"]
-[ext_resource type="Material" uid="uid://bk6fptpn5gpo3" path="res://resources/materials/pirate_hull.tres" id="mat_pirate_hull"]
-[ext_resource type="Material" uid="uid://d31krw0necrer" path="res://resources/materials/pirate_sail.tres" id="mat_pirate_sail"]
-[ext_resource type="ArrayMesh" uid="uid://bcqqe33fvu4jy" path="res://assets/_ai_generated/models/cutter__AI.obj" id="mdl_cutter"]
+[ext_resource type="Material" path="res://resources/materials/kenney_ship_pirate.tres" id="mat_kenney_ship_pirate"]
+[ext_resource type="ArrayMesh" uid="uid://co4i61n53wr6k" path="res://assets/models/kenney_pirate_kit/ship-pirate-small.obj" id="mdl_cutter"]
 
 [sub_resource type="SphereShape3D" id="Shape_cutter"]
 radius = 1.6
@@ -53,12 +50,9 @@ shape = SubResource("Shape_cutter")
 [node name="Visual" type="Node3D" parent="." unique_id=808851373]
 
 [node name="Hull" type="MeshInstance3D" parent="Visual" unique_id=1489647878]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.2)
+transform = Transform3D(-0.6, 0, 0, 0, 0.48, 0, 0, 0, -0.6, 0, -0.5, 0)
 mesh = ExtResource("mdl_cutter")
-surface_material_override/0 = ExtResource("mat_pirate_deck")
-surface_material_override/1 = ExtResource("mat_pirate_hull")
-surface_material_override/2 = ExtResource("mat_dark_iron")
-surface_material_override/3 = ExtResource("mat_pirate_sail")
+material_override = ExtResource("mat_kenney_ship_pirate")
 
 [node name="Shield" type="MeshInstance3D" parent="." unique_id=346237708]
 cast_shadow = 0

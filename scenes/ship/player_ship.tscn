@@ -14,13 +14,8 @@
 [ext_resource type="PackedScene" uid="uid://yh6ia4pyaayf" path="res://scenes/combat/explosion.tscn" id="12_boom"]
 [ext_resource type="PackedScene" uid="uid://bdeowowjpld5l" path="res://scenes/cargo/pickup.tscn" id="13_pick"]
 [ext_resource type="Script" uid="uid://dd1m8yuhurplu" path="res://scripts/economy/ship_loadout.gd" id="14_loadout"]
-[ext_resource type="Material" uid="uid://c1481fo4d6uq5" path="res://resources/materials/brass.tres" id="mat_brass"]
-[ext_resource type="Material" uid="uid://y8q6emcas1lb" path="res://resources/materials/dark_iron.tres" id="mat_dark_iron"]
-[ext_resource type="Material" uid="uid://ctld4h1acdyib" path="res://resources/materials/lantern_glow.tres" id="mat_lantern_glow"]
-[ext_resource type="Material" uid="uid://cfnawb313s13v" path="res://resources/materials/ship_deck.tres" id="mat_ship_deck"]
-[ext_resource type="Material" uid="uid://1ng8t1bld42s" path="res://resources/materials/ship_wood.tres" id="mat_ship_wood"]
-[ext_resource type="Material" uid="uid://bshwglts1g0gq" path="res://resources/materials/solar_sail.tres" id="mat_solar_sail"]
-[ext_resource type="ArrayMesh" uid="uid://becs8sq6rce5g" path="res://assets/_ai_generated/models/sloop__AI.obj" id="mdl_sloop"]
+[ext_resource type="Material" path="res://resources/materials/kenney_ship_player.tres" id="mat_kenney_ship_player"]
+[ext_resource type="ArrayMesh" uid="uid://bnk8gk1ccx05w" path="res://assets/models/kenney_pirate_kit/ship-small.obj" id="mdl_sloop"]
 
 [sub_resource type="SphereShape3D" id="Shape_hull"]
 radius = 1.25
@@ -161,14 +156,9 @@ shape = SubResource("Shape_hull")
 [node name="Visual" type="Node3D" parent="." unique_id=595620764]
 
 [node name="Hull" type="MeshInstance3D" parent="Visual" unique_id=1460219198]
-transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, -0.1, 0.1)
+transform = Transform3D(-0.55, 0, 0, 0, 0.44, 0, 0, 0, -0.55, 0, -0.5, 0)
 mesh = ExtResource("mdl_sloop")
-surface_material_override/0 = ExtResource("mat_brass")
-surface_material_override/1 = ExtResource("mat_dark_iron")
-surface_material_override/2 = ExtResource("mat_ship_deck")
-surface_material_override/3 = ExtResource("mat_lantern_glow")
-surface_material_override/4 = ExtResource("mat_solar_sail")
-surface_material_override/5 = ExtResource("mat_ship_wood")
+material_override = ExtResource("mat_kenney_ship_player")
 
 [node name="Engine" type="MeshInstance3D" parent="Visual" unique_id=310778916]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.02, 1.75)

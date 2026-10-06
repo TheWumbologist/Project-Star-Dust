@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" uid="uid://ccfh4h6sjw82b" path="res://assets/models/kenney_pirate_kit/Textures/colormap.png" id="1_cmap"]
+
+[resource]
+resource_name = "kenney_ship_wreck"
+albedo_color = Color(0.45, 0.4, 0.38, 1)
+albedo_texture = ExtResource("1_cmap")
+roughness = 0.8
+
