@@ -22,6 +22,7 @@ func _run() -> void:
 	_test_catalog()
 	_test_profile()
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(Profile.path))
+	_test_slots()
 	if _failures.is_empty():
 		print("ECONOMY TEST: all checks passed")
 		quit(0)
@@ -146,6 +147,46 @@ func _test_profile() -> void:
 		ok = ok and site.enemy_health > prev and site.payout >= 1.0
 		prev = site.enemy_health
 	_check(ok, "each rift tier is tougher than the last")
+
+
+## Save slots, old-version saves and the pre-slots save file.
+func _test_slots() -> void:
+	Profile.save_dir = "user://test_economy_saves"
+	Profile.legacy_path = "user://test_economy_legacy.json"
+	for n in range(1, Profile.SLOTS + 1):
+		Profile.delete_slot(n)
+	_check(Profile.latest_slot() == 0 and Profile.slot_info(1).is_empty(), "no saves to start with")
+	Profile.new_game(1)
+	Profile.credits = 77
+	Profile.has_compass = true
+	Profile.max_tier = 2
+	Profile.save()
+	var info := Profile.slot_info(1)
+	_check(info.get("compatible", false) and info.credits == 77 and info.max_tier == 2 and info.saved_at > 0, "a slot can be read without loading it")
+	_check(Profile.latest_slot() == 1, "the only save is the one to continue")
+	# A save from before this version (no version number).
+	var old := FileAccess.open(Profile.slot_path(2), FileAccess.WRITE)
+	old.store_string(JSON.stringify({"credits": 500, "upgrades": {}}))
+	old.close()
+	_check(Profile.slot_info(2) == {"compatible": false}, "older saves are flagged as incompatible")
+	_check(Profile.latest_slot() == 1, "an incompatible save is never offered to continue")
+	Profile.select_slot(2)
+	_check(Profile.credits == 0 and Profile.path == Profile.slot_path(2), "loading an incompatible save starts fresh")
+	Profile.new_game(2)
+	_check(Profile.slot_info(2).get("compatible", false), "a new game overwrites an old save")
+	Profile.select_slot(1)
+	_check(Profile.credits == 77 and Profile.has_compass and Profile.slot == 1, "selecting a slot loads it")
+	Profile.new_game(1)
+	_check(Profile.credits == 0 and not Profile.has_compass and Profile.slot_info(1).credits == 0, "a new game in a used slot starts over")
+	Profile.delete_slot(1)
+	Profile.delete_slot(2)
+	_check(Profile.slot_info(1).is_empty() and Profile.latest_slot() == 0, "deleting slots empties them")
+	var legacy := FileAccess.open(Profile.legacy_path, FileAccess.WRITE)
+	legacy.store_string("{}")
+	legacy.close()
+	_check(Profile.remove_legacy_save() and not FileAccess.file_exists(Profile.legacy_path), "the old single save file is removed")
+	_check(not Profile.remove_legacy_save(), "and only once")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(Profile.save_dir))
 
 
 func _aug(id: String) -> AugmentDefinition:

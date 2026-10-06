@@ -6,6 +6,7 @@ extends RefCounted
 const MAIN_MENU := "res://scenes/ui/main_menu.tscn"
 const RIFT := "res://scenes/rift/rift_run.tscn"
 const HANGAR := "res://scenes/ui/hangar.tscn"
+const SAVE_SELECT := "res://scenes/ui/save_select.tscn"
 const COMBAT_ARENA := "res://scenes/test/combat_test.tscn"
 const FLIGHT_ARENA := "res://scenes/test/flight_test.tscn"
 

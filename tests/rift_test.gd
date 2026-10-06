@@ -27,9 +27,12 @@ func _initialize() -> void:
 func _run() -> void:
 	# Never touch the real save.
 	Profile.path = "user://test_rift_profile.json"
+	Profile.save_dir = "user://test_rift_saves"
+	Profile.legacy_path = "user://test_rift_legacy.json"
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(Profile.path))
 	Profile.load_profile()
 	await _test_main_menu()
+	await _test_save_select()
 	var run := await _load_rift(SEED)
 	await _test_layout(run)
 	await _test_same_seed(run)
@@ -72,6 +75,33 @@ func _test_main_menu() -> void:
 	_check(menu.get_node("%RiftButton").has_focus(), "start screen focuses the first button for gamepads")
 	menu.queue_free()
 	await process_frame
+
+
+func _test_save_select() -> void:
+	var legacy := FileAccess.open(Profile.legacy_path, FileAccess.WRITE)
+	legacy.store_string("{}")
+	legacy.close()
+	var screen: SaveSelect = load(Scenes.SAVE_SELECT).instantiate()
+	root.add_child(screen)
+	await process_frame
+	_check(not FileAccess.file_exists(Profile.legacy_path) and "removed" in screen.get_node("%Note").text, "the save screen removes the old save and says so")
+	_check(not screen.get_node("%ContinueButton").visible, "no Continue without a save")
+	_check(screen.slot_button(1).text == "New game" and screen.slot_button(1).has_focus(), "empty slots offer a new game")
+	Profile.new_game(2)
+	Profile.credits = 321
+	Profile.save()
+	screen.refresh()
+	await process_frame
+	_check(screen.get_node("%ContinueButton").visible and "slot 2" in screen.get_node("%ContinueButton").text, "Continue picks the latest save")
+	_check(screen.slot_button(2).text == "Play" and "321 credits" in screen.get_node("%Slots/Slot2").get_child(0).text, "a used slot shows its progress")
+	_check(not screen.delete(2) and FileAccess.file_exists(Profile.slot_path(2)), "the first Delete press only asks")
+	_check("Really" in screen.delete_button(2).text, "Delete asks to confirm")
+	_check(screen.delete(2) and Profile.slot_info(2).is_empty(), "the second press deletes the save")
+	screen.queue_free()
+	await process_frame
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(Profile.save_dir))
+	Profile.path = "user://test_rift_profile.json"
+	Profile.load_profile()
 
 
 func _test_layout(run: RiftRun) -> void:

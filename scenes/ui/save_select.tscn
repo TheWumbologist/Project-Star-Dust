@@ -1,0 +1,78 @@
+[gd_scene format=3 uid="uid://vc4moq3cqmv8"]
+
+[ext_resource type="Script" uid="uid://c2k4tsins3s4e" path="res://scripts/ui/save_select.gd" id="1_saves"]
+[ext_resource type="Theme" uid="uid://dut2nb1aouh7e" path="res://resources/ui/menu_theme.tres" id="2_theme"]
+[ext_resource type="Shader" uid="uid://cuy60rdbt83yh" path="res://shaders/menu_starfield.gdshader" id="3_stars"]
+
+[sub_resource type="ShaderMaterial" id="Mat_stars"]
+shader = ExtResource("3_stars")
+
+[node name="SaveSelect" type="Control" unique_id=63584019]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_saves")
+
+[node name="Background" type="ColorRect" parent="." unique_id=532232304]
+material = SubResource("Mat_stars")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=2144294100]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 140
+theme_override_constants/margin_top = 90
+theme_override_constants/margin_right = 140
+theme_override_constants/margin_bottom = 70
+
+[node name="Layout" type="VBoxContainer" parent="Margin" unique_id=789225623]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Title" type="Label" parent="Margin/Layout" unique_id=624391225]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+theme_override_font_sizes/font_size = 44
+text = "CHOOSE A SAVE"
+
+[node name="ContinueButton" type="Button" parent="Margin/Layout" unique_id=2049409937]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Continue"
+
+[node name="Slots" type="VBoxContainer" parent="Margin/Layout" unique_id=1838303819]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Note" type="Label" parent="Margin/Layout" unique_id=20620955]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.6, 0.52, 1)
+theme_override_font_sizes/font_size = 15
+
+[node name="Spacer" type="Control" parent="Margin/Layout" unique_id=437386746]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BackButton" type="Button" parent="Margin/Layout" unique_id=1193952670]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Main menu"
