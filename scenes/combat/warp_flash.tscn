@@ -35,6 +35,7 @@ size = Vector3(0.25, 0.25, 0.25)
 
 [node name="WarpFlash" type="Node3D" unique_id=2077483298 node_paths=PackedStringArray("flash", "debris")]
 script = ExtResource("1_boom")
+sound = &"warp_in"
 duration = 0.8
 flash = NodePath("Flash")
 debris = NodePath("Debris")

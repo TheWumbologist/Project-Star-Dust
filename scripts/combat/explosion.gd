@@ -13,6 +13,8 @@ extends Node3D
 @export var duration: float = 0.45
 @export var flash: MeshInstance3D
 @export var debris: GPUParticles3D
+## &"auto" picks a small or big blast by radius; &"" is silent.
+@export var sound: StringName = &"auto"
 
 ## Who caused it; never hurt by its own blast.
 var source: Node = null
@@ -28,6 +30,10 @@ func _ready() -> void:
 		flash.material_override = _material
 	if debris != null:
 		debris.emitting = true
+	if sound == &"auto":
+		Sfx.play(&"explosion_big" if radius >= 7.0 else &"explosion_small", global_position)
+	elif sound != &"":
+		Sfx.play(sound, global_position)
 
 
 func _physics_process(delta: float) -> void:

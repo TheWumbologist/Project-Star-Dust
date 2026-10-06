@@ -16,6 +16,8 @@ enum Slot {
 
 @export var slot: Slot = Slot.PRIMARY
 @export var projectile_scene: PackedScene
+## Sound per shot; empty picks one (torpedo, player cannon or enemy gun).
+@export var fire_sound: StringName = &""
 
 @export_group("Firing")
 ## Volleys per second while the trigger is held.
@@ -104,3 +106,12 @@ func _spawn(ship: ShipController, dir: Vector3) -> void:
 	projectile.global_position = ship.global_position + dir * muzzle_offset
 	projectile.look_at(projectile.global_position + dir, Vector3.UP)
 	fired.emit(projectile)
+	Sfx.play(_sound_for(ship), global_position)
+
+
+func _sound_for(ship: ShipController) -> StringName:
+	if fire_sound != &"":
+		return fire_sound
+	if slot == Slot.HEAVY:
+		return &"torpedo"
+	return &"cannon" if ship.team == 0 else &"enemy_shot"

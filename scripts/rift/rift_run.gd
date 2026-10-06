@@ -69,6 +69,7 @@ var _rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
 	add_to_group("rift_run")
+	Sfx.music(&"rift")
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	Profile.ensure_loaded()
 	var rules := Deployment.site()
@@ -107,6 +108,7 @@ func _physics_process(delta: float) -> void:
 	instability = clampf(elapsed / maxf(collapse_time, 1.0), 0.0, 1.0)
 	while stage < STAGES.size() and instability >= STAGES[stage][0]:
 		stage_reached.emit(stage, STAGES[stage][1])
+		Sfx.play(&"alarm")
 		stage += 1
 	if game_ui != null:
 		game_ui.screen_fx.instability = smoothstep(0.55, 1.0, instability)
@@ -269,6 +271,7 @@ func _on_extracted(ship: ShipController) -> void:
 		tween.tween_property(player.visual_root, "scale", Vector3(0.05, 4.0, 0.05), 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
 	if game_ui != null:
 		game_ui.camera.add_shake(0.5)
+	Sfx.play(&"extracted")
 	var lines := settle(true)
 	run_ended.emit(true)
 	await get_tree().create_timer(end_card_delay, true, false, true).timeout

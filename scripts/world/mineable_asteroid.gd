@@ -41,6 +41,7 @@ func take_damage(amount: float, source: Node = null) -> void:
 	if chips == 0:
 		return
 	ore_left -= chips
+	Sfx.play(&"rock_chip", global_position)
 	_eject(chips, source)
 	_update_crystals()
 	if ore_left <= 0:

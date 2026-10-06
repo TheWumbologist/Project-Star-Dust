@@ -33,6 +33,7 @@ func take(ship: ShipController) -> bool:
 	var glow := get_node_or_null("CompassGlow") as OmniLight3D
 	if glow != null:
 		glow.visible = false
+	Sfx.play(&"compass")
 	collected.emit()
 	return true
 

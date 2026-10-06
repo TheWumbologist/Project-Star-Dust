@@ -23,6 +23,10 @@ func _run() -> void:
 	_test_profile()
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(Profile.path))
 	_test_slots()
+	# Let the audio server release playing sounds before quitting.
+	Sfx.stop_all()
+	for i in 4:
+		await process_frame
 	if _failures.is_empty():
 		print("ECONOMY TEST: all checks passed")
 		quit(0)

@@ -23,7 +23,9 @@ static func restart(tree: SceneTree) -> void:
 
 static func quit(tree: SceneTree) -> void:
 	_reset(tree)
-	tree.quit()
+	# Give the audio server a moment to let go of playing sounds.
+	Sfx.stop_all()
+	tree.create_timer(0.1, true, false, true).timeout.connect(tree.quit)
 
 
 static func _reset(tree: SceneTree) -> void:

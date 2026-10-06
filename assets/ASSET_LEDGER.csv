@@ -1,2 +1,23 @@
 path,source,author,license,ai_generated,tool,notes
 assets/_ai_generated/ui/icon__AI.svg,generated,Claude,project-owned placeholder,yes,Claude (hand-written SVG),Placeholder project icon; replace with final icon
+assets/_ai_generated/audio/music_hub__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder music loop; replace with a final or open-source sound
+assets/_ai_generated/audio/music_rift__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder music loop; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_alarm__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_boost__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_cache__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_cannon__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_compass__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_drift_kick__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_enemy_shot__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_explosion_big__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_explosion_small__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_extracted__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_hit_hull__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_hit_shield__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_pickup__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_rock_chip__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_shield_break__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_torpedo__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_ui_click__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_ui_confirm__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_warp_in__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound

@@ -29,6 +29,7 @@ func _run() -> void:
 	Profile.path = "user://test_rift_profile.json"
 	Profile.save_dir = "user://test_rift_saves"
 	Profile.legacy_path = "user://test_rift_legacy.json"
+	Sfx.settings_path = "user://test_rift_settings.cfg"
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(Profile.path))
 	Profile.load_profile()
 	await _test_main_menu()
@@ -56,6 +57,10 @@ func _run() -> void:
 	Deployment.tutorial = false
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(Profile.path))
 
+	# Let the audio server release playing sounds before quitting.
+	Sfx.stop_all()
+	for i in 4:
+		await process_frame
 	if _failures.is_empty():
 		print("RIFT TEST: all checks passed")
 		quit(0)
@@ -257,6 +262,14 @@ func _test_menus(run: RiftRun) -> void:
 	_press("pause")
 	await process_frame
 	_check(paused and ui.pause_menu.visible, "Esc opens the pause menu and pauses the game")
+	_check(Sfx.current_music() == &"rift", "the rift plays its music")
+	var music_slider: HSlider = ui.pause_menu.get_node("%MusicSlider")
+	music_slider.value = 0.3
+	_check(is_equal_approx(Sfx.music_volume, 0.3) and AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Music")) < -9.0, "the pause menu's music slider sets the music volume")
+	var cfg := ConfigFile.new()
+	_check(cfg.load(Sfx.settings_path) == OK and is_equal_approx(cfg.get_value("audio", "music", 0.0), 0.3), "volumes are saved")
+	Sfx.set_volumes(0.6, 0.8)
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(Sfx.settings_path))
 	_press("ship_menu")
 	await process_frame
 	_check(not ui.ship_menu.visible, "the ship screen can't open over the pause menu")

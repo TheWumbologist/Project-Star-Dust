@@ -1,6 +1,7 @@
 class_name PauseMenu
 extends CanvasLayer
-## Esc / Start: pauses the run with Resume, Restart, Main menu and Quit.
+## Esc / Start: pauses the run with Resume, Restart, Main menu and Quit,
+## plus music and sound volume sliders.
 
 signal opened
 signal closed
@@ -19,6 +20,8 @@ func _ready() -> void:
 	%RestartButton.pressed.connect(func(): Scenes.restart(get_tree()))
 	%MenuButton.pressed.connect(func(): Scenes.go(get_tree(), Scenes.MAIN_MENU))
 	%QuitButton.pressed.connect(func(): Scenes.quit(get_tree()))
+	%MusicSlider.value_changed.connect(_on_volume_changed)
+	%SfxSlider.value_changed.connect(_on_volume_changed)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -39,6 +42,8 @@ func open() -> void:
 	Hitstop.clear()
 	get_tree().paused = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	%MusicSlider.set_value_no_signal(Sfx.music_volume)
+	%SfxSlider.set_value_no_signal(Sfx.sfx_volume)
 	_resume.grab_focus()
 	opened.emit()
 
@@ -49,3 +54,7 @@ func close() -> void:
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	closed.emit()
+
+
+func _on_volume_changed(_value: float) -> void:
+	Sfx.set_volumes(%MusicSlider.value, %SfxSlider.value)

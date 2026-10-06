@@ -34,5 +34,6 @@ func _on_body_entered(body: Node) -> void:
 	opened = true
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
+	Sfx.play(&"cache")
 	picker.open(ship, AugmentCatalog.roll(rng, choices))
 	queue_free()
