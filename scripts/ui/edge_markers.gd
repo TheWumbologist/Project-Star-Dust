@@ -2,7 +2,7 @@ class_name EdgeMarkers
 extends Control
 ## Arrows pinned to the screen edge that point at things outside the view:
 ## a big green chevron for the nearest extraction beacon (the Rift Compass
-## reading), a gold one for the current objective (the tutorial derelict),
+## reading; in another section it points at the rift tear toward it), a gold one for the current objective (the tutorial derelict),
 ## and small red ones for nearby hostile ships. Nothing is drawn
 ## for things already on screen.
 
@@ -36,9 +36,10 @@ func _process(_delta: float) -> void:
 	if _run == null:
 		_run = get_tree().get_first_node_in_group("rift_run") as RiftRun
 	if _run != null and not _run.ended:
-		var exit := _run.nearest_extraction(ship.global_position)
-		if exit != null:
-			_mark(cam, exit.global_position, &"exit")
+		# The beacon, or the rift tear that leads toward it.
+		var way := _run.way_out(ship.global_position)
+		if way != null:
+			_mark(cam, way.global_position, &"exit")
 		if is_instance_valid(_run.objective):
 			_mark(cam, _run.objective.global_position, &"objective")
 	for node in get_tree().get_nodes_in_group("ships"):
