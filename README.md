@@ -31,7 +31,7 @@ Twin-stick: fly with one hand, aim with the other.
 | Restart (test arenas only) | R | |
 | Show/hide controls | F1 | |
 
-**In a rift:** each run builds a new rift from hand-made chunks. Mine, loot wrecks and fight your way to an extraction beacon (the green arrow on the edge of the screen, your Rift Compass reading, points to the nearest one; red edge arrows show nearby enemies off screen), then hold position in the ring to escape with your cargo. Rift instability climbs the whole time (a full collapse takes 5 minutes, with a countdown from 50%): more stray enemies warp in as it rises, and at 100% the rift collapses and tears your hull apart. Die and the cargo is lost.
+**In a rift:** each run builds a new rift from hand-made chunks. Mine, loot wrecks and fight your way to an extraction beacon (the green arrow on the edge of the screen, your Rift Compass reading, points to the nearest one; red edge arrows show nearby enemies off screen; the minimap in the top right fills in as you explore, with enemies in red sized by threat, ore in its colour, crates, wrecks and the exits), then hold position in the ring to escape with your cargo. Rift instability climbs the whole time (a full collapse takes 5 minutes, with a countdown from 50%): more stray enemies warp in as it rises, and at 100% the rift collapses and tears your hull apart. Die and the cargo is lost.
 
 In the combat arena (a test level): shoot the asteroids with glowing crystals to chip ore loose and fly close to scoop it up (torpedoes crack them fastest). Waves of scavenger drones and pirate cutters warp in, marked by a purple flash; they drop scrap. Your hold has 6 slots, and if your hull is destroyed you lose everything in it and respawn at the centre.
 
@@ -43,7 +43,7 @@ All handling numbers live in `resources/ships/sloop_stats.tres`. Open it in the 
 
 ### Building rift chunks
 
-Chunks live in `scenes/rift/chunks/`. Each is a `RiftChunk` (80 x 80 m) holding rocks, ore, wrecks, crates, wind streams and `EnemySpawnPoint` markers (pick the enemy and a spawn chance). Leave a clear cross about 12 m either side of the middle, because doorways open at the middle of each edge; the generator rotates chunks and builds the walls itself. Set `kind` (start, extract, normal), `weight` and `min_depth` on the root, then add the scene to the matching list on the `Generator` node.
+Chunks live in `scenes/rift/chunks/`. Each is a `RiftChunk` (80 x 80 m) holding rocks, ore, wrecks, crates, wind streams and `EnemySpawnPoint` markers (pick the enemy and a spawn chance). Leave a clear cross about 12 m either side of the middle, because doorways open at the middle of each edge; the generator rotates chunks and builds the walls itself. Set `kind` (start, extract, normal), `weight` and `min_depth` on the root, then add the scene to the matching list on the `Generator` node. Exits are never placed closer than `min_exit_depth` chunks of travel (4) or `min_exit_spread` grid cells in a straight line (3) from the start; both are on the `Generator` node.
 
 ## Layout
 
@@ -101,14 +101,14 @@ godot --headless --script res://tests/combat_test.gd
 godot --headless --script res://tests/rift_test.gd
 ```
 
-The flight test checks thrust, braking, steering, hold-to-burn boost, drift charge and kick, shooting and target respawn, the aim reticle, wind streams and camera framing. The combat test checks mining, cargo pickup and limits, jettison, torpedoes, both enemy types, shields, death and respawn, and waves. The rift test checks the generated layout (reachable chunks, doorways and walls, exits, enemies, same seed = same rift), instability and stray arrivals, the collapse countdown, the edge arrows, extraction, collapse and death, the pause menu and ship screen (including the real Tab key), and the boost camera. CI runs all of them on every pull request.
+The flight test checks thrust, braking, steering, hold-to-burn boost, drift charge and kick, shooting and target respawn, the aim reticle, wind streams and camera framing. The combat test checks mining, cargo pickup and limits, jettison, torpedoes, both enemy types, shields, death and respawn, and waves. The rift test checks the generated layout (reachable chunks, doorways and walls, exits kept away from the start, enemies, same seed = same rift), the minimap, instability and stray arrivals, the collapse countdown, the edge arrows, extraction, collapse and death, the pause menu and ship screen (including the real Tab key), and the boost camera. CI runs all of them on every pull request.
 
 ## Milestones (from the GDD)
 
 1. **Flight feel** (done) - movement, boost, drift, camera in a grey-box arena. (The grapple was cut from core movement; it may return as a salvage-grabbing augment.)
 2. **Combat and mining** (done) - cannon and torpedoes, scavenger drones and pirate cutters, mineable asteroids, cargo hold.
-3. **One rift** (this) - generator from 8 grey-box chunks, instability, stray arrivals, extraction, death and loss. Also the start screen, pause menu, ship screen and game-feel pass.
-4. Dual economy - augment caches and 10 augments, loot tables, run and profile inventories, saving.
+3. **One rift** (done) - generator from 8 grey-box chunks, instability, stray arrivals, extraction, death and loss. Also the start screen, pause menu, ship screen and game-feel pass.
+4. **Dual economy** (this) - minimap and exit-distance rule first, then augment caches and 10 augments, loot tables, run and profile inventories, saving.
 5. Hub - shipwright, gate selection, spending cargo on parts. Full loop end to end.
 6. Content and art pass.
 7. Polish and performance (Steam Deck / GTX 1060 at 60 fps).

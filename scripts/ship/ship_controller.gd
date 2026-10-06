@@ -30,6 +30,9 @@ signal picked_up(item: ItemDefinition, count: int)
 @export var turret: Node3D
 ## Ships only hurt ships on other teams (0 = player crews, 1 = hostiles).
 @export var team: int = 0
+## How dangerous this ship is (1 = drone, 2 = cutter, 3 = elites later).
+## Sizes its dot on the minimap.
+@export_range(1, 3) var threat_tier: int = 1
 ## Free the ship when destroyed (enemies). Otherwise it is disabled and
 ## waits for respawn() (players).
 @export var free_on_death: bool = false

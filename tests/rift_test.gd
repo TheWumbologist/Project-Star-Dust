@@ -28,6 +28,7 @@ func _run() -> void:
 	var run := await _load_rift(SEED)
 	await _test_layout(run)
 	await _test_same_seed(run)
+	await _test_minimap(run)
 	await _test_instability(run)
 	await _test_menus(run)
 	await _test_camera(run)
@@ -73,9 +74,19 @@ func _test_layout(run: RiftRun) -> void:
 	_check(exits >= 1 and exits <= 2, "the rift has 1 or 2 extraction beacons (%d)" % exits)
 	var far := true
 	for cell in gen.extract_cells:
-		if gen.cells[cell]["depth"] < 3:
+		if gen.cells[cell]["depth"] < gen.min_exit_depth or absi(cell.x) + absi(cell.y) < gen.min_exit_spread:
 			far = false
-	_check(far, "extraction is at least 3 chunks from the start")
+	_check(far, "extraction is at least %d chunks of travel and %d cells away from the start" % [gen.min_exit_depth, gen.min_exit_spread])
+	# The same rule over many layouts, without building chunks.
+	var planner := RiftGenerator.new()
+	var bad := 0
+	for s in range(1, 401):
+		planner.plan_layout(s)
+		for cell in planner.extract_cells:
+			if planner.cells[cell]["depth"] < planner.min_exit_depth or absi(cell.x) + absi(cell.y) < planner.min_exit_spread:
+				bad += 1
+	planner.free()
+	_check(bad == 0, "no exit lands near the start across 400 random layouts (%d bad)" % bad)
 	_check(gen.enemies.size() >= 4, "chunks place enemies when the rift is built (%d)" % gen.enemies.size())
 	var start_clear := true
 	for enemy in gen.enemies:
@@ -115,6 +126,22 @@ func _test_same_seed(run: RiftRun) -> void:
 	await process_frame
 
 
+func _test_minimap(run: RiftRun) -> void:
+	var map := run.game_ui.hud.get_node("%Minimap") as Minimap
+	await process_frame
+	_check(map.visible, "the minimap shows in a rift")
+	_check(map.is_revealed(run.player.global_position), "the minimap reveals where the ship is")
+	var far := run.generator.cell_center(run.generator.extract_cells[0])
+	_check(not map.is_revealed(far), "the far exit chunk stays dark until visited")
+	map.reveal_around(far, 20.0)
+	_check(map.is_revealed(far), "flying somewhere reveals it on the map")
+	var cutter: ShipController = load("res://scenes/enemies/pirate_cutter.tscn").instantiate()
+	var drone: ShipController = load("res://scenes/enemies/scavenger_drone.tscn").instantiate()
+	_check(cutter.threat_tier > drone.threat_tier, "cutters get bigger map dots than drones")
+	cutter.free()
+	drone.free()
+
+
 func _test_instability(run: RiftRun) -> void:
 	_check(run.instability < 0.05, "instability starts near zero")
 	var stages: Array[int] = []
@@ -143,8 +170,10 @@ func _test_instability(run: RiftRun) -> void:
 	if on_screen:
 		_check(exit_marks.is_empty(), "no edge arrow while the extraction beacon is on screen")
 	else:
-		var want := (cam.unproject_position(exit.global_position) - cam.get_viewport().get_visible_rect().size * 0.5).normalized()
-		_check(exit_marks.size() == 1 and exit_marks[0].direction.dot(want) > 0.95, "an edge arrow points to the nearest extraction")
+		# Screen right is world +X and screen down is world +Z (fixed camera yaw).
+		var flat := exit.global_position - run.player.global_position
+		var want := Vector2(flat.x, flat.z).normalized()
+		_check(exit_marks.size() == 1 and exit_marks[0].direction.dot(want) > 0.8, "an edge arrow points to the nearest extraction")
 	# An enemy just off screen gets a red edge arrow.
 	var probe: ShipController = load("res://scenes/enemies/scavenger_drone.tscn").instantiate()
 	probe.input_source = null

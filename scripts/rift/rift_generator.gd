@@ -4,7 +4,9 @@ extends Node3D
 ##
 ## 1. Lay out a zone graph on a grid from the seed: a main path from the
 ##    start chunk, plus a few side branches.
-## 2. Exits go at the far end of the main path and the deepest branch.
+## 2. Exits go at the far end of the main path and the deepest branch, and
+##    never within `min_exit_depth` chunks of travel or `min_exit_spread`
+##    grid cells (as the crow flies) of the start.
 ## 3. Fill every cell with a chunk that fits (start, exit, or a normal chunk
 ##    allowed at that depth), rotated a random quarter turn.
 ## 4. Build walls round every cell, with doorways where cells connect.
@@ -21,6 +23,11 @@ signal generated
 @export var main_path_length: int = 6
 @export var branch_count: int = 2
 @export var branch_length: Vector2i = Vector2i(1, 2)
+## An exit must be at least this many chunks of travel from the start.
+@export var min_exit_depth: int = 4
+## ...and at least this many grid cells away in a straight line (counting
+## across and down), so it isn't just behind the start chunk's wall.
+@export var min_exit_spread: int = 3
 @export var door_width: float = 26.0
 @export var wall_thickness: float = 3.0
 @export var floor_material: Material
@@ -42,6 +49,15 @@ var layout_seed: int = 0
 
 
 func generate(seed_value: int) -> void:
+	var rng := plan_layout(seed_value)
+	_place_chunks(rng)
+	_build_walls()
+	generated.emit()
+
+
+## Steps 1 and 2 only: the zone graph and exits, no chunks. Returns the
+## RNG so generate() carries on with the same random sequence.
+func plan_layout(seed_value: int) -> RandomNumberGenerator:
 	layout_seed = seed_value
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_value
@@ -50,9 +66,7 @@ func generate(seed_value: int) -> void:
 			break
 	_compute_depths()
 	_pick_extracts()
-	_place_chunks(rng)
-	_build_walls()
-	generated.emit()
+	return rng
 
 
 func cell_center(cell: Vector2i) -> Vector3:
@@ -74,12 +88,14 @@ func _layout(rng: RandomNumberGenerator) -> bool:
 	links.clear()
 	var path: Array[Vector2i] = [Vector2i.ZERO]
 	cells[Vector2i.ZERO] = {}
-	for i in main_path_length:
+	for i in maxi(main_path_length, min_exit_depth):
 		var next = _free_neighbour(path.back(), rng)
 		if next == null:
 			return false
 		_link(path.back(), next)
 		path.append(next)
+	if _spread(path.back()) < min_exit_spread:
+		return false # Path curled back toward the start; try another.
 	extract_cells = [path.back()]
 	for b in branch_count:
 		var from: Vector2i = path[rng.randi_range(1, maxi(path.size() - 2, 1))]
@@ -131,13 +147,18 @@ func _compute_depths() -> void:
 				queue.append(n)
 
 
+## Grid cells between `cell` and the start, across plus down.
+func _spread(cell: Vector2i) -> int:
+	return absi(cell.x) + absi(cell.y)
+
+
 ## Keep the main path's end, plus the deepest branch end (if it is far
 ## enough from the start to be worth it).
 func _pick_extracts() -> void:
 	var main_exit: Vector2i = extract_cells[0]
 	var best: Vector2i = main_exit
 	for cell in extract_cells.slice(1):
-		if cells[cell]["depth"] >= 3 and (best == main_exit or cells[cell]["depth"] > cells[best]["depth"]):
+		if cells[cell]["depth"] >= min_exit_depth and _spread(cell) >= min_exit_spread and (best == main_exit or cells[cell]["depth"] > cells[best]["depth"]):
 			best = cell
 	extract_cells = [main_exit]
 	if best != main_exit:
