@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://djmbuxfr7wgmm"]
 
 [ext_resource type="Script" uid="uid://btd5v8enh2lfl" path="res://scripts/ui/flight_hud.gd" id="1_hud"]
+[ext_resource type="Script" uid="uid://d0yyi03qu8nc5" path="res://scripts/ui/edge_markers.gd" id="2_edge"]
 
 [sub_resource type="StyleBoxFlat" id="Style_bar_bg"]
 bg_color = Color(0.1, 0.07, 0.04, 0.85)
@@ -67,6 +68,17 @@ corner_radius_bottom_left = 6
 
 [node name="FlightHud" type="CanvasLayer" unique_id=2084786287]
 script = ExtResource("1_hud")
+
+[node name="EdgeMarkers" type="Control" parent="." unique_id=2060000999]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_edge")
 
 [node name="Gauges" type="VBoxContainer" parent="." unique_id=558719626]
 offset_left = 24.0
@@ -208,6 +220,17 @@ theme_override_styles/background = SubResource("Style_bar_bg")
 theme_override_styles/fill = SubResource("Style_rift_fill")
 show_percentage = false
 
+[node name="CountdownLabel" type="Label" parent="RiftPanel" unique_id=278555789]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.35, 1)
+theme_override_colors/font_outline_color = Color(0.12, 0.02, 0.02, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 30
+text = "COLLAPSE IN 2:30"
+horizontal_alignment = 1
+
 [node name="ExtractLabel" type="Label" parent="RiftPanel" unique_id=723927490]
 unique_name_in_owner = true
 layout_mode = 2
@@ -275,6 +298,6 @@ Hide this: F1
 
 Shoot glowing asteroids to chip ore loose,
 fly close to scoop it up. Torpedoes crack
-rocks fast. In a rift, follow the compass
-to an extraction beacon before it collapses.
+rocks fast. In a rift, follow the green
+edge arrow to an extraction beacon before it collapses.
 Die and you lose your cargo."

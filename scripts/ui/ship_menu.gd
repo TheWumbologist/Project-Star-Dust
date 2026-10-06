@@ -42,7 +42,9 @@ func _ready() -> void:
 	%CloseButton.pressed.connect(close)
 
 
-func _unhandled_input(event: InputEvent) -> void:
+# _input, not _unhandled_input: Tab is also the GUI's focus-next key, and
+# the focused tab bar would swallow it before it reached us.
+func _input(event: InputEvent) -> void:
 	if not event.is_action_pressed("ship_menu"):
 		if is_open and event.is_action_pressed("pause"):
 			close()
@@ -92,7 +94,6 @@ func _fill_stats() -> void:
 			"Recharge %d/s after %.0fs without a hit." % [roundi(h.shield_regen_rate), h.shield_regen_delay])
 	_row(_stats_list, "Top speed", "%d m/s" % roundi(s.max_speed), "Boosting: %d m/s" % roundi(s.boost_max_speed))
 	_row(_stats_list, "Acceleration", "%d m/s²" % roundi(s.acceleration), "")
-	_row(_stats_list, "Turn rate", "%d °/s" % roundi(s.turn_rate_deg), "")
 	_row(_stats_list, "Boost fuel", "%d%%" % roundi(ship.boost_fuel * 100.0),
 		"Full tank lasts %.1fs." % (1.0 / maxf(s.boost_drain_rate, 0.01)))
 	_row(_stats_list, "Ram damage", "%d" % roundi(s.ram_damage), "")

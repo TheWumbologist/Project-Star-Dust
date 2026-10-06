@@ -21,16 +21,35 @@ void fragment() {
 	float r = length(uv);
 	float edge = smoothstep(0.25, 0.75, r);
 
-	// Radial streaks that rush outward from the centre.
-	float angle = atan(uv.y, uv.x);
-	float lane = floor(angle * 40.0);
+	// Thin speed beams rushing outward from the centre, each with a soft
+	// glow, plus a sprinkle of small sparks between them. Kept faint so the
+	// screen doesn't get crowded.
+	float angle = atan(uv.y, uv.x) / 6.2831853 + 0.5;
+	float t = TIME + time_offset;
+	float fade_in = smoothstep(0.22, 0.5, r);
+
+	float a = angle * 140.0;
+	float lane = floor(a);
+	float across = abs(fract(a) - 0.5);
 	float rnd = hash(lane);
-	float rush = fract(r * 1.5 - (TIME + time_offset) * (2.0 + rnd * 3.0) + rnd);
-	float streak = step(0.82, rnd) * smoothstep(0.75, 1.0, rush) * smoothstep(0.2, 0.55, r);
-	float lines = streak * speed_lines * 0.55;
+	float rush = fract(r * 1.2 - t * (1.6 + rnd * 2.2) + rnd * 13.0);
+	float beam_len = smoothstep(0.55, 0.97, rush) * (1.0 - smoothstep(0.97, 1.0, rush));
+	float core = 1.0 - smoothstep(0.03, 0.09, across);
+	float glow = (1.0 - smoothstep(0.05, 0.3, across)) * 0.35;
+	float beams = step(0.84, rnd) * beam_len * (core + glow);
+
+	float b = angle * 260.0;
+	float slane = floor(b);
+	float srnd = hash(slane + 71.0);
+	float srad = r * 22.0 - t * (5.0 + srnd * 6.0) + srnd * 40.0;
+	vec2 cell = vec2(fract(b) - 0.5, fract(srad) - 0.5);
+	float spark_on = step(0.86, hash(slane * 3.1 + floor(srad)));
+	float sparks = spark_on * (1.0 - smoothstep(0.08, 0.2, length(cell * vec2(1.0, 1.6))));
+
+	float lines = (beams * 0.32 + sparks * 0.22) * fade_in * speed_lines;
 
 	float pulse = 0.5 + 0.5 * sin(TIME * 7.0);
-	vec4 col = vec4(1.0, 1.0, 1.0, lines);
+	vec4 col = vec4(0.82, 0.9, 1.0, lines);
 	col = mix(col, vec4(flash_color.rgb, 1.0), clamp(edge * flash, 0.0, 1.0));
 	float danger_a = edge * danger * (0.25 + 0.2 * pulse);
 	col.rgb = mix(col.rgb, vec3(0.9, 0.05, 0.05), danger_a / max(col.a + danger_a, 0.001));

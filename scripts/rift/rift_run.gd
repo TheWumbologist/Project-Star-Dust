@@ -17,10 +17,10 @@ signal run_ended(extracted: bool)
 ## 0 = a new rift every run; anything else always builds the same rift.
 @export var layout_seed: int = 0
 ## Seconds from entering to full collapse.
-@export var collapse_time: float = 540.0
+@export var collapse_time: float = 300.0
 @export var trickle_enemies: Array[PackedScene] = []
 ## Seconds between stray arrivals at 0% and at 100% instability.
-@export var trickle_interval: Vector2 = Vector2(50.0, 9.0)
+@export var trickle_interval: Vector2 = Vector2(32.0, 6.0)
 ## Stray enemies arrive this far from the player.
 @export var trickle_distance: Vector2 = Vector2(32.0, 48.0)
 @export var warp_flash: PackedScene
@@ -78,6 +78,11 @@ func _physics_process(delta: float) -> void:
 
 	if instability >= 1.0 and player.is_alive():
 		player.take_damage(collapse_damage * delta, null)
+
+
+## Seconds left before the rift fully collapses.
+func time_to_collapse() -> float:
+	return maxf(collapse_time - elapsed, 0.0)
 
 
 ## The extraction beacon closest to `from`, or null.

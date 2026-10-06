@@ -3,7 +3,7 @@ extends SceneTree
 ## start screen.
 ##
 ## Builds a rift from a fixed seed and checks the layout, walls, enemies,
-## instability, stray arrivals, the compass, extraction, collapse and death,
+## instability, stray arrivals, the edge arrows, extraction, collapse and death,
 ## plus the pause menu, ship screen and boost camera. Run from the project
 ## folder:
 ##   godot --headless --script res://tests/rift_test.gd
@@ -133,12 +133,29 @@ func _test_instability(run: RiftRun) -> void:
 	var interval_low := lerpf(run.trickle_interval.x, run.trickle_interval.y, 0.0)
 	var interval_high := lerpf(run.trickle_interval.x, run.trickle_interval.y, 1.0)
 	_check(interval_high < interval_low, "strays arrive more often as instability rises")
-	var compass := run.get_node("RiftCompass") as RiftCompass
+	_check("COLLAPSE IN" in hud.get_node("%CountdownLabel").text and hud.get_node("%CountdownLabel").visible, "half way, a collapse countdown appears (%s)" % hud.get_node("%CountdownLabel").text)
+	var markers := hud.get_node("%EdgeMarkers") as EdgeMarkers
 	await process_frame
 	var exit := run.nearest_extraction(run.player.global_position)
-	var to_exit := (exit.global_position - run.player.global_position).normalized()
-	var needle := (compass.global_position - run.player.global_position).normalized()
-	_check(compass.visible and needle.dot(to_exit) > 0.95, "the Rift Compass points to the nearest extraction")
+	var cam := run.game_ui.camera
+	var exit_marks := markers.markers.filter(func(m): return m.kind == &"exit")
+	var on_screen := cam.get_viewport().get_visible_rect().has_point(cam.unproject_position(exit.global_position))
+	if on_screen:
+		_check(exit_marks.is_empty(), "no edge arrow while the extraction beacon is on screen")
+	else:
+		var want := (cam.unproject_position(exit.global_position) - cam.get_viewport().get_visible_rect().size * 0.5).normalized()
+		_check(exit_marks.size() == 1 and exit_marks[0].direction.dot(want) > 0.95, "an edge arrow points to the nearest extraction")
+	# An enemy just off screen gets a red edge arrow.
+	var probe: ShipController = load("res://scenes/enemies/scavenger_drone.tscn").instantiate()
+	probe.input_source = null
+	run.generator.enemies_parent.add_child(probe)
+	probe.global_position = run.player.global_position + Vector3(70.0, 0.0, 0.0)
+	await process_frame
+	await process_frame
+	var enemy_marks := markers.markers.filter(func(m): return m.kind == &"enemy" and m.direction.x > 0.9)
+	_check(not enemy_marks.is_empty(), "off-screen enemies get an edge arrow")
+	probe.queue_free()
+	await process_frame
 
 
 func _test_menus(run: RiftRun) -> void:
@@ -157,6 +174,12 @@ func _test_menus(run: RiftRun) -> void:
 	_press("ship_menu")
 	await process_frame
 	_check(paused and ui.ship_menu.visible, "Tab opens the ship screen and pauses the game")
+	_tab_key()
+	await process_frame
+	_check(not ui.ship_menu.visible and not paused, "pressing the real Tab key closes the ship screen again")
+	_tab_key()
+	await process_frame
+	_check(ui.ship_menu.visible, "and Tab opens it once more")
 	var tabs := ui.ship_menu.get_node("%Tabs") as TabContainer
 	_check(tabs.get_tab_count() == 4, "ship screen has Ship, Skills, Augments and Cargo pages")
 	_check(ui.ship_menu.get_node("%StatsList").get_child_count() > 5, "the Ship page lists stats")
@@ -252,6 +275,16 @@ func _press(action: String) -> void:
 	up.action = action
 	up.pressed = false
 	Input.parse_input_event(up)
+
+
+## A real Tab key press, which the GUI also wants for focus changes.
+func _tab_key() -> void:
+	for down in [true, false]:
+		var ev := InputEventKey.new()
+		ev.keycode = KEY_TAB
+		ev.physical_keycode = KEY_TAB
+		ev.pressed = down
+		Input.parse_input_event(ev)
 
 
 func _clear_pickups() -> void:

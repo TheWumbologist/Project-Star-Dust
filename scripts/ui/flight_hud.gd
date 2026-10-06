@@ -21,6 +21,8 @@ extends CanvasLayer
 @onready var _rift_panel: Control = %RiftPanel
 @onready var _instability_label: Label = %InstabilityLabel
 @onready var _instability_bar: ProgressBar = %InstabilityBar
+@onready var _countdown_label: Label = %CountdownLabel
+@onready var _edge_markers: EdgeMarkers = %EdgeMarkers
 @onready var _extract_label: Label = %ExtractLabel
 @onready var _extract_bar: ProgressBar = %ExtractBar
 
@@ -46,6 +48,7 @@ func bind(target: ShipController) -> void:
 		return
 	_bound = true
 	ship = target
+	_edge_markers.ship = ship
 	ship.drift_kicked.connect(func(tier): _callout("DRIFT KICK " + "I".repeat(tier)))
 	ship.rammed.connect(func(_t): _callout("RAM!"))
 	ship.picked_up.connect(func(item, count): _callout("+%d %s" % [count, item.display_name.to_upper()]))
@@ -134,8 +137,13 @@ func _update_rift() -> void:
 		_rift.stage_reached.connect(func(_stage, text): _show_banner(text, 3.0))
 	_rift_panel.visible = true
 	var pct := _rift.instability * 100.0
-	_instability_label.text = "RIFT INSTABILITY  %d%%   %s" % [floori(pct), _format_time(_rift.elapsed)]
+	_instability_label.text = "RIFT INSTABILITY  %d%%" % floori(pct)
 	_instability_bar.value = pct
+	# The countdown only appears once the rift starts destabilising.
+	_countdown_label.visible = _rift.instability >= 0.5 and not _rift.ended
+	if _countdown_label.visible:
+		var left := _rift.time_to_collapse()
+		_countdown_label.text = "COLLAPSE IN  %s" % _format_time(ceilf(left)) if left > 0.0 else "RIFT COLLAPSING"
 	var exit := _rift.nearest_extraction(ship.global_position)
 	if exit == null:
 		_extract_label.text = ""
@@ -145,7 +153,7 @@ func _update_rift() -> void:
 	if exit.progress > 0.0:
 		_extract_label.text = "EXTRACTING... hold position"
 	else:
-		_extract_label.text = "EXTRACTION  %d m  (follow the compass)" % roundi(dist)
+		_extract_label.text = "EXTRACTION  %d m  (follow the green arrow)" % roundi(dist)
 	_extract_bar.visible = exit.progress > 0.0
 	_extract_bar.value = exit.progress * 100.0
 

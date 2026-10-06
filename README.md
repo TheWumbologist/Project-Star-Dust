@@ -31,7 +31,7 @@ Twin-stick: fly with one hand, aim with the other.
 | Restart (test arenas only) | R | |
 | Show/hide controls | F1 | |
 
-**In a rift:** each run builds a new rift from hand-made chunks. Mine, loot wrecks and fight your way to an extraction beacon (the green needle around your ship, the Rift Compass, points to the nearest one), then hold position in the ring to escape with your cargo. Rift instability climbs the whole time: more stray enemies warp in as it rises, and at 100% the rift collapses and tears your hull apart. Die and the cargo is lost.
+**In a rift:** each run builds a new rift from hand-made chunks. Mine, loot wrecks and fight your way to an extraction beacon (the green arrow on the edge of the screen, your Rift Compass reading, points to the nearest one; red edge arrows show nearby enemies off screen), then hold position in the ring to escape with your cargo. Rift instability climbs the whole time (a full collapse takes 5 minutes, with a countdown from 50%): more stray enemies warp in as it rises, and at 100% the rift collapses and tears your hull apart. Die and the cargo is lost.
 
 In the combat arena (a test level): shoot the asteroids with glowing crystals to chip ore loose and fly close to scoop it up (torpedoes crack them fastest). Waves of scavenger drones and pirate cutters warp in, marked by a purple flash; they drop scrap. Your hold has 6 slots, and if your hull is destroyed you lose everything in it and respawn at the centre.
 
@@ -51,7 +51,7 @@ Chunks live in `scenes/rift/chunks/`. Each is a `RiftChunk` (80 x 80 m) holding 
 project.godot            engine settings and input map
 scenes/
   ui/main_menu.tscn      start screen (main scene)
-  rift/rift_run.tscn     a rift run: generator, player, compass, UI
+  rift/rift_run.tscn     a rift run: generator, player, UI
   rift/chunks/           hand-made rift pieces
   test/combat_test.tscn  milestone 2 combat and mining arena
   test/flight_test.tscn  milestone 1 flight arena
@@ -67,7 +67,7 @@ scripts/
   camera/                tilted look-ahead camera (RiftCamera)
   combat/                weapons, projectiles, explosions, health, hit flashes
   cargo/                 item definitions, cargo hold, pickups, loot drops
-  rift/                  rift generator, run rules (instability, extraction), compass
+  rift/                  rift generator, run rules (instability, extraction)
   world/                 targets, asteroids, mining, crates, wind streams, waves, layout
   fx/                    hitstop
   ui/                    HUD, menus, scene switching
@@ -101,7 +101,7 @@ godot --headless --script res://tests/combat_test.gd
 godot --headless --script res://tests/rift_test.gd
 ```
 
-The flight test checks thrust, braking, steering, hold-to-burn boost, drift charge and kick, shooting and target respawn, the aim reticle, wind streams and camera framing. The combat test checks mining, cargo pickup and limits, jettison, torpedoes, both enemy types, shields, death and respawn, and waves. The rift test checks the generated layout (reachable chunks, doorways and walls, exits, enemies, same seed = same rift), instability and stray arrivals, the compass, extraction, collapse and death, the pause menu and ship screen, and the boost camera. CI runs all of them on every pull request.
+The flight test checks thrust, braking, steering, hold-to-burn boost, drift charge and kick, shooting and target respawn, the aim reticle, wind streams and camera framing. The combat test checks mining, cargo pickup and limits, jettison, torpedoes, both enemy types, shields, death and respawn, and waves. The rift test checks the generated layout (reachable chunks, doorways and walls, exits, enemies, same seed = same rift), instability and stray arrivals, the collapse countdown, the edge arrows, extraction, collapse and death, the pause menu and ship screen (including the real Tab key), and the boost camera. CI runs all of them on every pull request.
 
 ## Milestones (from the GDD)
 

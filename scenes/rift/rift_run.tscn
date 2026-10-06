@@ -5,7 +5,6 @@
 [ext_resource type="PackedScene" uid="uid://luedaqe5tiiw" path="res://scenes/ship/player_ship.tscn" id="3_ship"]
 [ext_resource type="Script" uid="uid://cjqqgtdno4s7b" path="res://scripts/camera/rift_camera.gd" id="4_cam"]
 [ext_resource type="PackedScene" uid="uid://b1w2irwcw0s1x" path="res://scenes/ui/game_ui.tscn" id="5_ui"]
-[ext_resource type="PackedScene" uid="uid://db5pcp1b3quqq" path="res://scenes/rift/rift_compass.tscn" id="6_compass"]
 [ext_resource type="PackedScene" uid="uid://bhb7npvyr2ok1" path="res://scenes/enemies/scavenger_drone.tscn" id="7_drone"]
 [ext_resource type="PackedScene" uid="uid://c0qk8vwdbwojd" path="res://scenes/enemies/pirate_cutter.tscn" id="8_cutter"]
 [ext_resource type="PackedScene" uid="uid://dotenp0gf0pxr" path="res://scenes/combat/warp_flash.tscn" id="9_warp"]
@@ -80,9 +79,6 @@ fov = 50.0
 far = 400.0
 script = ExtResource("4_cam")
 target = NodePath("../PlayerShip")
-
-[node name="RiftCompass" parent="." unique_id=1156429619 node_paths=PackedStringArray("ship") instance=ExtResource("6_compass")]
-ship = NodePath("../PlayerShip")
 
 [node name="GameUI" parent="." unique_id=990790707 node_paths=PackedStringArray("ship", "camera") instance=ExtResource("5_ui")]
 ship = NodePath("../PlayerShip")
