@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AugmentDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/economy/augment_definition.gd" id="1_aug"]
+
+[resource]
+script = ExtResource("1_aug")
+id = &"reinforced_plating"
+display_name = "Reinforced Plating"
+description = "+30 hull, patched on the spot."
+stat = &"max_hull"
+amount = 30
+percent = false
+essence_value = 5

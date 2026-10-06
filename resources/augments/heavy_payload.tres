@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AugmentDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/economy/augment_definition.gd" id="1_aug"]
+
+[resource]
+script = ExtResource("1_aug")
+id = &"heavy_payload"
+display_name = "Heavy Payload"
+description = "Torpedoes hit 40% harder."
+rarity = 1
+stat = &"heavy_damage"
+amount = 0.4
+essence_value = 12

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="AugmentDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/economy/augment_definition.gd" id="1_aug"]
+
+[resource]
+script = ExtResource("1_aug")
+id = &"afterburner_injectors"
+display_name = "Afterburner Injectors"
+description = "Boost burns 30% less fuel."
+stat = &"boost_drain"
+amount = -0.3
+essence_value = 5

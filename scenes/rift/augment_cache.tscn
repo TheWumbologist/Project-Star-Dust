@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://ds5c06x0x5qa0"]
+
+[ext_resource type="Script" uid="uid://dycy4wcmmye44" path="res://scripts/rift/augment_cache.gd" id="1_cache"]
+
+[sub_resource type="SphereShape3D" id="Shape_cache"]
+radius = 3.5
+
+[sub_resource type="StandardMaterial3D" id="Mat_base"]
+albedo_color = Color(0.35, 0.28, 0.2, 1)
+metallic = 0.6
+
+[sub_resource type="CylinderMesh" id="Mesh_base"]
+material = SubResource("Mat_base")
+top_radius = 1.6
+bottom_radius = 2.0
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="Mat_gem"]
+albedo_color = Color(0.3, 1, 0.85, 1)
+emission_enabled = true
+emission = Color(0.25, 1, 0.85, 1)
+emission_energy_multiplier = 2.5
+
+[sub_resource type="BoxMesh" id="Mesh_gem"]
+material = SubResource("Mat_gem")
+size = Vector3(1.4, 1.4, 1.4)
+
+[node name="AugmentCache" type="Area3D" unique_id=1966188393]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_cache")
+
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=1604953632]
+shape = SubResource("Shape_cache")
+
+[node name="Base" type="MeshInstance3D" parent="." unique_id=913919246]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.9, 0)
+mesh = SubResource("Mesh_base")
+
+[node name="Gem" type="MeshInstance3D" parent="." unique_id=834263787]
+transform = Transform3D(0.707107, -0.5, 0.5, 0.707107, 0.5, -0.5, 0, 0.707107, 0.707107, 0, 0.6, 0)
+mesh = SubResource("Mesh_gem")
+
+[node name="Glow" type="OmniLight3D" parent="." unique_id=1092353793]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+light_color = Color(0.3, 1, 0.85, 1)
+light_energy = 2.0
+omni_range = 9.0

@@ -9,7 +9,8 @@ extends CharacterBody3D
 ## node with `get_intent(ship) -> ShipIntent`). It owns no input or camera
 ## code, so a second player or an AI pilot is just another input source.
 ## Optional child components the ship drives or exposes: ShipWeapon nodes,
-## a Health named "Health" and a CargoHold named "Cargo".
+## a Health named "Health", a CargoHold named "Cargo" and a ShipLoadout
+## named "Loadout".
 
 signal boost_started
 signal boost_ended
@@ -69,6 +70,8 @@ var _alive: bool = true
 ## The primary and heavy weapons, if fitted (for HUDs and tests).
 @onready var primary: ShipWeapon = _find_weapon(ShipWeapon.Slot.PRIMARY)
 @onready var heavy: ShipWeapon = _find_weapon(ShipWeapon.Slot.HEAVY)
+## Upgrades and run augments, if the ship has a "Loadout" child.
+@onready var loadout: ShipLoadout = get_node_or_null("Loadout") as ShipLoadout
 
 
 func _ready() -> void:

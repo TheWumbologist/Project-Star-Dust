@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://b1w2irwcw0s1x" path="res://scenes/ui/game_ui.tscn" id="5_ui"]
 [ext_resource type="PackedScene" uid="uid://bhb7npvyr2ok1" path="res://scenes/enemies/scavenger_drone.tscn" id="7_drone"]
 [ext_resource type="PackedScene" uid="uid://c0qk8vwdbwojd" path="res://scenes/enemies/pirate_cutter.tscn" id="8_cutter"]
+[ext_resource type="PackedScene" uid="uid://ds5c06x0x5qa0" path="res://scenes/rift/augment_cache.tscn" id="9_cache"]
 [ext_resource type="PackedScene" uid="uid://dotenp0gf0pxr" path="res://scenes/combat/warp_flash.tscn" id="9_warp"]
 [ext_resource type="Shader" uid="uid://cvgk0dsj2qwac" path="res://shaders/space_grid.gdshader" id="10_grid"]
 [ext_resource type="PackedScene" uid="uid://jhvdvqb0jjgj" path="res://scenes/rift/chunks/start.tscn" id="11_start"]
@@ -50,6 +51,7 @@ player = NodePath("PlayerShip")
 game_ui = NodePath("GameUI")
 trickle_enemies = Array[PackedScene]([ExtResource("7_drone"), ExtResource("8_cutter")])
 warp_flash = ExtResource("9_warp")
+augment_cache = ExtResource("9_cache")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1931257677]
 environment = SubResource("Env")

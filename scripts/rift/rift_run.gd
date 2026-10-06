@@ -7,6 +7,11 @@ extends Node3D
 ## `collapse_time`; as it rises, stray enemies warp in more often (no
 ## waves, just a growing trickle near the player), and at 100% the rift
 ## collapses and tears at the hull until you get out or die.
+##
+## The run also settles the economy: on extraction the hold is sold for
+## credits and run augments break down into Void Essence; on death only
+## the Secured Locker (the hold's most valuable slot) is sold. Both land in
+## the Profile save.
 
 signal stage_reached(stage: int, text: String)
 signal run_ended(extracted: bool)
@@ -28,6 +33,9 @@ signal run_ended(extracted: bool)
 @export var collapse_damage: float = 12.0
 ## Seconds between the ending and the result card.
 @export var end_card_delay: float = 1.2
+## Dropped by tougher enemies (threat tier 2+) now and then.
+@export var augment_cache: PackedScene
+@export_range(0.0, 1.0) var cache_drop_chance: float = 0.2
 
 const STAGES := [
 	[0.5, "THE RIFT IS DESTABILISING"],
@@ -55,6 +63,14 @@ func _ready() -> void:
 	player.global_position = generator.player_start
 	player.reset_physics_interpolation()
 	player.destroyed.connect(_on_player_destroyed)
+	Profile.ensure_loaded()
+	if player.loadout != null:
+		player.loadout.set_upgrades(Profile.upgrade_mods())
+	if player.health != null:
+		player.health.reset()
+	get_tree().node_added.connect(_on_node_added)
+	for enemy in generator.enemies:
+		_on_node_added(enemy)
 	for point in generator.extraction_points:
 		point.extracted.connect(_on_extracted)
 	_trickle_timer = trickle_interval.x
@@ -158,27 +174,89 @@ func _on_extracted(ship: ShipController) -> void:
 		tween.tween_property(player.visual_root, "scale", Vector3(0.05, 4.0, 0.05), 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
 	if game_ui != null:
 		game_ui.camera.add_shake(0.5)
+	var lines := settle(true)
 	run_ended.emit(true)
 	await get_tree().create_timer(end_card_delay, true, false, true).timeout
 	player.visible = false
 	if game_ui != null:
-		game_ui.show_end(true, "You escaped the rift with your cargo.", _extra_lines())
+		game_ui.show_end(true, "You escaped the rift with your cargo.", lines, Scenes.HANGAR)
 
 
 func _on_player_destroyed(_ship: ShipController) -> void:
 	if ended:
 		return
 	ended = true
+	var lines := settle(false)
 	run_ended.emit(false)
 	await get_tree().create_timer(end_card_delay, true, false, true).timeout
 	if game_ui != null:
 		var why := "The rift collapsed around you." if instability >= 1.0 else "Your ship broke apart in the rift."
-		game_ui.show_end(false, why + " Everything in the hold is lost.", _extra_lines())
+		game_ui.show_end(false, why + " The hold is lost, all but the Secured Locker.", lines, Scenes.HANGAR)
+
+
+## Pays out the run into the Profile and saves it. Returns the report
+## lines for the end card (also kept for the hangar).
+func settle(escaped: bool) -> PackedStringArray:
+	Profile.ensure_loaded()
+	var lines: PackedStringArray = []
+	var augments: Array[AugmentDefinition] = []
+	if player.loadout != null:
+		augments = player.loadout.augments
+	var hold := player.cargo
+	if escaped:
+		var credits := hold.total_value() if hold != null else 0
+		var essence := player.loadout.essence_value() if player.loadout != null else 0
+		Profile.credits += credits
+		Profile.essence += essence
+		Profile.extractions += 1
+		lines.append("Hold sold        +%d cr" % credits)
+		lines.append("Augments (%d)     +%d essence" % [augments.size(), essence])
+	else:
+		var locker := secured_locker_slot()
+		if locker.is_empty():
+			lines.append("Secured Locker   empty")
+		else:
+			var value: int = locker.count * locker.item.value
+			Profile.credits += value
+			lines.append("Secured Locker   %d %s  +%d cr" % [locker.count, locker.item.display_name, value])
+		lines.append("Augments lost    %d" % augments.size())
+	Profile.runs += 1
+	lines.append("Credits          %d    Essence  %d" % [Profile.credits, Profile.essence])
+	lines.append_array(_extra_lines())
+	Profile.last_run = PackedStringArray([("EXTRACTED" if escaped else "SHIP LOST")]) + lines
+	Profile.save()
+	return lines
+
+
+## The hold slot the Secured Locker keeps on death: the most valuable one.
+func secured_locker_slot() -> Dictionary:
+	var best := {}
+	if player.cargo == null:
+		return best
+	for slot in player.cargo.slots:
+		if best.is_empty() or slot.count * slot.item.value > best.count * best.item.value:
+			best = slot
+	return best
+
+
+func _on_node_added(node: Node) -> void:
+	var enemy := node as ShipController
+	if enemy != null and enemy != player and enemy.team != player.team and not enemy.destroyed.is_connected(_on_enemy_destroyed):
+		enemy.destroyed.connect(_on_enemy_destroyed)
+
+
+## Tougher enemies sometimes leave an augment cache behind.
+func _on_enemy_destroyed(enemy: ShipController) -> void:
+	if ended or augment_cache == null or enemy.threat_tier < 2 or _rng.randf() >= cache_drop_chance:
+		return
+	var cache := augment_cache.instantiate() as Node3D
+	var at := enemy.global_position
+	add_child.call_deferred(cache)
+	cache.set_deferred("position", Vector3(at.x, 0.0, at.z))
 
 
 func _extra_lines() -> PackedStringArray:
 	return [
-		"Instability     %d%%" % floori(instability * 100.0),
-		"Rift chunks     %d" % generator.cells.size(),
-		"Rift seed       %d" % generator.layout_seed,
+		"Instability      %d%%" % floori(instability * 100.0),
+		"Rift seed        %d" % generator.layout_seed,
 	]

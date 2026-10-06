@@ -10,7 +10,7 @@ extends Node3D
 ## 3. Fill every cell with a chunk that fits (start, exit, or a normal chunk
 ##    allowed at that depth), rotated a random quarter turn.
 ## 4. Build walls round every cell, with doorways where cells connect.
-## 5. Roll each chunk's enemy spawn points.
+## 5. Roll each chunk's enemy spawn points and augment caches.
 ## Same seed, same rift.
 
 signal generated
@@ -44,6 +44,7 @@ var links: Dictionary = {}
 var extract_cells: Array[Vector2i] = []
 var extraction_points: Array[ExtractionPoint] = []
 var enemies: Array[ShipController] = []
+var augment_caches: Array[AugmentCache] = []
 var player_start: Vector3 = Vector3.ZERO
 var layout_seed: int = 0
 
@@ -223,6 +224,11 @@ func _scan(node: Node, rng: RandomNumberGenerator, enemy_parent: Node, is_start:
 				enemies.append(enemy)
 		elif child is ExtractionPoint:
 			extraction_points.append(child)
+		elif child is AugmentCache:
+			if rng.randf() >= child.spawn_chance:
+				child.free()
+				continue
+			augment_caches.append(child)
 		elif is_start and child.name == &"PlayerStart":
 			player_start = (child as Node3D).global_position
 		_scan(child, rng, enemy_parent, is_start)

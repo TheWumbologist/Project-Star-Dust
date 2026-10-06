@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://d31da2vncc0p8" path="res://scenes/ui/pause_menu.tscn" id="4_pause"]
 [ext_resource type="PackedScene" uid="uid://b622fwxk2bq52" path="res://scenes/ui/ship_menu.tscn" id="5_ship"]
 [ext_resource type="PackedScene" uid="uid://5gurxujpato" path="res://scenes/ui/run_end_screen.tscn" id="6_end"]
+[ext_resource type="Script" uid="uid://dkc3fqfs2wbxf" path="res://scripts/ui/augment_picker.gd" id="7_pick"]
 
 [node name="GameUI" type="Node" unique_id=1707517669]
 script = ExtResource("1_ui")
@@ -19,3 +20,6 @@ script = ExtResource("1_ui")
 [node name="PauseMenu" parent="." unique_id=1958796979 instance=ExtResource("4_pause")]
 
 [node name="RunEndScreen" parent="." unique_id=999675734 instance=ExtResource("6_end")]
+
+[node name="AugmentPicker" type="CanvasLayer" parent="." unique_id=188881053]
+script = ExtResource("7_pick")

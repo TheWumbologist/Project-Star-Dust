@@ -3,7 +3,7 @@ extends Control
 ## Top-right rift map, centred on the ship. It starts dark and reveals the
 ## rift (floors, walls, rocks) around the ship as you fly, so it only shows
 ## where you've been. Dots on revealed ground: ore rocks in their ore's
-## colour, salvage crates, wrecks. Hostiles within sensor range are red dots
+## colour, salvage crates, wrecks, and teal squares for augment caches. Hostiles within sensor range are red dots
 ## sized by threat tier. The extraction beacons always show (the Rift
 ## Compass knows where they are). Hidden outside a rift.
 
@@ -23,6 +23,7 @@ const ROCK_COLOR := Color(0.5, 0.44, 0.56, 1.0)
 const CRATE_COLOR := Color(1.0, 0.82, 0.3)
 const WRECK_COLOR := Color(1.0, 0.5, 0.2)
 const EXIT_COLOR := Color(0.35, 1.0, 0.55)
+const CACHE_COLOR := Color(0.4, 1.0, 0.9)
 const ENEMY_COLOR := Color(1.0, 0.22, 0.18)
 const BORDER_COLOR := Color(0.75, 0.56, 0.25)
 
@@ -177,6 +178,10 @@ func _draw() -> void:
 		var node: Node3D = o.node
 		if is_instance_valid(node) and node.is_inside_tree() and is_revealed(node.global_position):
 			draw_circle(_to_map(node.global_position, me, px_per_m, centre), o.radius, o.color)
+	for cache in get_tree().get_nodes_in_group("augment_caches"):
+		if is_revealed(cache.global_position):
+			var at := _to_map(cache.global_position, me, px_per_m, centre)
+			draw_rect(Rect2(at - Vector2(4, 4), Vector2(8, 8)), CACHE_COLOR)
 	for point in _gen.extraction_points:
 		if is_instance_valid(point):
 			var at := _to_map(point.global_position, me, px_per_m, centre)

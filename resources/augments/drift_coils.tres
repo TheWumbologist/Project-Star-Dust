@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AugmentDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/economy/augment_definition.gd" id="1_aug"]
+
+[resource]
+script = ExtResource("1_aug")
+id = &"drift_coils"
+display_name = "Drift Coils"
+description = "Drift kicks launch you 40% harder."
+rarity = 1
+stat = &"drift_kick"
+amount = 0.4
+essence_value = 12

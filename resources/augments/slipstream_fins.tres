@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AugmentDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/economy/augment_definition.gd" id="1_aug"]
+
+[resource]
+script = ExtResource("1_aug")
+id = &"slipstream_fins"
+display_name = "Slipstream Fins"
+description = "+15% top speed, boosting too."
+rarity = 2
+stat = &"max_speed"
+amount = 0.15
+essence_value = 25
