@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://cy8fd4cls83o2"]
+
+[ext_resource type="Script" uid="uid://duyeqeem421k" path="res://scripts/rift/compass_derelict.gd" id="1_derelict"]
+[ext_resource type="PackedScene" uid="uid://c1lvr2ehxndkf" path="res://scenes/world/wreck.tscn" id="2_wreck"]
+
+[sub_resource type="SphereShape3D" id="Shape_grab"]
+radius = 5.0
+
+[sub_resource type="StandardMaterial3D" id="Mat_gold"]
+albedo_color = Color(1, 0.78, 0.3, 1)
+metallic = 0.8
+roughness = 0.3
+emission_enabled = true
+emission = Color(1, 0.72, 0.25, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="TorusMesh" id="Mesh_ring"]
+material = SubResource("Mat_gold")
+inner_radius = 0.8
+outer_radius = 1.05
+
+[sub_resource type="PrismMesh" id="Mesh_needle"]
+material = SubResource("Mat_gold")
+size = Vector3(0.35, 1.5, 0.15)
+
+[node name="CompassDerelict" type="Area3D" unique_id=438253380]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_derelict")
+
+[node name="Grab" type="CollisionShape3D" parent="." unique_id=1547489683]
+shape = SubResource("Shape_grab")
+
+[node name="Wreck" parent="." unique_id=241843980 instance=ExtResource("2_wreck")]
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1, 0, -0.7071068, 0, 0.7071068, 0, -0.5, 0)
+collision_layer = 0
+
+[node name="Compass" type="Node3D" parent="." unique_id=1522337235]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+
+[node name="Ring" type="MeshInstance3D" parent="Compass" unique_id=348073404]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_ring")
+
+[node name="Needle" type="MeshInstance3D" parent="Compass" unique_id=682482355]
+cast_shadow = 0
+mesh = SubResource("Mesh_needle")
+
+[node name="CompassGlow" type="OmniLight3D" parent="." unique_id=716253872]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+light_color = Color(1, 0.78, 0.3, 1)
+light_energy = 3.0
+omni_range = 14.0

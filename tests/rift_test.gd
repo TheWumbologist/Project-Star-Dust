@@ -13,6 +13,7 @@ const RIFT := "res://scenes/rift/rift_run.tscn"
 const MENU := "res://scenes/ui/main_menu.tscn"
 const ScriptedInput := preload("res://tests/scripted_input.gd")
 const ORE := preload("res://resources/items/ore.tres")
+const SCRAP := preload("res://resources/items/scrap.tres")
 const SEED := 4242
 
 var _failures: PackedStringArray = []
@@ -44,6 +45,12 @@ func _run() -> void:
 	run = await _load_rift(SEED + 1)
 	_check(run.player.health.max_hull > 100.0, "hangar upgrades apply in the next rift (hull %.0f)" % run.player.health.max_hull)
 	await _test_collapse_and_death(run)
+	run.queue_free()
+	await process_frame
+	await _test_tutorial()
+	await _test_tiers()
+	Deployment.tier = 1
+	Deployment.tutorial = false
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(Profile.path))
 
 	if _failures.is_empty():
@@ -303,6 +310,8 @@ func _test_extraction(run: RiftRun) -> void:
 	ship.health.reset()
 	ship.cargo.clear()
 	ship.cargo.add(ORE, 3)
+	ship.cargo.add(SCRAP, 4)
+	ship.health.hull = ship.health.max_hull - 30.0
 	var credits_before := Profile.credits
 	var results: Array[bool] = []
 	run.run_ended.connect(func(e): results.append(e))
@@ -318,6 +327,8 @@ func _test_extraction(run: RiftRun) -> void:
 	_check(end.visible and end.get_node("%Title").text == "EXTRACTED", "the result card says EXTRACTED")
 	_check("Cargo banked" in end.get_node("%Stats").text, "the result card shows the cargo banked")
 	_check(Profile.credits == credits_before + 3 * ORE.value, "extracting sells the hold for credits (%d)" % Profile.credits)
+	_check(Profile.scrap == 4, "scrap goes to the shipwright's stash, not the market (%d)" % Profile.scrap)
+	_check(Profile.hull_damage >= 30.0 and Profile.hull_damage < 200.0, "hull damage carries over to the next run (%.0f)" % Profile.hull_damage)
 	_check(Profile.essence == ship.loadout.essence_value() and Profile.essence > 0, "augments break down into Void Essence (%d)" % Profile.essence)
 	_check(end.get_node("%RetryButton").text == "To the hangar", "the card leads on to the hangar")
 	var saved := Profile.credits
@@ -347,6 +358,8 @@ func _test_collapse_and_death(run: RiftRun) -> void:
 	_check(run.ended and not run.extracted, "dying in the rift ends the run")
 	_check(end.visible and end.get_node("%Title").text == "SHIP LOST", "the death screen says SHIP LOST")
 	_check("collapsed" in end.get_node("%Subtitle").text, "the death screen says the rift collapsed")
+	_check(is_equal_approx(Profile.hull_damage, ship.health.max_hull * 0.75), "a lost ship is towed home at 25%% hull (damage %.0f)" % Profile.hull_damage)
+	_check("Towed home" in end.get_node("%Stats").text or "Towed home" in "\n".join(Profile.last_run), "the report says the ship was towed home")
 	paused = false
 	Hitstop.clear()
 
@@ -356,12 +369,115 @@ func _test_hangar() -> void:
 	var hangar: Hangar = load(Scenes.HANGAR).instantiate()
 	root.add_child(hangar)
 	await process_frame
-	_check(hangar.get_node("%LaunchButton").has_focus(), "the hangar focuses Launch")
-	_check(str(Profile.credits) in hangar.get_node("%Wallet").text, "the hangar shows the wallet")
+	var chart := hangar.get_node("%StarChart")
+	_check(chart.get_child_count() == 1 and hangar.site_button(0) != null, "before the Rift Compass the star chart only shows the graveyard")
+	_check(hangar.site_button(0).has_focus(), "the hangar focuses the star chart")
+	_check(str(Profile.credits) in hangar.get_node("%Wallet").text and "scrap" in hangar.get_node("%Wallet").text, "the hangar shows credits, essence and scrap")
 	_check("EXTRACTED" in hangar.get_node("%Report").text, "the hangar shows the last run")
 	_check(hangar.buy(&"hull") and Profile.level(&"hull") == 1 and Profile.credits == 1000 - 120, "buying hull plating spends credits and saves the level")
 	_check(not hangar.buy(&"engine") or Profile.essence >= 15, "upgrades that need essence wait for it")
+
+	# Shipwright: 4 scrap fixes 20 hull, the other 20 costs 60 cr.
+	Profile.hull_damage = 40.0
+	Profile.scrap = 4
+	Profile.credits = 500
+	hangar.refresh()
+	var repair: Button = hangar.get_node("%RepairButton")
+	_check("4 scrap" in repair.text and "60 cr" in repair.text and not repair.disabled, "the repair button prices scrap then credits (%s)" % repair.text)
+	hangar.repair()
+	_check(Profile.hull_damage == 0.0 and Profile.scrap == 0 and Profile.credits == 440, "repairing spends scrap first, then credits")
+	_check(repair.disabled, "a sound hull needs no repair")
+	Profile.hull_damage = 300.0
+	Profile.credits = 30
+	hangar.repair()
+	_check(Profile.credits == 0 and is_equal_approx(Profile.hull_damage, 290.0), "short on money, the shipwright repairs what you can pay for")
+	Profile.hull_damage = 0.0
+	Profile.scrap = 10
+	_check(hangar.sell_scrap() == 20 and Profile.scrap == 0 and Profile.credits == 20, "spare scrap sells for 2 cr each")
+
+	# With the compass: every site shows, deeper tiers locked until earned.
+	Profile.has_compass = true
+	Profile.max_tier = 1
+	hangar.refresh()
+	await process_frame
+	_check(chart.get_child_count() == Deployment.SITES.size(), "with the compass the star chart lists the debris field and all rift tiers")
+	_check(not hangar.site_button(1).disabled and hangar.site_button(2).disabled and hangar.site_button(3).disabled, "only unlocked tiers can be launched")
+	_check("tier I" in hangar.site_button(2).text, "locked tiers say what opens them (%s)" % hangar.site_button(2).text.replace("\n", " / "))
+	Profile.has_compass = false
+	Profile.max_tier = 0
+	Profile.save()
 	hangar.queue_free()
+	await process_frame
+
+
+## The first run: the graveyard debris field and the dead runner's compass.
+func _test_tutorial() -> void:
+	Deployment.choose(2)
+	_check(Deployment.tutorial and Deployment.tier == 0, "without the compass every launch is the tutorial debris field")
+	var run := await _load_rift(SEED + 2)
+	await _frames(5)
+	_check(not run.has_instability, "debris fields have no instability")
+	run.elapsed = 1000.0
+	await _frames(3)
+	_check(run.instability == 0.0 and run.stage == 0, "the debris field never collapses")
+	_check(get_nodes_in_group("augment_caches").is_empty(), "debris fields hold no augment caches")
+	var cutters := 0
+	for e in run.generator.enemies:
+		if is_instance_valid(e) and e.threat_tier >= 2:
+			cutters += 1
+	_check(cutters == 0, "debris fields have no pirate cutters")
+	var crystals := 0
+	for rock in root.find_children("*", "StaticBody3D", true, false):
+		if rock is MineableAsteroid and rock.ore_item.grade != ItemDefinition.Grade.COMMON:
+			crystals += 1
+	_check(crystals == 0, "debris fields have no void crystals")
+	_check(run.game_ui.hud.get_node("%InstabilityLabel").text == "THE GRAVEYARD" and not run.game_ui.hud.get_node("%InstabilityBar").visible, "the HUD names the site and hides the rift clock")
+	var derelict := run.objective as CompassDerelict
+	_check(derelict != null, "the tutorial places the dead runner's derelict")
+	if derelict == null:
+		return
+	var exits: Array = []
+	for p in run.generator.extraction_points:
+		exits.append(run.generator.cell_at(p.global_position))
+	_check(not run.generator.cell_at(derelict.global_position) in exits, "the derelict isn't in an exit chunk")
+	_check("DERELICT" in run.game_ui.hud.get_node("%ExtractLabel").text, "the HUD points to the derelict first")
+	var ship := run.player
+	ship.global_position = derelict.global_position
+	ship.velocity = Vector3.ZERO
+	await _frames(6)
+	_check(Profile.has_compass and Profile.max_tier == 1, "flying into the derelict salvages the Rift Compass and opens tier I")
+	_check(run.objective == null and "EXTRACTION" in run.game_ui.hud.get_node("%ExtractLabel").text, "then the HUD points to the exit")
+	Profile.load_profile()
+	_check(Profile.has_compass, "the compass is saved")
+	# Extracting from the deepest open tier unlocks the next one.
+	run.site = Deployment.SITES[1]
+	var lines := run.settle(true)
+	_check(Profile.max_tier == 2 and "unlocked" in "\n".join(lines), "extracting from tier I unlocks tier II")
+	run.queue_free()
+	await process_frame
+
+
+## Deeper rifts scale enemies up.
+func _test_tiers() -> void:
+	Deployment.choose(3)
+	_check(not Deployment.tutorial and Deployment.tier == 3, "with the compass the chart sends you where you picked")
+	var sample: Node = load("res://scenes/enemies/scavenger_drone.tscn").instantiate()
+	var base: float = sample.get_node("Health").max_hull
+	sample.free()
+	var run := await _load_rift(SEED + 3)
+	await _frames(2)
+	_check(run.has_instability and is_equal_approx(run.collapse_time, 260.0), "tier III collapses sooner (%.0f s)" % run.collapse_time)
+	var drone: ShipController = null
+	for e in run.generator.enemies:
+		if is_instance_valid(e) and e.threat_tier == 1:
+			drone = e
+			break
+	_check(drone != null and is_equal_approx(drone.health.max_hull, base * 1.75), "tier III drones are tougher (%.0f vs %.0f)" % [drone.health.max_hull if drone != null else 0.0, base])
+	var stray := run.spawn_stray()
+	await _frames(2)
+	if stray != null:
+		_check(stray.health.max_hull > base, "stray arrivals are scaled too")
+	run.queue_free()
 	await process_frame
 
 

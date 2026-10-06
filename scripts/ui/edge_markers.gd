@@ -2,7 +2,8 @@ class_name EdgeMarkers
 extends Control
 ## Arrows pinned to the screen edge that point at things outside the view:
 ## a big green chevron for the nearest extraction beacon (the Rift Compass
-## reading) and small red ones for nearby hostile ships. Nothing is drawn
+## reading), a gold one for the current objective (the tutorial derelict),
+## and small red ones for nearby hostile ships. Nothing is drawn
 ## for things already on screen.
 
 @export var ship: ShipController
@@ -12,6 +13,7 @@ extends Control
 @export var enemy_range: float = 85.0
 @export var exit_color: Color = Color(0.35, 1.0, 0.55, 0.9)
 @export var enemy_color: Color = Color(1.0, 0.3, 0.22, 0.85)
+@export var objective_color: Color = Color(1.0, 0.78, 0.3, 0.95)
 
 ## What was drawn last frame, for tests: [{kind, screen_pos, direction}].
 var markers: Array[Dictionary] = []
@@ -37,6 +39,8 @@ func _process(_delta: float) -> void:
 		var exit := _run.nearest_extraction(ship.global_position)
 		if exit != null:
 			_mark(cam, exit.global_position, &"exit")
+		if is_instance_valid(_run.objective):
+			_mark(cam, _run.objective.global_position, &"objective")
 	for node in get_tree().get_nodes_in_group("ships"):
 		var other := node as ShipController
 		if other == null or other == ship or other.team == ship.team or not other.is_alive():
@@ -71,12 +75,16 @@ func _mark(cam: Camera3D, world_pos: Vector3, kind: StringName) -> void:
 
 func _draw() -> void:
 	for m in markers:
-		var exit: bool = m.kind == &"exit"
+		var big: bool = m.kind != &"enemy"
 		# Short and wide: a flat chevron pointing outward.
-		var depth := 16.0 if exit else 12.0
-		var width := 46.0 if exit else 28.0
-		var notch := 6.0 if exit else 3.5
-		var col: Color = exit_color if exit else enemy_color
+		var depth := 16.0 if big else 12.0
+		var width := 46.0 if big else 28.0
+		var notch := 6.0 if big else 3.5
+		var col: Color = enemy_color
+		if m.kind == &"exit":
+			col = exit_color
+		elif m.kind == &"objective":
+			col = objective_color
 		draw_set_transform(m.screen_pos, m.direction.angle(), Vector2.ONE)
 		var pts := PackedVector2Array([
 			Vector2(depth * 0.5, 0.0),

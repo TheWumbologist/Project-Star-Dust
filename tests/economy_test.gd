@@ -117,6 +117,36 @@ func _test_profile() -> void:
 	Profile.upgrades[&"hull"] = 5
 	_check(Profile.is_maxed(&"hull") and not Profile.can_buy(&"hull") and Profile.next_cost(&"hull") == Vector2i.ZERO, "maxed upgrades can't be bought")
 
+	# Hub state: scrap, hull damage, the compass and unlocked tiers.
+	var ship: Node = load("res://scenes/ship/player_ship.tscn").instantiate()
+	_check(is_equal_approx(Profile.BASE_HULL, ship.get_node("Health").max_hull), "Profile.BASE_HULL matches the player ship's hull")
+	ship.free()
+	Profile.upgrades[&"hull"] = 2
+	_check(is_equal_approx(Profile.max_hull(), Profile.BASE_HULL + 40.0), "max hull counts hull upgrades")
+	Profile.scrap = 7
+	Profile.hull_damage = 33.0
+	Profile.has_compass = true
+	Profile.max_tier = 2
+	Profile.save()
+	Profile.reset()
+	_check(Profile.scrap == 0 and Profile.hull_damage == 0.0 and not Profile.has_compass and Profile.max_tier == 0, "reset clears the hub state")
+	Profile.load_profile()
+	_check(Profile.scrap == 7 and is_equal_approx(Profile.hull_damage, 33.0) and Profile.has_compass and Profile.max_tier == 2, "scrap, hull damage, compass and tiers are saved")
+	_check(Profile.repair_scrap_cost() == 7, "33 hull takes 7 scrap")
+	_check(Deployment.is_unlocked(0) and Deployment.is_unlocked(2) and not Deployment.is_unlocked(3), "tiers open up to the highest earned")
+	Profile.has_compass = false
+	_check(Deployment.is_unlocked(0) and not Deployment.is_unlocked(1), "without the compass only debris fields are open")
+	Deployment.choose(1)
+	_check(Deployment.tutorial and Deployment.site().tier == 0 and not Deployment.site().instability, "without the compass you're sent to the tutorial debris field")
+	Deployment.tutorial = false
+	Deployment.tier = 1
+	var prev := -1.0
+	var ok := true
+	for site in Deployment.SITES.slice(1):
+		ok = ok and site.enemy_health > prev and site.payout >= 1.0
+		prev = site.enemy_health
+	_check(ok, "each rift tier is tougher than the last")
+
 
 func _aug(id: String) -> AugmentDefinition:
 	return load("res://resources/augments/%s.tres" % id)

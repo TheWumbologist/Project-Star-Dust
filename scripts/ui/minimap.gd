@@ -5,7 +5,8 @@ extends Control
 ## where you've been. Dots on revealed ground: ore rocks in their ore's
 ## colour, salvage crates, wrecks, and teal squares for augment caches. Hostiles within sensor range are red dots
 ## sized by threat tier. The extraction beacons always show (the Rift
-## Compass knows where they are). Hidden outside a rift.
+## Compass knows where they are), and so does the objective (a gold
+## diamond). Hidden outside a rift.
 
 @export var ship: ShipController
 ## Metres from the ship to the edge of the map.
@@ -24,6 +25,7 @@ const CRATE_COLOR := Color(1.0, 0.82, 0.3)
 const WRECK_COLOR := Color(1.0, 0.5, 0.2)
 const EXIT_COLOR := Color(0.35, 1.0, 0.55)
 const CACHE_COLOR := Color(0.4, 1.0, 0.9)
+const OBJECTIVE_COLOR := Color(1.0, 0.78, 0.3)
 const ENEMY_COLOR := Color(1.0, 0.22, 0.18)
 const BORDER_COLOR := Color(0.75, 0.56, 0.25)
 
@@ -185,6 +187,9 @@ func _draw() -> void:
 			var at := _to_map(point.global_position, me, px_per_m, centre)
 			draw_circle(at, 7.0, EXIT_COLOR, false, 2.5, true)
 			draw_circle(at, 3.0, EXIT_COLOR)
+	if is_instance_valid(_run.objective):
+		var at := _to_map(_run.objective.global_position, me, px_per_m, centre)
+		draw_colored_polygon(PackedVector2Array([at + Vector2(0, -7), at + Vector2(6, 0), at + Vector2(0, 7), at + Vector2(-6, 0)]), OBJECTIVE_COLOR)
 	for node in get_tree().get_nodes_in_group("ships"):
 		var other := node as ShipController
 		if other == null or other == ship or other.team == ship.team or not other.is_alive():

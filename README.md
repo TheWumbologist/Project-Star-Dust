@@ -8,7 +8,7 @@ A sci-fi roguelike looter with space-pirate aesthetics, fast movement and proced
 
 1. Install **Godot 4.6 or newer** (standard build, not .NET). 4.6 and 4.7 are tested.
 2. Open Godot, click **Import**, pick `project.godot` in this folder, then **Import & Edit**.
-3. Press **F5** (or the ▶ button top right). The start screen opens: **Enter the Rift** goes to the hangar, where **Launch into a rift** starts a run. The two test arenas (combat and flight) are on the start screen too.
+3. Press **F5** (or the ▶ button top right). The start screen opens: **Enter the Rift** goes to the hangar, where you pick a site on the **star chart** to start a run. A new save starts with the tutorial: a debris field called the graveyard, where you salvage the Rift Compass from a dead rift runner's derelict. The two test arenas (combat and flight) are on the start screen too.
 
 The first open takes a few seconds while Godot imports the project.
 
@@ -33,7 +33,9 @@ Twin-stick: fly with one hand, aim with the other.
 
 **In a rift:** each run builds a new rift from hand-made chunks. Mine, loot wrecks and fight your way to an extraction beacon (the green arrow on the edge of the screen, your Rift Compass reading, points to the nearest one; red edge arrows show nearby enemies off screen; the minimap in the top right fills in as you explore, with enemies in red sized by threat, ore in its colour, crates, wrecks and the exits), then hold position in the ring to escape with your cargo. Rift instability climbs the whole time (a full collapse takes 5 minutes, with a countdown from 50%): more stray enemies warp in as it rises, and at 100% the rift collapses and tears your hull apart.
 
-**Loot and the hangar:** fly into a glowing teal **augment cache** (some chunks have one, and pirate cutters sometimes drop one) to pick one of three augments. Augments boost the ship for this run only and stack. Extract and the hold sells for credits while augments break down into **Void Essence**. Die and the augments are lost and the hold with them, except the **Secured Locker** (your most valuable cargo slot), which still pays out. Between runs the hangar's shipwright sells permanent upgrades (hull, shields, cargo racks, cannon, torpedoes, engine) for credits and essence. Progress is saved in `user://profile.json` (on Windows: `%APPDATA%\Godot\app_userdata\Rift Runners\`); delete it to start over.
+**Loot and the hangar:** fly into a glowing teal **augment cache** (some chunks have one, and pirate cutters sometimes drop one) to pick one of three augments. Augments boost the ship for this run only and stack. Extract and the hold sells for credits while augments break down into **Void Essence**. Die and the augments are lost and the hold with them, except the **Secured Locker** (your most valuable cargo slot), which still pays out. Between runs the hangar's shipwright sells permanent upgrades (hull, shields, cargo racks, cannon, torpedoes, engine) for credits and essence. **Hull damage carries over** between runs: scrap from the hold goes to the shipwright's stash (not sold), and repairs spend scrap first (1 scrap = 5 hull) and credits for the rest (3 cr per hull). Spare scrap can be sold for 2 cr each. Lose your ship and it's towed home at 25% hull.
+
+**The star chart:** **debris fields** (tier 0) are small and safe-ish: no instability clock, drones only, no augments and no void crystals, just scrap and common ore for repairs. **Rifts** come in tiers I to III: each deeper tier is bigger, its hostiles have more hull and hit harder, the collapse comes sooner, and the hold sells for more (+30% at II, +60% at III). The Rift Compass from the tutorial opens tier I, and extracting from your deepest open tier unlocks the next. Site numbers live in `scripts/economy/deployment.gd`. Progress is saved in `user://profile.json` (on Windows: `%APPDATA%\Godot\app_userdata\Rift Runners\`); delete it to start over.
 
 In the combat arena (a test level): shoot the asteroids with glowing crystals to chip ore loose and fly close to scoop it up (torpedoes crack them fastest). Waves of scavenger drones and pirate cutters warp in, marked by a purple flash; they drop scrap. Your hold has 6 slots, and if your hull is destroyed you lose everything in it and respawn at the centre.
 
@@ -53,10 +55,11 @@ Chunks live in `scenes/rift/chunks/`. Each is a `RiftChunk` (80 x 80 m) holding 
 project.godot            engine settings and input map
 scenes/
   ui/main_menu.tscn      start screen (main scene)
-  ui/hangar.tscn         between runs: wallet, last run, upgrades, launch
+  ui/hangar.tscn         the hub: star chart, repairs, upgrades, last run
   rift/rift_run.tscn     a rift run: generator, player, UI
   rift/chunks/           hand-made rift pieces
   rift/augment_cache.tscn  pick-one-of-three augment cache
+  rift/compass_derelict.tscn  the tutorial's derelict holding the Rift Compass
   test/combat_test.tscn  milestone 2 combat and mining arena
   test/flight_test.tscn  milestone 1 flight arena
   ship/player_ship.tscn  player ship: hull, weapons, health, cargo, effects, reticle
@@ -109,14 +112,14 @@ godot --headless --script res://tests/rift_test.gd
 godot --headless --script res://tests/economy_test.gd
 ```
 
-The flight test checks thrust, braking, steering, hold-to-burn boost, drift charge and kick, shooting and target respawn, the aim reticle, wind streams and camera framing. The combat test checks mining, cargo pickup and limits, jettison, torpedoes, both enemy types, shields, death and respawn, and waves. The rift test checks the generated layout (reachable chunks, doorways and walls, exits kept away from the start, enemies, same seed = same rift), the minimap, instability and stray arrivals, the collapse countdown, the edge arrows, extraction, collapse and death, the pause menu and ship screen (including the real Tab key), the boost camera, augment caches, the extraction payout, the Secured Locker and the hangar. The economy test checks augment and upgrade maths, the augment catalog, and saving and buying with the profile. Tests use their own save file. CI runs all of them on every pull request.
+The flight test checks thrust, braking, steering, hold-to-burn boost, drift charge and kick, shooting and target respawn, the aim reticle, wind streams and camera framing. The combat test checks mining, cargo pickup and limits, jettison, torpedoes, both enemy types, shields, death and respawn, and waves. The rift test checks the generated layout (reachable chunks, doorways and walls, exits kept away from the start, enemies, same seed = same rift), the minimap, instability and stray arrivals, the collapse countdown, the edge arrows, extraction, collapse and death, the pause menu and ship screen (including the real Tab key), the boost camera, augment caches, the extraction payout, the Secured Locker, the hangar's star chart and shipwright, debris field and tier rules, hull carry-over and the tutorial compass. The economy test checks augment and upgrade maths, the augment catalog, and saving and buying with the profile. Tests use their own save file. CI runs all of them on every pull request.
 
 ## Milestones (from the GDD)
 
 1. **Flight feel** (done) - movement, boost, drift, camera in a grey-box arena. (The grapple was cut from core movement; it may return as a salvage-grabbing augment.)
 2. **Combat and mining** (done) - cannon and torpedoes, scavenger drones and pirate cutters, mineable asteroids, cargo hold.
 3. **One rift** (done) - generator from 8 grey-box chunks, instability, stray arrivals, extraction, death and loss. Also the start screen, pause menu, ship screen and game-feel pass.
-4. **Dual economy** (this) - minimap and exit-distance rule, 10 augments in caches, credits and Void Essence, Secured Locker, saved profile, permanent upgrades at a stand-in hangar. Later: richer loot tables and an item stash at the hub.
-5. Hub - shipwright, gate selection, spending cargo on parts. Full loop end to end.
+4. **Dual economy** (done) - minimap and exit-distance rule, 10 augments in caches, credits and Void Essence, Secured Locker, saved profile, permanent upgrades at a stand-in hangar. Later: richer loot tables and an item stash at the hub.
+5. **Hub** (this) - star chart with debris fields and rift tiers I to III, shipwright repairs with hull damage carried over, and the tutorial debris field where you find the Rift Compass. Later: spending cargo on parts, a real hub scene.
 6. Content and art pass.
 7. Polish and performance (Steam Deck / GTX 1060 at 60 fps).

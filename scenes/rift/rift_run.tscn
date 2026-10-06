@@ -18,6 +18,7 @@
 [ext_resource type="PackedScene" uid="uid://5v4mre5mx17k" path="res://scenes/rift/chunks/wind_run.tscn" id="16_wind_run"]
 [ext_resource type="PackedScene" uid="uid://b8o7uflgh6jkf" path="res://scenes/rift/chunks/pirate_nest.tscn" id="17_pirate_nest"]
 [ext_resource type="PackedScene" uid="uid://cvij0m3tniet" path="res://scenes/rift/chunks/dead_runner.tscn" id="18_dead_runner"]
+[ext_resource type="PackedScene" uid="uid://cy8fd4cls83o2" path="res://scenes/rift/compass_derelict.tscn" id="19_derelict"]
 
 [sub_resource type="Environment" id="Env"]
 background_mode = 1
@@ -52,6 +53,7 @@ game_ui = NodePath("GameUI")
 trickle_enemies = Array[PackedScene]([ExtResource("7_drone"), ExtResource("8_cutter")])
 warp_flash = ExtResource("9_warp")
 augment_cache = ExtResource("9_cache")
+compass_derelict = ExtResource("19_derelict")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1931257677]
 environment = SubResource("Env")

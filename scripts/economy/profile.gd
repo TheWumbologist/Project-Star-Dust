@@ -1,7 +1,8 @@
 class_name Profile
 extends RefCounted
-## The player's permanent save: credits, Void Essence, upgrade levels and
-## the last run's report. Static, so it survives scene changes without an
+## The player's permanent save: credits, Void Essence, scrap, hull damage,
+## upgrade levels, story progress (Rift Compass, deepest rift tier open)
+## and the last run's report. Static, so it survives scene changes without an
 ## autoload. Saved as JSON in user:// (on Windows that's
 ## %APPDATA%/Godot/app_userdata/Rift Runners/).
 
@@ -10,6 +11,14 @@ static var path: String = "user://profile.json"
 
 static var credits: int = 0
 static var essence: int = 0
+## Scrap is kept for repairs instead of being sold on extraction.
+static var scrap: int = 0
+## Hull points missing; carried from run to run until repaired.
+static var hull_damage: float = 0.0
+## Found in the tutorial derelict; rifts need it.
+static var has_compass: bool = false
+## Deepest rift tier unlocked (0 until the Compass is found).
+static var max_tier: int = 0
 static var upgrades: Dictionary = {}
 static var runs: int = 0
 static var extractions: int = 0
@@ -17,6 +26,15 @@ static var extractions: int = 0
 static var last_run: PackedStringArray = []
 
 static var _loaded: bool = false
+
+## The player ship's base hull (player_ship.tscn Health.max_hull). The
+## economy test checks they match.
+const BASE_HULL := 100.0
+## Hull points one scrap repairs, and credits per point when out of scrap.
+const HULL_PER_SCRAP := 5.0
+const CREDITS_PER_HULL := 3
+## Fraction of hull the ship is towed home with after being destroyed.
+const TOWED_HULL := 0.25
 
 ## Permanent upgrades sold at the hangar. Each level adds `amount` to `stat`
 ## (a fraction when `percent`). Level n costs credits * n and essence * n.
@@ -52,6 +70,10 @@ static func load_profile() -> void:
 		return
 	credits = int(data.get("credits", 0))
 	essence = int(data.get("essence", 0))
+	scrap = int(data.get("scrap", 0))
+	hull_damage = float(data.get("hull_damage", 0.0))
+	has_compass = bool(data.get("has_compass", false))
+	max_tier = int(data.get("max_tier", 0))
 	runs = int(data.get("runs", 0))
 	extractions = int(data.get("extractions", 0))
 	var ups: Dictionary = data.get("upgrades", {})
@@ -65,9 +87,13 @@ static func save() -> void:
 	for key in upgrades:
 		ups[String(key)] = upgrades[key]
 	var data := {
-		"version": 1,
+		"version": 2,
 		"credits": credits,
 		"essence": essence,
+		"scrap": scrap,
+		"hull_damage": hull_damage,
+		"has_compass": has_compass,
+		"max_tier": max_tier,
 		"runs": runs,
 		"extractions": extractions,
 		"upgrades": ups,
@@ -84,6 +110,10 @@ static func save() -> void:
 static func reset() -> void:
 	credits = 0
 	essence = 0
+	scrap = 0
+	hull_damage = 0.0
+	has_compass = false
+	max_tier = 0
 	upgrades = {}
 	runs = 0
 	extractions = 0
@@ -139,3 +169,45 @@ static func upgrade_mods() -> Array:
 		if n > 0:
 			mods.append({"stat": u.stat, "amount": u.amount * n, "percent": u.percent})
 	return mods
+
+
+## Max hull with upgrades bought.
+static func max_hull() -> float:
+	var total := BASE_HULL
+	for m in upgrade_mods():
+		if m.stat == &"max_hull" and not m.percent:
+			total += m.amount
+	return total
+
+
+## Scrap needed to fix all hull damage.
+static func repair_scrap_cost() -> int:
+	return ceili(hull_damage / HULL_PER_SCRAP)
+
+
+## Repairs with scrap first, then credits for whatever's left. Returns the
+## hull points repaired.
+static func repair() -> float:
+	var before := hull_damage
+	var use := mini(scrap, repair_scrap_cost())
+	scrap -= use
+	hull_damage = maxf(hull_damage - use * HULL_PER_SCRAP, 0.0)
+	var afford := mini(ceili(hull_damage), floori(credits / float(CREDITS_PER_HULL)))
+	credits -= afford * CREDITS_PER_HULL
+	hull_damage = maxf(hull_damage - afford, 0.0)
+	save()
+	return before - hull_damage
+
+
+## Credits a repair would cost after spending all usable scrap.
+static func repair_credit_cost() -> int:
+	var left := maxf(hull_damage - mini(scrap, repair_scrap_cost()) * HULL_PER_SCRAP, 0.0)
+	return ceili(left) * CREDITS_PER_HULL
+
+
+static func sell_scrap(scrap_value: int) -> int:
+	var earned := scrap * scrap_value
+	credits += earned
+	scrap = 0
+	save()
+	return earned
