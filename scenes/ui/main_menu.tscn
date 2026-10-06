@@ -1,0 +1,107 @@
+[gd_scene format=3 uid="uid://cah0v3eyl2rv2"]
+
+[ext_resource type="Script" uid="uid://bd4gxw0tyh7qi" path="res://scripts/ui/main_menu.gd" id="1_menu"]
+[ext_resource type="Theme" uid="uid://dut2nb1aouh7e" path="res://resources/ui/menu_theme.tres" id="2_theme"]
+[ext_resource type="Shader" uid="uid://cuy60rdbt83yh" path="res://shaders/menu_starfield.gdshader" id="3_stars"]
+
+[sub_resource type="ShaderMaterial" id="Mat_stars"]
+shader = ExtResource("3_stars")
+
+[node name="MainMenu" type="Control" unique_id=327519044]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_menu")
+
+[node name="Background" type="ColorRect" parent="." unique_id=574051485]
+material = SubResource("Mat_stars")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Layout" type="VBoxContainer" parent="." unique_id=1007171960]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 140.0
+offset_top = -300.0
+offset_right = 760.0
+offset_bottom = 300.0
+grow_vertical = 2
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="Layout" unique_id=707374014]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.78, 0.38, 1)
+theme_override_colors/font_outline_color = Color(0.25, 0.08, 0.02, 1)
+theme_override_constants/outline_size = 14
+theme_override_font_sizes/font_size = 84
+text = "RIFT RUNNERS"
+
+[node name="Tagline" type="Label" parent="Layout" unique_id=586032826]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.7, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Dive the rift. Grab what you can. Get out before it collapses."
+
+[node name="Spacer" type="Control" parent="Layout" unique_id=64532008]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="RiftButton" type="Button" parent="Layout" unique_id=247681350]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(340, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Enter the Rift"
+alignment = 0
+
+[node name="CombatButton" type="Button" parent="Layout" unique_id=1601155810]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(340, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Combat arena (test)"
+alignment = 0
+
+[node name="FlightButton" type="Button" parent="Layout" unique_id=357057799]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(340, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Flight arena (test)"
+alignment = 0
+
+[node name="QuitButton" type="Button" parent="Layout" unique_id=1309788032]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(340, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Quit"
+alignment = 0
+
+[node name="Version" type="Label" parent="." unique_id=1584989278]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -420.0
+offset_top = -44.0
+offset_right = -24.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.6, 0.55, 0.7, 1)
+theme_override_font_sizes/font_size = 14
+text = "Prototype · milestone 3 · grey-box"
+horizontal_alignment = 2

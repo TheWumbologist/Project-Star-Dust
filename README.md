@@ -2,13 +2,13 @@
 
 A sci-fi roguelike looter with space-pirate aesthetics, fast movement and procedural Void Rifts. Built in **Godot 4** (GDScript). Design doc: *Rift Runners: Game Design Document* (Claude Doc in the project).
 
-![Combat test arena](docs/screenshots/combat_test.png)
+![Inside a rift](docs/screenshots/rift_run.png)
 
 ## Run it
 
 1. Install **Godot 4.6 or newer** (standard build, not .NET). 4.6 and 4.7 are tested.
 2. Open Godot, click **Import**, pick `project.godot` in this folder, then **Import & Edit**.
-3. Press **F5** (or the ▶ button top right). The combat and mining arena starts. To fly the older flight-only arena, open `scenes/test/flight_test.tscn` and press **F6**.
+3. Press **F5** (or the ▶ button top right). The start screen opens: **Enter the Rift** starts a run, and the two test arenas (combat and flight) are there too.
 
 The first open takes a few seconds while Godot imports the project.
 
@@ -26,43 +26,57 @@ Twin-stick: fly with one hand, aim with the other.
 | Boost (hold, burns fuel) | Shift | A |
 | Drift (hold) | Space | B or LB |
 | Jettison last cargo slot | X | X |
-| Restart | R | Start |
-| Show/hide help | F1 | Back |
+| Ship screen (stats, skills, augments, cargo) | Tab | Back |
+| Pause menu (resume, restart, main menu, quit) | Esc | Start |
+| Restart (test arenas only) | R | |
+| Show/hide controls | F1 | |
 
-In the combat arena: shoot the asteroids with glowing crystals to chip ore loose and fly close to scoop it up (torpedoes crack them fastest). Waves of scavenger drones and pirate cutters warp in, marked by a purple flash; they drop scrap. Your hold has 6 slots, and if your hull is destroyed you lose everything in it and respawn at the centre.
+**In a rift:** each run builds a new rift from hand-made chunks. Mine, loot wrecks and fight your way to an extraction beacon (the green arrow on the edge of the screen, your Rift Compass reading, points to the nearest one; red edge arrows show nearby enemies off screen), then hold position in the ring to escape with your cargo. Rift instability climbs the whole time (a full collapse takes 5 minutes, with a countdown from 50%): more stray enemies warp in as it rises, and at 100% the rift collapses and tears your hull apart. Die and the cargo is lost.
+
+In the combat arena (a test level): shoot the asteroids with glowing crystals to chip ore loose and fly close to scoop it up (torpedoes crack them fastest). Waves of scavenger drones and pirate cutters warp in, marked by a purple flash; they drop scrap. Your hold has 6 slots, and if your hull is destroyed you lose everything in it and respawn at the centre.
 
 Things to try: hold drift while turning so the ship slides. The sparks turn blue, then orange as the drift charges; let go for a speed kick in the direction you're pointing plus some boost fuel back. Ride the blue **wind streams** for extra speed, and boost into a target to **ram** it.
 
 ## Tuning the feel
 
-All handling numbers live in `resources/ships/sloop_stats.tres`. Open it in the Godot inspector, change values and press F5 again; each one has a tooltip. To tweak live, run the game, open the **Remote** tab in the Scene dock, select `PlayerShip` and edit its `stats` there. Camera numbers (tilt, distance, look-ahead, boost zoom, shake) are on the `RiftCamera` node in `scenes/test/flight_test.tscn`. Weapon, hull, shield and cargo numbers are on the `Cannon`, `Torpedoes`, `Health` and `Cargo` nodes in `scenes/ship/player_ship.tscn`. Enemies are `scenes/enemies/*.tscn`: their handling is in `resources/ships/`, and their behaviour (range, circling, burst fire) is on their `Input` node. Wave sizes are on `EncounterDirector` in `scenes/test/combat_test.tscn`, and the asteroid layout (seed, counts) on its `Asteroids` node.
+All handling numbers live in `resources/ships/sloop_stats.tres`. Open it in the Godot inspector, change values and press F5 again; each one has a tooltip. To tweak live, run the game, open the **Remote** tab in the Scene dock, select `PlayerShip` and edit its `stats` there. Camera numbers (tilt, distance, look-ahead, boost zoom, shake) are on the `RiftCamera` node in `scenes/test/flight_test.tscn`. Weapon, hull, shield and cargo numbers are on the `Cannon`, `Torpedoes`, `Health` and `Cargo` nodes in `scenes/ship/player_ship.tscn`. Enemies are `scenes/enemies/*.tscn`: their handling is in `resources/ships/`, and their behaviour (range, circling, burst fire) is on their `Input` node. Wave sizes are on `EncounterDirector` in `scenes/test/combat_test.tscn`, and the asteroid layout (seed, counts) on its `Asteroids` node. Rift tuning (run length, stray spawn rate, collapse damage, fixed seed) is on the root of `scenes/rift/rift_run.tscn`, and map size on its `Generator` node.
+
+### Building rift chunks
+
+Chunks live in `scenes/rift/chunks/`. Each is a `RiftChunk` (80 x 80 m) holding rocks, ore, wrecks, crates, wind streams and `EnemySpawnPoint` markers (pick the enemy and a spawn chance). Leave a clear cross about 12 m either side of the middle, because doorways open at the middle of each edge; the generator rotates chunks and builds the walls itself. Set `kind` (start, extract, normal), `weight` and `min_depth` on the root, then add the scene to the matching list on the `Generator` node.
 
 ## Layout
 
 ```
 project.godot            engine settings and input map
 scenes/
-  test/combat_test.tscn  milestone 2 combat and mining arena (main scene)
+  ui/main_menu.tscn      start screen (main scene)
+  rift/rift_run.tscn     a rift run: generator, player, UI
+  rift/chunks/           hand-made rift pieces
+  test/combat_test.tscn  milestone 2 combat and mining arena
   test/flight_test.tscn  milestone 1 flight arena
   ship/player_ship.tscn  player ship: hull, weapons, health, cargo, effects, reticle
   enemies/               scavenger drone, pirate cutter
-  world/                 asteroids (plain and ore), target dummy, wind stream
+  world/                 asteroids (plain and ore), wrecks, salvage crates, target dummy, wind stream
   combat/                projectiles, torpedo, explosions
   cargo/                 loose cargo pickup
-  ui/                    debug HUD
+  ui/                    HUD, pause menu, ship screen, end-of-run card, screen effects
 scripts/
   ship/                  flight model (ShipController), stats, input, effects, reticle
   ai/                    enemy pilots (AIPilot)
   camera/                tilted look-ahead camera (RiftCamera)
   combat/                weapons, projectiles, explosions, health, hit flashes
   cargo/                 item definitions, cargo hold, pickups, loot drops
-  world/                 targets, asteroids, mining, wind streams, waves, layout
-  ui/                    HUD
+  rift/                  rift generator, run rules (instability, extraction)
+  world/                 targets, asteroids, mining, crates, wind streams, waves, layout
+  fx/                    hitstop
+  ui/                    HUD, menus, scene switching
 resources/ships/         per-hull ShipStats (.tres), enemies included
-resources/items/         one ItemDefinition per kind of loot (scrap, ore)
-shaders/                 grid floor and wind stream shaders
+resources/items/         one ItemDefinition per kind of loot (scrap, ore, void crystal)
+resources/ui/            menu theme
+shaders/                 grid floor, wind stream, screen effects and menu starfield
 assets/                  art/audio; every file listed in ASSET_LEDGER.csv
-tests/                   headless smoke tests (flight, combat and mining)
+tests/                   headless smoke tests (flight, combat, rift and menus)
 tools/                   asset ledger check
 ```
 
@@ -84,15 +98,16 @@ python3 tools/check_asset_ledger.py
 godot --headless --import
 godot --headless --script res://tests/smoke_test.gd
 godot --headless --script res://tests/combat_test.gd
+godot --headless --script res://tests/rift_test.gd
 ```
 
-The flight test checks thrust, braking, steering, hold-to-burn boost, drift charge and kick, shooting and target respawn, the aim reticle, wind streams and camera framing. The combat test checks mining, cargo pickup and limits, jettison, torpedoes, both enemy types, shields, death and respawn, and waves. CI runs all of them on every pull request.
+The flight test checks thrust, braking, steering, hold-to-burn boost, drift charge and kick, shooting and target respawn, the aim reticle, wind streams and camera framing. The combat test checks mining, cargo pickup and limits, jettison, torpedoes, both enemy types, shields, death and respawn, and waves. The rift test checks the generated layout (reachable chunks, doorways and walls, exits, enemies, same seed = same rift), instability and stray arrivals, the collapse countdown, the edge arrows, extraction, collapse and death, the pause menu and ship screen (including the real Tab key), and the boost camera. CI runs all of them on every pull request.
 
 ## Milestones (from the GDD)
 
 1. **Flight feel** (done) - movement, boost, drift, camera in a grey-box arena. (The grapple was cut from core movement; it may return as a salvage-grabbing augment.)
-2. **Combat and mining** (this) - cannon and torpedoes, scavenger drones and pirate cutters, mineable asteroids, cargo hold.
-3. One rift - zone-graph generator from grey-box chunks, instability meter, extraction, death and loss.
+2. **Combat and mining** (done) - cannon and torpedoes, scavenger drones and pirate cutters, mineable asteroids, cargo hold.
+3. **One rift** (this) - generator from 8 grey-box chunks, instability, stray arrivals, extraction, death and loss. Also the start screen, pause menu, ship screen and game-feel pass.
 4. Dual economy - augment caches and 10 augments, loot tables, run and profile inventories, saving.
 5. Hub - shipwright, gate selection, spending cargo on parts. Full loop end to end.
 6. Content and art pass.

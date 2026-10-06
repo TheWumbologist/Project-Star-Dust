@@ -369,9 +369,14 @@ func _set_alive(alive: bool) -> void:
 
 ## Throws the last cargo slot out behind the ship.
 func _jettison() -> void:
-	if jettison_pickup == null:
+	jettison_slot(cargo.slots.size() - 1)
+
+
+## Throws cargo slot `index` out behind the ship (from the ship screen too).
+func jettison_slot(index: int) -> void:
+	if jettison_pickup == null or cargo == null:
 		return
-	var slot := cargo.take_last_slot()
+	var slot := cargo.take_slot(index)
 	if slot.is_empty():
 		return
 	for p in Pickup.scatter(jettison_pickup, get_parent(), slot.item, slot.count, global_position - forward() * 2.5, -forward(), 7.0):

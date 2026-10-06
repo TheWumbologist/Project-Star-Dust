@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://jhvdvqb0jjgj"]
+
+[ext_resource type="Script" uid="uid://buljo71mablxn" path="res://scripts/rift/rift_chunk.gd" id="1_chunk"]
+[ext_resource type="PackedScene" uid="uid://h8jwjbgny8xj" path="res://scenes/world/asteroid.tscn" id="2_rock"]
+[ext_resource type="PackedScene" uid="uid://bli67hfl6l71o" path="res://scenes/world/ore_asteroid.tscn" id="3_ore"]
+
+[node name="StartChunk" type="Node3D" unique_id=736727683]
+script = ExtResource("1_chunk")
+kind = 0
+min_depth = 0
+
+[node name="PlayerStart" type="Marker3D" parent="." unique_id=236136952]
+
+[node name="Rock02" parent="." unique_id=1583708346 instance=ExtResource("2_rock")]
+transform = Transform3D(-0.328357, 0, 0.944554, 0, 1, 0, -0.944554, 0, -0.328357, 21.0943, 0, -29.2231)
+radius = 3.4
+
+[node name="Rock03" parent="." unique_id=424742510 instance=ExtResource("2_rock")]
+transform = Transform3D(0.0513716, 0, 0.99868, 0, 1, 0, -0.99868, 0, 0.0513716, -31.7123, 0, -22.305)
+radius = 2.3
+
+[node name="Rock04" parent="." unique_id=1085364086 instance=ExtResource("2_rock")]
+transform = Transform3D(0.904324, 0, 0.426847, 0, 1, 0, -0.426847, 0, 0.904324, -19.4641, 0, -15.1891)
+radius = 2.1
+
+[node name="Rock05" parent="." unique_id=1510667063 instance=ExtResource("2_rock")]
+transform = Transform3D(-0.981991, 0, 0.18893, 0, 1, 0, -0.18893, 0, -0.981991, -20.9003, 0, 29.5396)
+radius = 4.3
+
+[node name="Ore06" parent="." unique_id=1457039954 instance=ExtResource("3_ore")]
+transform = Transform3D(-0.495006, 0, 0.86889, 0, 1, 0, -0.86889, 0, -0.495006, -16.5762, 0, -29.7256)
+ore_count = 9
+radius = 3.5
+
+[node name="Ore07" parent="." unique_id=274775602 instance=ExtResource("3_ore")]
+transform = Transform3D(0.439442, 0, 0.898271, 0, 1, 0, -0.898271, 0, 0.439442, -31.6877, 0, 21.3855)
+ore_count = 9
+radius = 3.5

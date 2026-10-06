@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://v8m8hutq1lcu"]
+
+[ext_resource type="Script" uid="uid://cswgtd5ktl82b" path="res://scripts/world/salvage_crate.gd" id="1_crate"]
+[ext_resource type="PackedScene" uid="uid://bdeowowjpld5l" path="res://scenes/cargo/pickup.tscn" id="2_pick"]
+[ext_resource type="Resource" path="res://resources/items/scrap.tres" id="3_scrap"]
+[ext_resource type="PackedScene" uid="uid://yh6ia4pyaayf" path="res://scenes/combat/explosion.tscn" id="4_boom"]
+
+[sub_resource type="BoxShape3D" id="Shape_crate"]
+size = Vector3(1.8, 1.8, 1.8)
+
+[sub_resource type="StandardMaterial3D" id="Mat_crate"]
+albedo_color = Color(0.55, 0.42, 0.25, 1)
+roughness = 0.8
+emission_enabled = true
+emission = Color(1, 0.6, 0.2, 1)
+emission_energy_multiplier = 0.15
+
+[sub_resource type="BoxMesh" id="Mesh_crate"]
+material = SubResource("Mat_crate")
+size = Vector3(1.6, 1.6, 1.6)
+
+[node name="SalvageCrate" type="StaticBody3D" unique_id=1712587813 node_paths=PackedStringArray("mesh")]
+collision_mask = 0
+script = ExtResource("1_crate")
+pickup_scene = ExtResource("2_pick")
+item = ExtResource("3_scrap")
+break_explosion = ExtResource("4_boom")
+mesh = NodePath("Mesh")
+
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=287648053]
+shape = SubResource("Shape_crate")
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=510300052]
+mesh = SubResource("Mesh_crate")

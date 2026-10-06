@@ -1,0 +1,88 @@
+[gd_scene format=3 uid="uid://b5md7ssogm2je"]
+
+[ext_resource type="Script" uid="uid://chxucywhpb6ks" path="res://scripts/rift/extraction_point.gd" id="1_exit"]
+
+[sub_resource type="CylinderShape3D" id="Shape_ring"]
+height = 6.0
+radius = 7.0
+
+[sub_resource type="StandardMaterial3D" id="Mat_ring"]
+shading_mode = 0
+albedo_color = Color(0.5, 1, 0.65, 1)
+
+[sub_resource type="TorusMesh" id="Mesh_ring"]
+material = SubResource("Mat_ring")
+inner_radius = 6.6
+outer_radius = 7.2
+rings = 48
+ring_segments = 6
+
+[sub_resource type="BoxMesh" id="Mesh_marker"]
+material = SubResource("Mat_ring")
+size = Vector3(0.6, 0.3, 2.2)
+
+[sub_resource type="StandardMaterial3D" id="Mat_beam"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(0.45, 1, 0.6, 0.25)
+
+[sub_resource type="CylinderMesh" id="Mesh_beam"]
+material = SubResource("Mat_beam")
+top_radius = 2.5
+bottom_radius = 3.5
+height = 60.0
+radial_segments = 24
+rings = 1
+cap_top = false
+cap_bottom = false
+
+[node name="ExtractionPoint" type="Area3D" unique_id=8955193 node_paths=PackedStringArray("ring", "beam")]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_exit")
+ring = NodePath("Ring")
+beam = NodePath("Beam")
+
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=809038469]
+shape = SubResource("Shape_ring")
+
+[node name="Ring" type="Node3D" parent="." unique_id=620202774]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
+
+[node name="Torus" type="MeshInstance3D" parent="Ring" unique_id=1065559990]
+cast_shadow = 0
+mesh = SubResource("Mesh_ring")
+
+[node name="MarkerN" type="MeshInstance3D" parent="Ring" unique_id=450473866]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8.5)
+cast_shadow = 0
+mesh = SubResource("Mesh_marker")
+
+[node name="MarkerS" type="MeshInstance3D" parent="Ring" unique_id=928273466]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.5)
+cast_shadow = 0
+mesh = SubResource("Mesh_marker")
+
+[node name="MarkerE" type="MeshInstance3D" parent="Ring" unique_id=1166057267]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 8.5, 0, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_marker")
+
+[node name="MarkerW" type="MeshInstance3D" parent="Ring" unique_id=1349370034]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -8.5, 0, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_marker")
+
+[node name="Beam" type="MeshInstance3D" parent="." unique_id=374186797]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 28, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_beam")
+
+[node name="Light" type="OmniLight3D" parent="." unique_id=846394642]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+light_color = Color(0.5, 1, 0.65, 1)
+light_energy = 3.0
+omni_range = 16.0

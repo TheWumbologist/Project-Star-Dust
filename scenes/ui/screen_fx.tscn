@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://cu6nd6e16us01"]
+
+[ext_resource type="Script" uid="uid://dgkt2lwa7twq1" path="res://scripts/fx/screen_fx.gd" id="1_fx"]
+[ext_resource type="Shader" uid="uid://goigcii3441q" path="res://shaders/screen_fx.gdshader" id="2_shader"]
+
+[sub_resource type="ShaderMaterial" id="Mat_fx"]
+shader = ExtResource("2_shader")
+
+[node name="ScreenFx" type="CanvasLayer" unique_id=1748384061 node_paths=PackedStringArray("overlay")]
+layer = 5
+script = ExtResource("1_fx")
+overlay = NodePath("Overlay")
+
+[node name="Overlay" type="ColorRect" parent="." unique_id=972936111]
+material = SubResource("Mat_fx")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

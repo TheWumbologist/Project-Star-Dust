@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://bxq26mk2a7kpw"]
+
+[ext_resource type="Script" uid="uid://buljo71mablxn" path="res://scripts/rift/rift_chunk.gd" id="1_chunk"]
+[ext_resource type="PackedScene" uid="uid://b5md7ssogm2je" path="res://scenes/rift/extraction_point.tscn" id="2_exit"]
+[ext_resource type="PackedScene" uid="uid://h8jwjbgny8xj" path="res://scenes/world/asteroid.tscn" id="3_rock"]
+[ext_resource type="Script" uid="uid://c68igyuprc2l7" path="res://scripts/rift/enemy_spawn_point.gd" id="4_spawn"]
+[ext_resource type="PackedScene" uid="uid://bhb7npvyr2ok1" path="res://scenes/enemies/scavenger_drone.tscn" id="5_drone"]
+
+[node name="ExtractChunk" type="Node3D" unique_id=1820542292]
+script = ExtResource("1_chunk")
+kind = 1
+
+[node name="ExtractionPoint" parent="." unique_id=1571447124 instance=ExtResource("2_exit")]
+
+[node name="Rock02" parent="." unique_id=1233334961 instance=ExtResource("3_rock")]
+transform = Transform3D(0.41669, 0, -0.909049, 0, 1, 0, 0.909049, 0, 0.41669, 29.2301, 0, -31.7646)
+radius = 3.4
+
+[node name="Rock03" parent="." unique_id=857679224 instance=ExtResource("3_rock")]
+transform = Transform3D(0.398786, 0, -0.917044, 0, 1, 0, 0.917044, 0, 0.398786, -32.3026, 0, -23.6726)
+radius = 2.2
+
+[node name="Rock04" parent="." unique_id=1539401631 instance=ExtResource("3_rock")]
+transform = Transform3D(-0.951652, 0, -0.307179, 0, 1, 0, 0.307179, 0, -0.951652, 19.5781, 0, -28.6119)
+radius = 3.2
+
+[node name="Rock05" parent="." unique_id=691983314 instance=ExtResource("3_rock")]
+transform = Transform3D(0.849604, 0, -0.527421, 0, 1, 0, 0.527421, 0, 0.849604, -22.3753, 0, 17.894)
+radius = 2.5
+
+[node name="Rock06" parent="." unique_id=2108079875 instance=ExtResource("3_rock")]
+transform = Transform3D(-0.641834, 0, -0.766844, 0, 1, 0, 0.766844, 0, -0.641834, 20.693, 0, 23.9007)
+radius = 2.0
+
+[node name="Spawn07" type="Marker3D" parent="." unique_id=773359663]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, -18)
+script = ExtResource("4_spawn")
+enemy = ExtResource("5_drone")
+chance = 0.8
+
+[node name="Spawn08" type="Marker3D" parent="." unique_id=1285616605]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0, 18)
+script = ExtResource("4_spawn")
+enemy = ExtResource("5_drone")
+chance = 0.6

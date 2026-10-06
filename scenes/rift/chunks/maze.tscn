@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://due1gc84hxnci"]
+
+[ext_resource type="Script" uid="uid://buljo71mablxn" path="res://scripts/rift/rift_chunk.gd" id="1_chunk"]
+[ext_resource type="PackedScene" uid="uid://h8jwjbgny8xj" path="res://scenes/world/asteroid.tscn" id="2_rock"]
+[ext_resource type="PackedScene" uid="uid://bli67hfl6l71o" path="res://scenes/world/ore_asteroid.tscn" id="3_ore"]
+[ext_resource type="Script" uid="uid://c68igyuprc2l7" path="res://scripts/rift/enemy_spawn_point.gd" id="4_spawn"]
+[ext_resource type="PackedScene" uid="uid://c0qk8vwdbwojd" path="res://scenes/enemies/pirate_cutter.tscn" id="5_cutter"]
+[ext_resource type="PackedScene" uid="uid://bhb7npvyr2ok1" path="res://scenes/enemies/scavenger_drone.tscn" id="6_drone"]
+
+[node name="MazeChunk" type="Node3D" unique_id=1105508455]
+script = ExtResource("1_chunk")
+min_depth = 2
+
+[node name="Rock01" parent="." unique_id=1895390121 instance=ExtResource("2_rock")]
+transform = Transform3D(0.703049, 0, -0.711142, 0, 1, 0, 0.711142, 0, 0.703049, -19.5401, 0, 25.7643)
+radius = 4.4
+
+[node name="Rock02" parent="." unique_id=1335879273 instance=ExtResource("2_rock")]
+transform = Transform3D(0.924094, 0, -0.382165, 0, 1, 0, 0.382165, 0, 0.924094, -25.8971, 0, -23.602)
+radius = 4.0
+
+[node name="Rock03" parent="." unique_id=2134897747 instance=ExtResource("2_rock")]
+transform = Transform3D(0.2835, 0, -0.958972, 0, 1, 0, 0.958972, 0, 0.2835, -30.6575, 0, 29.3379)
+radius = 3.7
+
+[node name="Rock04" parent="." unique_id=173269007 instance=ExtResource("2_rock")]
+transform = Transform3D(-0.230796, 0, 0.973002, 0, 1, 0, -0.973002, 0, -0.230796, 30.8148, 0, 17.3596)
+radius = 3.1
+
+[node name="Rock05" parent="." unique_id=329132344 instance=ExtResource("2_rock")]
+transform = Transform3D(0.544843, 0, 0.838538, 0, 1, 0, -0.838538, 0, 0.544843, 28.3637, 0, 32.004)
+radius = 1.9
+
+[node name="Rock06" parent="." unique_id=339338811 instance=ExtResource("2_rock")]
+transform = Transform3D(0.507365, 0, -0.861731, 0, 1, 0, 0.861731, 0, 0.507365, 16.478, 0, -28.2045)
+radius = 3.1
+
+[node name="Rock07" parent="." unique_id=19745518 instance=ExtResource("2_rock")]
+transform = Transform3D(0.551781, 0, 0.833989, 0, 1, 0, -0.833989, 0, 0.551781, 27.6911, 0, -19.4892)
+radius = 3.4
+
+[node name="Rock08" parent="." unique_id=829276352 instance=ExtResource("2_rock")]
+transform = Transform3D(-0.731227, 0, -0.682134, 0, 1, 0, 0.682134, 0, -0.731227, 17.2705, 0, 16.6737)
+radius = 4.1
+
+[node name="Rock09" parent="." unique_id=1287530645 instance=ExtResource("2_rock")]
+transform = Transform3D(-0.378781, 0, -0.925486, 0, 1, 0, 0.925486, 0, -0.378781, -32.8797, 0, 16.5749)
+radius = 2.3
+
+[node name="Rock10" parent="." unique_id=162617895 instance=ExtResource("2_rock")]
+transform = Transform3D(0.587457, 0, 0.809255, 0, 1, 0, -0.809255, 0, 0.587457, -18.278, 0, -31.1586)
+radius = 2.9
+
+[node name="Rock11" parent="." unique_id=448126255 instance=ExtResource("2_rock")]
+transform = Transform3D(0.0445489, 0, -0.999007, 0, 1, 0, 0.999007, 0, 0.0445489, 32.4784, 0, -29.6592)
+radius = 2.8
+
+[node name="Ore12" parent="." unique_id=1194214994 instance=ExtResource("3_ore")]
+transform = Transform3D(0.207418, 0, -0.978253, 0, 1, 0, 0.978253, 0, 0.207418, 17.9593, 0, 28.6911)
+
+[node name="Spawn13" type="Marker3D" parent="." unique_id=220286493]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -22)
+script = ExtResource("4_spawn")
+enemy = ExtResource("5_cutter")
+
+[node name="Spawn14" type="Marker3D" parent="." unique_id=287304573]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, 20)
+script = ExtResource("4_spawn")
+enemy = ExtResource("6_drone")
+chance = 0.7

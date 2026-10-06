@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://b1w2irwcw0s1x"]
+
+[ext_resource type="Script" uid="uid://tctrslxlidpi" path="res://scripts/ui/game_ui.gd" id="1_ui"]
+[ext_resource type="PackedScene" uid="uid://djmbuxfr7wgmm" path="res://scenes/ui/flight_hud.tscn" id="2_hud"]
+[ext_resource type="PackedScene" uid="uid://cu6nd6e16us01" path="res://scenes/ui/screen_fx.tscn" id="3_fx"]
+[ext_resource type="PackedScene" uid="uid://d31da2vncc0p8" path="res://scenes/ui/pause_menu.tscn" id="4_pause"]
+[ext_resource type="PackedScene" uid="uid://b622fwxk2bq52" path="res://scenes/ui/ship_menu.tscn" id="5_ship"]
+[ext_resource type="PackedScene" uid="uid://5gurxujpato" path="res://scenes/ui/run_end_screen.tscn" id="6_end"]
+
+[node name="GameUI" type="Node" unique_id=1707517669]
+script = ExtResource("1_ui")
+
+[node name="FlightHud" parent="." unique_id=1634304449 instance=ExtResource("2_hud")]
+
+[node name="ScreenFx" parent="." unique_id=190681533 instance=ExtResource("3_fx")]
+
+[node name="ShipMenu" parent="." unique_id=404824369 instance=ExtResource("5_ship")]
+
+[node name="PauseMenu" parent="." unique_id=1958796979 instance=ExtResource("4_pause")]
+
+[node name="RunEndScreen" parent="." unique_id=999675734 instance=ExtResource("6_end")]

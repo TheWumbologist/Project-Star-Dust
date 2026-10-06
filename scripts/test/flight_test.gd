@@ -1,6 +1,6 @@
 extends Node3D
 ## Flight-feel test arena (milestone 1). Grey-box only: fly, boost, drift,
-## shoot dummies. R / Start restarts.
+## shoot dummies. R restarts; Esc opens the pause menu.
 
 
 func _ready() -> void:
@@ -10,4 +10,4 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("restart"):
-		get_tree().reload_current_scene()
+		Scenes.restart(get_tree())

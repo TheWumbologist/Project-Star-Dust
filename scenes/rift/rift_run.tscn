@@ -1,0 +1,85 @@
+[gd_scene format=3 uid="uid://0uha34vflggh"]
+
+[ext_resource type="Script" uid="uid://m8er3cmxus0" path="res://scripts/rift/rift_run.gd" id="1_run"]
+[ext_resource type="Script" uid="uid://byjsyayugjyyu" path="res://scripts/rift/rift_generator.gd" id="2_gen"]
+[ext_resource type="PackedScene" uid="uid://luedaqe5tiiw" path="res://scenes/ship/player_ship.tscn" id="3_ship"]
+[ext_resource type="Script" uid="uid://cjqqgtdno4s7b" path="res://scripts/camera/rift_camera.gd" id="4_cam"]
+[ext_resource type="PackedScene" uid="uid://b1w2irwcw0s1x" path="res://scenes/ui/game_ui.tscn" id="5_ui"]
+[ext_resource type="PackedScene" uid="uid://bhb7npvyr2ok1" path="res://scenes/enemies/scavenger_drone.tscn" id="7_drone"]
+[ext_resource type="PackedScene" uid="uid://c0qk8vwdbwojd" path="res://scenes/enemies/pirate_cutter.tscn" id="8_cutter"]
+[ext_resource type="PackedScene" uid="uid://dotenp0gf0pxr" path="res://scenes/combat/warp_flash.tscn" id="9_warp"]
+[ext_resource type="Shader" uid="uid://cvgk0dsj2qwac" path="res://shaders/space_grid.gdshader" id="10_grid"]
+[ext_resource type="PackedScene" uid="uid://jhvdvqb0jjgj" path="res://scenes/rift/chunks/start.tscn" id="11_start"]
+[ext_resource type="PackedScene" uid="uid://bxq26mk2a7kpw" path="res://scenes/rift/chunks/extract.tscn" id="12_extract"]
+[ext_resource type="PackedScene" uid="uid://b04ykr2b8phs3" path="res://scenes/rift/chunks/field.tscn" id="13_field"]
+[ext_resource type="PackedScene" uid="uid://c4ojbjq1tfi15" path="res://scenes/rift/chunks/ore_belt.tscn" id="14_ore_belt"]
+[ext_resource type="PackedScene" uid="uid://due1gc84hxnci" path="res://scenes/rift/chunks/maze.tscn" id="15_maze"]
+[ext_resource type="PackedScene" uid="uid://5v4mre5mx17k" path="res://scenes/rift/chunks/wind_run.tscn" id="16_wind_run"]
+[ext_resource type="PackedScene" uid="uid://b8o7uflgh6jkf" path="res://scenes/rift/chunks/pirate_nest.tscn" id="17_pirate_nest"]
+[ext_resource type="PackedScene" uid="uid://cvij0m3tniet" path="res://scenes/rift/chunks/dead_runner.tscn" id="18_dead_runner"]
+
+[sub_resource type="Environment" id="Env"]
+background_mode = 1
+background_color = Color(0.02, 0.016, 0.05, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.35, 0.3, 0.5, 1)
+ambient_light_energy = 0.6
+tonemap_mode = 2
+glow_enabled = true
+glow_intensity = 0.9
+glow_bloom = 0.15
+fog_enabled = true
+fog_light_color = Color(0.12, 0.06, 0.2, 1)
+fog_density = 0.004
+
+[sub_resource type="ShaderMaterial" id="Mat_floor"]
+render_priority = 0
+shader = ExtResource("10_grid")
+shader_parameter/fade_radius = 100000.0
+
+[sub_resource type="StandardMaterial3D" id="Mat_wall"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(0.6, 0.3, 1, 0.45)
+
+[node name="RiftRun" type="Node3D" unique_id=482988902 node_paths=PackedStringArray("generator", "player", "game_ui")]
+script = ExtResource("1_run")
+generator = NodePath("Generator")
+player = NodePath("PlayerShip")
+game_ui = NodePath("GameUI")
+trickle_enemies = Array[PackedScene]([ExtResource("7_drone"), ExtResource("8_cutter")])
+warp_flash = ExtResource("9_warp")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1931257677]
+environment = SubResource("Env")
+
+[node name="StarLight" type="DirectionalLight3D" parent="." unique_id=760802728]
+transform = Transform3D(0.8253356, -0.45928895, 0.328443, 0, 0.5816831, 0.8134155, -0.5646425, -0.6713408, 0.4800838, 0, 0, 0)
+light_color = Color(1, 0.9, 0.75, 1)
+light_energy = 1.2
+shadow_enabled = true
+directional_shadow_max_distance = 120.0
+
+[node name="Generator" type="Node3D" parent="." unique_id=316157496 node_paths=PackedStringArray("enemies_parent")]
+script = ExtResource("2_gen")
+start_chunks = Array[PackedScene]([ExtResource("11_start")])
+extract_chunks = Array[PackedScene]([ExtResource("12_extract")])
+normal_chunks = Array[PackedScene]([ExtResource("13_field"), ExtResource("14_ore_belt"), ExtResource("15_maze"), ExtResource("16_wind_run"), ExtResource("17_pirate_nest"), ExtResource("18_dead_runner")])
+floor_material = SubResource("Mat_floor")
+wall_material = SubResource("Mat_wall")
+enemies_parent = NodePath("../Enemies")
+
+[node name="Enemies" type="Node3D" parent="." unique_id=1117616730]
+
+[node name="PlayerShip" parent="." unique_id=1242182675 instance=ExtResource("3_ship")]
+
+[node name="RiftCamera" type="Camera3D" parent="." unique_id=490186979 node_paths=PackedStringArray("target")]
+fov = 50.0
+far = 400.0
+script = ExtResource("4_cam")
+target = NodePath("../PlayerShip")
+
+[node name="GameUI" parent="." unique_id=990790707 node_paths=PackedStringArray("ship", "camera") instance=ExtResource("5_ui")]
+ship = NodePath("../PlayerShip")
+camera = NodePath("../RiftCamera")

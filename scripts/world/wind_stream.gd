@@ -7,9 +7,12 @@ extends Area3D
 ## scaling, since physics shapes dislike non-uniform scale.
 
 ## Acceleration applied along the stream, in m/s^2.
-@export var push_strength: float = 30.0
+@export var push_strength: float = 48.0
 ## Extra top speed allowed while inside the stream.
-@export var speed_cap_bonus: float = 14.0
+@export var speed_cap_bonus: float = 24.0
+## Instant shove along the stream (m/s) when a ship flies in, so the
+## stream grabs you straight away instead of building up.
+@export var entry_kick: float = 9.0
 @export var length: float = 40.0:
 	set(value):
 		length = maxf(value, 1.0)
@@ -57,6 +60,9 @@ func _apply_size() -> void:
 func _on_body_entered(body: Node) -> void:
 	if body is ShipController and body not in _ships:
 		_ships.append(body)
+		var dir := -global_transform.basis.z
+		dir.y = 0.0
+		body.apply_impulse(dir.normalized() * entry_kick)
 
 
 func _on_body_exited(body: Node) -> void:
