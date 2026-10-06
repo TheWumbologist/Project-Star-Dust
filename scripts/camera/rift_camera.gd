@@ -75,6 +75,17 @@ func _on_boost_started() -> void:
 	_punch = boost_punch
 
 
+## Jumps straight onto the target instead of gliding there (after the
+## ship is moved through a rift tear).
+func snap() -> void:
+	if target == null:
+		return
+	_lead = Vector3.ZERO
+	_focus = target.global_position
+	_apply_transform(Vector3.ZERO, 0.0)
+	reset_physics_interpolation()
+
+
 ## Adds screen shake. 0.2 is a nudge, 1.0 is a big hit.
 func add_shake(amount: float) -> void:
 	_trauma = clampf(_trauma + amount, 0.0, 1.0)

@@ -136,6 +136,7 @@ func _apply_site(rules: Dictionary) -> void:
 	generator.allow_cutters = rules.cutters
 	generator.allow_caches = rules.caches
 	generator.allow_void_crystals = rules.void_crystals
+	generator.use_tears = rules.get("tears", true)
 	if not rules.caches:
 		cache_drop_chance = 0.0
 
@@ -205,6 +206,20 @@ func nearest_extraction(from: Vector3) -> ExtractionPoint:
 		if is_instance_valid(point) and (best == null or point.global_position.distance_to(from) < best.global_position.distance_to(from)):
 			best = point
 	return best
+
+
+## Where to head to get out from `from`: the nearest extraction beacon if
+## it is in this section, else the rift tear that leads toward it.
+func way_out(from: Vector3) -> Node3D:
+	var exit := nearest_extraction(from)
+	if exit == null:
+		return null
+	var here := generator.section_of(from)
+	var there := generator.section_of(exit.global_position)
+	if here == there or here < 0:
+		return exit
+	var tear := generator.next_tear(here, there)
+	return tear if tear != null else exit
 
 
 ## Warps one stray enemy in somewhere near (but not on top of) the player.

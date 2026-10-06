@@ -51,7 +51,7 @@ func _run() -> void:
 
 	# Let the audio server release playing sounds before quitting.
 	Sfx.stop_all()
-	await create_timer(0.2, true, false, true).timeout
+	await create_timer(1.0, true, false, true).timeout
 	if _failures.is_empty():
 		print("COMBAT TEST: all checks passed")
 		quit(0)

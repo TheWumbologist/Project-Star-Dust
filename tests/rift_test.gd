@@ -42,6 +42,7 @@ func _run() -> void:
 	await _test_menus(run)
 	await _test_camera(run)
 	await _test_augment_cache(run)
+	await _test_tears(run)
 	await _test_extraction(run)
 	run.queue_free()
 	await process_frame
@@ -59,7 +60,7 @@ func _run() -> void:
 
 	# Let the audio server release playing sounds before quitting.
 	Sfx.stop_all()
-	await create_timer(0.2, true, false, true).timeout
+	await create_timer(1.0, true, false, true).timeout
 	if _failures.is_empty():
 		print("RIFT TEST: all checks passed")
 		quit(0)
@@ -232,7 +233,8 @@ func _test_instability(run: RiftRun) -> void:
 	_check("COLLAPSE IN" in hud.get_node("%CountdownLabel").text and hud.get_node("%CountdownLabel").visible, "half way, a collapse countdown appears (%s)" % hud.get_node("%CountdownLabel").text)
 	var markers := hud.get_node("%EdgeMarkers") as EdgeMarkers
 	await process_frame
-	var exit := run.nearest_extraction(run.player.global_position)
+	# In another section the arrow points at the tear that leads toward it.
+	var exit := run.way_out(run.player.global_position)
 	var cam := run.game_ui.camera
 	var exit_marks := markers.markers.filter(func(m): return m.kind == &"exit")
 	var on_screen := cam.get_viewport().get_visible_rect().has_point(cam.unproject_position(exit.global_position))
@@ -344,6 +346,85 @@ func _test_augment_cache(run: RiftRun) -> void:
 	_check(tile is VBoxContainer and "Overcharged" in tile.get_child(0).text, "the ship screen lists fitted augments")
 	_press("ship_menu")
 	await process_frame
+
+
+## Rifts come in sections joined by tears that pull you through.
+func _test_tears(run: RiftRun) -> void:
+	var gen := run.generator
+	var ship := run.player
+	var main := gen.sections.filter(func(sec): return not sec.side)
+	_check(main.size() >= 2, "the rift is cut into sections (%d main, %d side)" % [main.size(), gen.sections.size() - main.size()])
+	var sizes_ok := true
+	for sec in gen.sections:
+		sizes_ok = sizes_ok and sec.cells.size() >= 1 and sec.cells.size() <= 3
+	_check(sizes_ok, "each section is 1 to 3 chunks")
+	_check(gen.tears.size() == 2 * (gen.sections.size() - 1), "sections are joined by pairs of tears (%d tears)" % gen.tears.size())
+	var pairs_ok := true
+	for tear in gen.tears:
+		pairs_ok = pairs_ok and tear.partner != null and tear.partner.partner == tear and tear.partner.section != tear.section and tear.leads_to == tear.partner.section
+	_check(pairs_ok, "every tear has a partner in another section")
+	_check(gen.section_of(gen.player_start) == 0 and gen.exit_section() == main.size() - 1, "you start in the first section and the exit is in the last")
+	# No doorway crosses a section border.
+	var sealed := true
+	for cell in gen.cells:
+		for d in RiftGenerator.DIRS:
+			if gen.is_linked(cell, cell + d) and gen.cells[cell + d].section != gen.cells[cell].section:
+				sealed = false
+	_check(sealed, "sections only connect through tears")
+	# The same rules over many layouts, without building chunks.
+	var planner := RiftGenerator.new()
+	var bad := 0
+	for s in range(1, 301):
+		planner.plan_layout(s)
+		var used := {}
+		for t in planner.tear_plan:
+			for end in [[t.a, t.a_dir], [t.b, t.b_dir]]:
+				var key := "%s %s" % end
+				if used.has(key) or planner.is_linked(end[0], end[0] + end[1]):
+					bad += 1
+				used[key] = true
+		for cell in planner.cells:
+			if not planner.cells[cell].has("depth"):
+				bad += 1
+		if planner.sections.size() != planner.branch_count + planner.sections.filter(func(sec): return not sec.side).size():
+			bad += 1
+	planner.free()
+	_check(bad == 0, "tears sit on walled sides and reach every chunk across 300 layouts (%d bad)" % bad)
+
+	# Fly into the first tear on the way out.
+	ship.global_position = gen.player_start
+	ship.reset_physics_interpolation()
+	await _frames(2)
+	var tear := run.way_out(ship.global_position) as RiftTear
+	_check(tear != null and tear.section == 0, "from the start, the way out is a rift tear")
+	await process_frame
+	_check("RIFT TEAR" in run.game_ui.hud.get_node("%ExtractLabel").text, "the HUD points to the tear (%s)" % run.game_ui.hud.get_node("%ExtractLabel").text)
+	if tear == null:
+		return
+	var trips: Array = []
+	tear.traversed.connect(func(s): trips.append(s))
+	ship.velocity = Vector3.ZERO
+	ship.global_position = tear.global_position
+	await _frames(6)
+	var other := tear.partner
+	_check(trips.size() == 1 and gen.section_of(ship.global_position) == other.section, "flying into a tear pulls you through to the next section")
+	_check(ship.global_position.distance_to(other.global_position) < other.exit_offset + 3.0, "you come out by the partner tear")
+	_check(ship.velocity.dot(other.inward) > 0.0, "you come out heading into the new section")
+	var cam := run.game_ui.camera
+	_check(Vector2(cam.global_position.x - ship.global_position.x, cam.global_position.z - ship.global_position.z).length() < 40.0, "the camera jumps with the ship")
+	var map := run.game_ui.hud.get_node("%Minimap") as Minimap
+	await process_frame
+	_check(map._section == other.section and map.is_revealed(ship.global_position), "the minimap switches to the new section")
+	# Straight back in: the tear needs a moment before it works again.
+	ship.global_position = other.global_position
+	ship.velocity = Vector3.ZERO
+	await _frames(3)
+	_check(gen.section_of(ship.global_position) == other.section, "a tear doesn't bounce you straight back")
+	ship.global_position = other.global_position + other.inward * 20.0
+	await create_timer(other.cooldown + 0.2).timeout
+	ship.global_position = other.global_position
+	await _frames(6)
+	_check(gen.section_of(ship.global_position) == tear.section, "tears work both ways")
 
 
 func _test_extraction(run: RiftRun) -> void:
@@ -482,6 +563,7 @@ func _test_tutorial() -> void:
 	for p in run.generator.extraction_points:
 		exits.append(run.generator.cell_at(p.global_position))
 	_check(not run.generator.cell_at(derelict.global_position) in exits, "the derelict isn't in an exit chunk")
+	_check(run.generator.tears.is_empty() and run.generator.sections.is_empty(), "debris fields are one open area, no rift tears")
 	_check("DERELICT" in run.game_ui.hud.get_node("%ExtractLabel").text, "the HUD points to the derelict first")
 	var ship := run.player
 	ship.global_position = derelict.global_position

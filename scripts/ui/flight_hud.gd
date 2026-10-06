@@ -162,7 +162,12 @@ func _update_way_out() -> void:
 		_extract_label.text = "DERELICT  %d m  (follow the gold arrow)" % roundi(_rift.objective.global_position.distance_to(ship.global_position))
 		_extract_bar.visible = false
 		return
-	var exit := _rift.nearest_extraction(ship.global_position)
+	var way := _rift.way_out(ship.global_position)
+	if way is RiftTear:
+		_extract_label.text = "RIFT TEAR  %d m  (follow the green arrow)" % roundi(way.global_position.distance_to(ship.global_position))
+		_extract_bar.visible = false
+		return
+	var exit := way as ExtractionPoint
 	if exit == null:
 		_extract_label.text = ""
 		_extract_bar.visible = false
