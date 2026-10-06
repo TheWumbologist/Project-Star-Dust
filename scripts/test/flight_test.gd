@@ -4,6 +4,7 @@ extends Node3D
 
 
 func _ready() -> void:
+	Sfx.music(&"rift")
 	# The ship's aim reticle replaces the system cursor.
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 

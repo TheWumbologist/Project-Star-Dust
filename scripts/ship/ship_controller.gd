@@ -84,8 +84,14 @@ func _ready() -> void:
 	aim_direction = forward()
 	add_to_group("ships")
 	if health != null:
-		health.damaged.connect(func(amount, source): damaged.emit(amount, source))
+		health.damaged.connect(_on_health_damaged)
+		health.shield_broken.connect(func(): Sfx.play(&"shield_break", global_position))
 		health.died.connect(_on_died)
+
+
+func _on_health_damaged(amount: float, source: Node) -> void:
+	Sfx.play(&"hit_shield" if health.shield > 0.0 else &"hit_hull", global_position)
+	damaged.emit(amount, source)
 
 
 func _physics_process(delta: float) -> void:
@@ -245,6 +251,8 @@ func _update_boost(intent: ShipIntent, delta: float) -> void:
 		_rammed_this_boost.clear()
 		velocity += forward() * stats.boost_kick
 		boost_started.emit()
+		if team == 0:
+			Sfx.play(&"boost", global_position)
 
 	if _boosting:
 		_recharge_wait = stats.boost_recharge_delay
@@ -286,6 +294,7 @@ func _release_drift() -> void:
 	_kick_time_left = stats.drift_kick_duration
 	add_fuel(fuel)
 	drift_kicked.emit(tier)
+	Sfx.play(&"drift_kick", global_position, -2.0 + tier * 2.0)
 
 
 ## Cancels sideways velocity relative to the hull. Low grip = drift.

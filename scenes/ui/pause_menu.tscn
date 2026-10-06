@@ -68,6 +68,42 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Quit game"
 
+[node name="MusicRow" type="HBoxContainer" parent="Root/Center/Panel/Items" unique_id=753573510]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="MusicLabel" type="Label" parent="Root/Center/Panel/Items/MusicRow" unique_id=1802009404]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "Music"
+
+[node name="MusicSlider" type="HSlider" parent="Root/Center/Panel/Items/MusicRow" unique_id=1732001375]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.05
+
+[node name="SfxRow" type="HBoxContainer" parent="Root/Center/Panel/Items" unique_id=504945021]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SfxLabel" type="Label" parent="Root/Center/Panel/Items/SfxRow" unique_id=1252153539]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "Sound"
+
+[node name="SfxSlider" type="HSlider" parent="Root/Center/Panel/Items/SfxRow" unique_id=233330514]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.05
+
 [node name="Hint" type="Label" parent="Root/Center/Panel/Items" unique_id=551113538]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.65, 0.55, 1)

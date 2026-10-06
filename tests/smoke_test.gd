@@ -39,6 +39,9 @@ func _run() -> void:
 	await _test_wind(ship)
 	await _test_camera(ship, camera)
 
+	# Let the audio server release playing sounds before quitting.
+	Sfx.stop_all()
+	await create_timer(0.2, true, false, true).timeout
 	if _failures.is_empty():
 		print("SMOKE TEST: all checks passed")
 		quit(0)

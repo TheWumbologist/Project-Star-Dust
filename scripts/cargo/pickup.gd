@@ -89,6 +89,8 @@ func _try_collect(body: Node) -> void:
 		return
 	collected.emit(ship, item, added)
 	ship.picked_up.emit(item, added)
+	if ship.team == 0:
+		Sfx.play(&"pickup")
 	count -= added
 	if count <= 0:
 		queue_free()

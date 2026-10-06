@@ -11,30 +11,14 @@
 [ext_resource type="Resource" path="res://resources/items/scrap.tres" id="9_scrap"]
 [ext_resource type="Script" uid="uid://cvlhlxpb1nkur" path="res://scripts/combat/hit_flash.gd" id="10_flash"]
 [ext_resource type="PackedScene" uid="uid://yh6ia4pyaayf" path="res://scenes/combat/explosion.tscn" id="11_boom"]
+[ext_resource type="Material" uid="uid://y8q6emcas1lb" path="res://resources/materials/dark_iron.tres" id="mat_dark_iron"]
+[ext_resource type="Material" uid="uid://b0vdt8b6kk441" path="res://resources/materials/pirate_deck.tres" id="mat_pirate_deck"]
+[ext_resource type="Material" uid="uid://bk6fptpn5gpo3" path="res://resources/materials/pirate_hull.tres" id="mat_pirate_hull"]
+[ext_resource type="Material" uid="uid://d31krw0necrer" path="res://resources/materials/pirate_sail.tres" id="mat_pirate_sail"]
+[ext_resource type="ArrayMesh" uid="uid://bcqqe33fvu4jy" path="res://assets/_ai_generated/models/cutter__AI.obj" id="mdl_cutter"]
 
 [sub_resource type="SphereShape3D" id="Shape_cutter"]
 radius = 1.6
-
-[sub_resource type="StandardMaterial3D" id="Mat_hull"]
-albedo_color = Color(0.22, 0.2, 0.24, 1)
-roughness = 0.7
-rim_enabled = true
-rim = 0.5
-
-[sub_resource type="PrismMesh" id="Mesh_hull"]
-material = SubResource("Mat_hull")
-size = Vector3(2.6, 4.4, 1.1)
-
-[sub_resource type="StandardMaterial3D" id="Mat_sail"]
-cull_mode = 2
-albedo_color = Color(0.6, 0.1, 0.15, 1)
-emission_enabled = true
-emission = Color(0.9, 0.1, 0.2, 1)
-emission_energy_multiplier = 0.5
-
-[sub_resource type="BoxMesh" id="Mesh_sail"]
-material = SubResource("Mat_sail")
-size = Vector3(2.2, 0.06, 1.6)
 
 [sub_resource type="StandardMaterial3D" id="Mat_shield"]
 transparency = 1
@@ -70,16 +54,12 @@ shape = SubResource("Shape_cutter")
 [node name="Visual" type="Node3D" parent="." unique_id=808851373]
 
 [node name="Hull" type="MeshInstance3D" parent="Visual" unique_id=1489647878]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
-mesh = SubResource("Mesh_hull")
-
-[node name="SailLeft" type="MeshInstance3D" parent="Visual" unique_id=1246867900]
-transform = Transform3D(0.9553365, -0.29552022, 0, 0.29552022, 0.9553365, 0, 0, 0, 1, -1.9, 0.3, 0.5)
-mesh = SubResource("Mesh_sail")
-
-[node name="SailRight" type="MeshInstance3D" parent="Visual" unique_id=1389676100]
-transform = Transform3D(0.9553365, 0.29552022, 0, -0.29552022, 0.9553365, 0, 0, 0, 1, 1.9, 0.3, 0.5)
-mesh = SubResource("Mesh_sail")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.2)
+mesh = ExtResource("mdl_cutter")
+surface_material_override/0 = ExtResource("mat_pirate_deck")
+surface_material_override/1 = ExtResource("mat_pirate_hull")
+surface_material_override/2 = ExtResource("mat_dark_iron")
+surface_material_override/3 = ExtResource("mat_pirate_sail")
 
 [node name="Shield" type="MeshInstance3D" parent="." unique_id=346237708]
 cast_shadow = 0
@@ -126,5 +106,5 @@ max_count = 7
 [node name="HitFlash" type="Node" parent="." unique_id=1287505398 node_paths=PackedStringArray("health", "body_meshes", "shield_mesh")]
 script = ExtResource("10_flash")
 health = NodePath("../Health")
-body_meshes = [NodePath("../Visual/Hull"), NodePath("../Visual/SailLeft"), NodePath("../Visual/SailRight")]
+body_meshes = [NodePath("../Visual/Hull")]
 shield_mesh = NodePath("../Shield")

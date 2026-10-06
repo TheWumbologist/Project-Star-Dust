@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://5ryltq1n3cvv"]
 
 [ext_resource type="Script" uid="uid://bhlxub0blb5r5" path="res://scripts/combat/projectile.gd" id="1_proj"]
+[ext_resource type="PackedScene" uid="uid://7gpkb2mjv5rv" path="res://scenes/combat/impact_sparks.tscn" id="impact_sparks"]
 
 [sub_resource type="SphereShape3D" id="Shape_bolt"]
 radius = 0.35
@@ -22,6 +23,8 @@ collision_mask = 3
 monitorable = false
 script = ExtResource("1_proj")
 lifetime = 1.5
+impact = ExtResource("impact_sparks")
+impact_color = Color(1, 0.3, 0.5, 1)
 
 [node name="Collision" type="CollisionShape3D" parent="." unique_id=190867057]
 shape = SubResource("Shape_bolt")

@@ -41,6 +41,10 @@ In the combat arena (a test level): shoot the asteroids with glowing crystals to
 
 Things to try: hold drift while turning so the ship slides. The sparks turn blue, then orange as the drift charges; let go for a speed kick in the direction you're pointing plus some boost fuel back. Ride the blue **wind streams** for extra speed, and boost into a target to **ram** it.
 
+## Look and sound (placeholders)
+
+The ships (player sloop, pirate cutter, scavenger drone) and the wreck are low-poly models built by `tools/make_models.py`; their materials live in `resources/materials/`. The rift's nebula backdrop, energy walls and lumpy rocks are shaders in `shaders/`. Sound effects and the two music loops (rift, hub) are synthesized by `tools/make_sounds.py`. Everything generated is tagged `__AI`, sits under `assets/_ai_generated/` and has a row in `assets/ASSET_LEDGER.csv`, so it can be found and replaced. To swap a sound, drop a new file over the same name (or add it to `OVERRIDES` in `scripts/audio/sfx.gd`). Music and sound volume sliders are in the pause menu.
+
 ## Tuning the feel
 
 All handling numbers live in `resources/ships/sloop_stats.tres`. Open it in the Godot inspector, change values and press F5 again; each one has a tooltip. To tweak live, run the game, open the **Remote** tab in the Scene dock, select `PlayerShip` and edit its `stats` there. Camera numbers (tilt, distance, look-ahead, boost zoom, shake) are on the `RiftCamera` node in `scenes/test/flight_test.tscn`. Weapon, hull, shield and cargo numbers are on the `Cannon`, `Torpedoes`, `Health` and `Cargo` nodes in `scenes/ship/player_ship.tscn`. Enemies are `scenes/enemies/*.tscn`: their handling is in `resources/ships/`, and their behaviour (range, circling, burst fire) is on their `Input` node. Wave sizes are on `EncounterDirector` in `scenes/test/combat_test.tscn`, and the asteroid layout (seed, counts) on its `Asteroids` node. Rift tuning (run length, stray spawn rate, collapse damage, fixed seed) is on the root of `scenes/rift/rift_run.tscn`, and map size on its `Generator` node.
@@ -121,6 +125,6 @@ The flight test checks thrust, braking, steering, hold-to-burn boost, drift char
 2. **Combat and mining** (done) - cannon and torpedoes, scavenger drones and pirate cutters, mineable asteroids, cargo hold.
 3. **One rift** (done) - generator from 8 grey-box chunks, instability, stray arrivals, extraction, death and loss. Also the start screen, pause menu, ship screen and game-feel pass.
 4. **Dual economy** (done) - minimap and exit-distance rule, 10 augments in caches, credits and Void Essence, Secured Locker, saved profile, permanent upgrades at a stand-in hangar. Later: richer loot tables and an item stash at the hub.
-5. **Hub** (this) - star chart with debris fields and rift tiers I to III, shipwright repairs with hull damage carried over, and the tutorial debris field where you find the Rift Compass. Later: spending cargo on parts, a real hub scene.
-6. Content and art pass.
+5. **Hub** (done) - star chart with debris fields and rift tiers I to III, shipwright repairs with hull damage carried over, and the tutorial debris field where you find the Rift Compass. Later: spending cargo on parts, a real hub scene.
+6. **Content and art pass**, split up: 6a look and sound (this), 6b rift tears between sections, 6c nine-enemy roster, 6d mini-boss vaults and lock-in, 6e an interactive port hub you fly around, 6f loadouts, 6g more chunks, themes and loot.
 7. Polish and performance (Steam Deck / GTX 1060 at 60 fps).

@@ -13,6 +13,10 @@ extends Node3D
 @export var duration: float = 0.45
 @export var flash: MeshInstance3D
 @export var debris: GPUParticles3D
+## A flat shockwave ring that races outward past the flash.
+@export var ring: MeshInstance3D
+## &"auto" picks a small or big blast by radius; &"" is silent.
+@export var sound: StringName = &"auto"
 
 ## Who caused it; never hurt by its own blast.
 var source: Node = null
@@ -20,6 +24,7 @@ var source: Node = null
 var _age: float = 0.0
 var _applied: bool = false
 var _material: StandardMaterial3D
+var _ring_material: StandardMaterial3D
 
 
 func _ready() -> void:
@@ -28,6 +33,13 @@ func _ready() -> void:
 		flash.material_override = _material
 	if debris != null:
 		debris.emitting = true
+	if ring != null:
+		_ring_material = ring.get_active_material(0).duplicate() as StandardMaterial3D
+		ring.material_override = _ring_material
+	if sound == &"auto":
+		Sfx.play(&"explosion_big" if radius >= 7.0 else &"explosion_small", global_position)
+	elif sound != &"":
+		Sfx.play(sound, global_position)
 
 
 func _physics_process(delta: float) -> void:
@@ -40,6 +52,11 @@ func _physics_process(delta: float) -> void:
 		flash.scale = Vector3.ONE * radius * lerpf(0.3, 1.0, 1.0 - pow(1.0 - t, 3.0))
 		if _material != null:
 			_material.albedo_color.a = 1.0 - t
+	if ring != null:
+		var rt := clampf(_age / (duration * 1.3), 0.0, 1.0)
+		ring.scale = Vector3.ONE * radius * lerpf(0.2, 1.7, 1.0 - pow(1.0 - rt, 2.0))
+		if _ring_material != null:
+			_ring_material.albedo_color.a = (1.0 - rt) * 0.8
 	# Linger long enough for the debris particles to finish.
 	if _age >= maxf(duration, 1.0):
 		queue_free()

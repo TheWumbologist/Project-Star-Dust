@@ -49,6 +49,9 @@ func _run() -> void:
 	await _test_death()
 	await _test_waves()
 
+	# Let the audio server release playing sounds before quitting.
+	Sfx.stop_all()
+	await create_timer(0.2, true, false, true).timeout
 	if _failures.is_empty():
 		print("COMBAT TEST: all checks passed")
 		quit(0)
@@ -82,6 +85,7 @@ func _test_mining() -> void:
 	await _frames(45)
 	_input.fire = false
 	_check(rock.ore_left < ore_start, "cannon fire chips ore off an asteroid (%d -> %d)" % [ore_start, rock.ore_left])
+	_check(Sfx.history.has(&"cannon") and Sfx.history.has(&"rock_chip"), "the cannon and chipped rocks make sounds")
 	await _frames(120)
 	_check(_ship.cargo.count_of(ORE) > 0, "loose ore gets pulled into the hold (%d ore)" % _ship.cargo.count_of(ORE))
 	# Keep firing until the rock is mined out.
@@ -112,6 +116,7 @@ func _test_torpedo() -> void:
 	_check(_ship.heavy.charges == charges - 1, "firing a torpedo uses a charge (%d -> %d)" % [charges, _ship.heavy.charges])
 	await _frames(60)
 	_check(not is_instance_valid(drone) or not drone.is_alive(), "a torpedo blast destroys a drone")
+	_check(Sfx.history.has(&"torpedo") and Sfx.history.has(&"explosion_small"), "torpedoes and blasts make sounds")
 	# Blast shoves ships: a cutter survives the hit but gets pushed.
 	var cutter := _director.spawn_now(CUTTER, Vector3(4, 0, -20))
 	cutter.input_source = null
@@ -174,6 +179,7 @@ func _test_drone() -> void:
 			_place(p.global_position)
 			await _frames(30)
 	_check(_ship.cargo.count_of(SCRAP) > 0, "flying over scrap collects it")
+	_check(Sfx.history.has(&"pickup") and Sfx.history.has(&"enemy_shot") and Sfx.history.has(&"hit_shield"), "pickups, enemy guns and shield hits make sounds")
 	_ship.cargo.clear()
 
 

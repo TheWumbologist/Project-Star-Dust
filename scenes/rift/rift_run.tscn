@@ -19,6 +19,9 @@
 [ext_resource type="PackedScene" uid="uid://b8o7uflgh6jkf" path="res://scenes/rift/chunks/pirate_nest.tscn" id="17_pirate_nest"]
 [ext_resource type="PackedScene" uid="uid://cvij0m3tniet" path="res://scenes/rift/chunks/dead_runner.tscn" id="18_dead_runner"]
 [ext_resource type="PackedScene" uid="uid://cy8fd4cls83o2" path="res://scenes/rift/compass_derelict.tscn" id="19_derelict"]
+[ext_resource type="Script" uid="uid://b38valikpsxk3" path="res://scripts/fx/backdrop.gd" id="backdrop_script"]
+[ext_resource type="Shader" uid="uid://uwid7nq61ik5" path="res://shaders/nebula.gdshader" id="nebula_shader"]
+[ext_resource type="Shader" uid="uid://b8lmng4v72wuj" path="res://shaders/rift_wall.gdshader" id="wall_shader"]
 
 [sub_resource type="Environment" id="Env"]
 background_mode = 1
@@ -34,16 +37,24 @@ fog_enabled = true
 fog_light_color = Color(0.12, 0.06, 0.2, 1)
 fog_density = 0.004
 
+[sub_resource type="ShaderMaterial" id="Mat_nebula"]
+render_priority = 0
+shader = ExtResource("nebula_shader")
+
+[sub_resource type="PlaneMesh" id="Mesh_backdrop"]
+material = SubResource("Mat_nebula")
+size = Vector2(900, 900)
+
 [sub_resource type="ShaderMaterial" id="Mat_floor"]
 render_priority = 0
 shader = ExtResource("10_grid")
+shader_parameter/line_color = Color(0.09, 0.1, 0.24, 1)
+shader_parameter/major_color = Color(0.22, 0.14, 0.36, 1)
 shader_parameter/fade_radius = 100000.0
 
-[sub_resource type="StandardMaterial3D" id="Mat_wall"]
-transparency = 1
-blend_mode = 1
-shading_mode = 0
-albedo_color = Color(0.6, 0.3, 1, 0.45)
+[sub_resource type="ShaderMaterial" id="Mat_wall"]
+render_priority = 0
+shader = ExtResource("wall_shader")
 
 [node name="RiftRun" type="Node3D" unique_id=482988902 node_paths=PackedStringArray("generator", "player", "game_ui")]
 script = ExtResource("1_run")
@@ -64,6 +75,12 @@ light_color = Color(1, 0.9, 0.75, 1)
 light_energy = 1.2
 shadow_enabled = true
 directional_shadow_max_distance = 120.0
+
+[node name="Backdrop" type="MeshInstance3D" parent="." unique_id=574874694]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -45, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_backdrop")
+script = ExtResource("backdrop_script")
 
 [node name="Generator" type="Node3D" parent="." unique_id=316157496 node_paths=PackedStringArray("enemies_parent")]
 script = ExtResource("2_gen")
