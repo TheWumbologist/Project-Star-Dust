@@ -57,6 +57,11 @@ func _run() -> void:
 	await _test_ketch()
 	await _test_warden()
 
+	# Free the arena first: live enemies would keep starting sounds after
+	# stop_all, and a stream still playing at quit counts as a leak.
+	_level.queue_free()
+	await process_frame
+	# Let the audio server release playing sounds before quitting.
 	Sfx.stop_all()
 	await create_timer(1.0, true, false, true).timeout
 	if _failures.is_empty():
