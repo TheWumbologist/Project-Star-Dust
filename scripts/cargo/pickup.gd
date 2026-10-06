@@ -94,12 +94,12 @@ func _try_collect(body: Node) -> void:
 		queue_free()
 
 
-## Spawns `count` single pickups of `item` at `pos`, flung outward.
-static func scatter(scene: PackedScene, parent: Node, item: ItemDefinition, count: int, pos: Vector3, dir: Vector3 = Vector3.ZERO, speed: float = 9.0) -> Array[Pickup]:
+## Spawns `amount` single pickups of `loot` at `pos`, flung outward.
+static func scatter(scene: PackedScene, parent: Node, loot: ItemDefinition, amount: int, pos: Vector3, dir: Vector3 = Vector3.ZERO, speed: float = 9.0) -> Array[Pickup]:
 	var out: Array[Pickup] = []
-	for i in count:
+	for i in amount:
 		var p := scene.instantiate() as Pickup
-		p.item = item
+		p.item = loot
 		p.count = 1
 		var fling := dir
 		if fling == Vector3.ZERO:

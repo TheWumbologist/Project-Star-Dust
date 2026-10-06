@@ -54,7 +54,7 @@ func start_wave(n: int) -> void:
 	_running = true
 	wave = n
 	var drones := mini(2 + n, max_drones)
-	var cutters := mini(n / 2, max_cutters)
+	var cutters := mini(floori(n / 2.0), max_cutters)
 	wave_started.emit(n)
 	for i in drones:
 		_warp_in(drone_scene)

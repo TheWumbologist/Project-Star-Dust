@@ -174,10 +174,8 @@ func _draw() -> void:
 	var map_size := Vector2(_map.get_width(), _map.get_height()) * resolution * px_per_m
 	draw_texture_rect(_tex, Rect2(centre + (_origin - me) * px_per_m, map_size), false)
 
-	for o in _objects:
-		var node: Node3D = o.node
-		if is_instance_valid(node) and node.is_inside_tree() and is_revealed(node.global_position):
-			draw_circle(_to_map(node.global_position, me, px_per_m, centre), o.radius, o.color)
+	for o in visible_objects():
+		draw_circle(_to_map(o.node.global_position, me, px_per_m, centre), o.radius, o.color)
 	for cache in get_tree().get_nodes_in_group("augment_caches"):
 		if is_revealed(cache.global_position):
 			var at := _to_map(cache.global_position, me, px_per_m, centre)
@@ -202,6 +200,20 @@ func _draw() -> void:
 		centre + fwd * 8.0, centre - fwd * 5.0 + side * 5.0, centre - fwd * 2.0, centre - fwd * 5.0 - side * 5.0,
 	]), Color(1.0, 0.92, 0.7))
 	draw_rect(Rect2(Vector2.ZERO, size), BORDER_COLOR, false, 2.0)
+
+
+## Mapped objects still in the rift and on revealed ground. Rocks that
+## were mined out or crates that were cracked are dropped from the list.
+func visible_objects() -> Array[Dictionary]:
+	# Check validity before touching the node: a freed rock can't even be
+	# assigned to a typed variable.
+	_objects = _objects.filter(func(o): return is_instance_valid(o.node))
+	var out: Array[Dictionary] = []
+	for o in _objects:
+		var node := o.node as Node3D
+		if node.is_inside_tree() and is_revealed(node.global_position):
+			out.append(o)
+	return out
 
 
 func _to_map(world_pos: Vector3, me: Vector2, px_per_m: float, centre: Vector2) -> Vector2:

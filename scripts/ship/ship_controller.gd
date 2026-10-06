@@ -19,7 +19,8 @@ signal drift_kicked(tier: int)
 signal rammed(target: Node)
 signal damaged(amount: float, source: Node)
 signal destroyed(ship: ShipController)
-## Cargo collected from a pickup.
+## Cargo collected from a pickup (emitted by the Pickup).
+@warning_ignore("unused_signal")
 signal picked_up(item: ItemDefinition, count: int)
 
 @export var stats: ShipStats

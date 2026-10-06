@@ -148,6 +148,21 @@ func _test_minimap(run: RiftRun) -> void:
 	_check(not map.is_revealed(far), "the far exit chunk stays dark until visited")
 	map.reveal_around(far, 20.0)
 	_check(map.is_revealed(far), "flying somewhere reveals it on the map")
+	# Mining a rock out frees it; the map must just drop its dot.
+	for cell in run.generator.cells:
+		map.reveal_around(run.generator.cell_center(cell), 60.0)
+	var before := map.visible_objects().size()
+	var rock: MineableAsteroid = null
+	for o in map.visible_objects():
+		if o.node is MineableAsteroid:
+			rock = o.node
+	var mined := rock != null
+	if mined:
+		rock.free()
+	map.queue_redraw()
+	await process_frame
+	await process_frame
+	_check(mined and map.visible_objects().size() == before - 1, "a mined-out rock drops off the minimap (%d -> %d)" % [before, map.visible_objects().size()])
 	var cutter: ShipController = load("res://scenes/enemies/pirate_cutter.tscn").instantiate()
 	var drone: ShipController = load("res://scenes/enemies/scavenger_drone.tscn").instantiate()
 	_check(cutter.threat_tier > drone.threat_tier, "cutters get bigger map dots than drones")
