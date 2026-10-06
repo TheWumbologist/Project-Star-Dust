@@ -34,3 +34,6 @@ jobs:
 
       - name: Run combat and mining smoke test
         run: timeout 180 ./godot --headless --script res://tests/combat_test.gd
+
+      - name: Run rift and menus smoke test
+        run: timeout 240 ./godot --headless --script res://tests/rift_test.gd

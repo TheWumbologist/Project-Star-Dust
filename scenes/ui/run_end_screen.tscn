@@ -1,0 +1,79 @@
+[gd_scene format=3 uid="uid://5gurxujpato"]
+
+[ext_resource type="Script" uid="uid://c6ed72txhnnh8" path="res://scripts/ui/run_end_screen.gd" id="1_end"]
+[ext_resource type="Theme" uid="uid://dut2nb1aouh7e" path="res://resources/ui/menu_theme.tres" id="2_theme"]
+
+[node name="RunEndScreen" type="CanvasLayer" unique_id=767669903]
+layer = 25
+script = ExtResource("1_end")
+
+[node name="Root" type="Control" parent="." unique_id=871989575]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+
+[node name="Backdrop" type="ColorRect" parent="Root" unique_id=758256664]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12, 0, 0, 0)
+
+[node name="Center" type="CenterContainer" parent="Root" unique_id=1041371064]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Items" type="VBoxContainer" parent="Root/Center" unique_id=821663894]
+custom_minimum_size = Vector2(520, 0)
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="Root/Center/Items" unique_id=941546150]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.35, 0.25, 1)
+theme_override_colors/font_outline_color = Color(0.05, 0.02, 0.02, 1)
+theme_override_constants/outline_size = 12
+theme_override_font_sizes/font_size = 72
+text = "SHIP LOST"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Root/Center/Items" unique_id=1459472413]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+
+[node name="StatsPanel" type="PanelContainer" parent="Root/Center/Items" unique_id=1123908545]
+layout_mode = 2
+
+[node name="Stats" type="Label" parent="Root/Center/Items/StatsPanel" unique_id=1989811770]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+
+[node name="Buttons" type="HBoxContainer" parent="Root/Center/Items" unique_id=1146821818]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="RetryButton" type="Button" parent="Root/Center/Items/Buttons" unique_id=85465838]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Try again"
+
+[node name="MenuButton" type="Button" parent="Root/Center/Items/Buttons" unique_id=73849807]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Main menu"

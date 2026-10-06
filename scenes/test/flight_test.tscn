@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://h8jwjbgny8xj" path="res://scenes/world/asteroid.tscn" id="4_ast"]
 [ext_resource type="PackedScene" uid="uid://cmaukawaj6jyc" path="res://scenes/world/target_dummy.tscn" id="5_dummy"]
 [ext_resource type="PackedScene" uid="uid://cep7yldudp70y" path="res://scenes/world/wind_stream.tscn" id="6_wind"]
-[ext_resource type="PackedScene" uid="uid://djmbuxfr7wgmm" path="res://scenes/ui/flight_hud.tscn" id="7_hud"]
+[ext_resource type="PackedScene" uid="uid://b1w2irwcw0s1x" path="res://scenes/ui/game_ui.tscn" id="7_hud"]
 [ext_resource type="Shader" uid="uid://cvgk0dsj2qwac" path="res://shaders/space_grid.gdshader" id="8_grid"]
 
 [sub_resource type="Environment" id="Env"]
@@ -278,5 +278,6 @@ length = 140.0
 transform = Transform3D(-3.6199901e-06, 0, 1, 0, 1, 0, -1, 0, -3.6199901e-06, -50, 0, -55)
 length = 80.0
 
-[node name="FlightHud" parent="." unique_id=1139980843 node_paths=PackedStringArray("ship") instance=ExtResource("7_hud")]
+[node name="GameUI" parent="." unique_id=1526233543 node_paths=PackedStringArray("ship", "camera") instance=ExtResource("7_hud")]
 ship = NodePath("../PlayerShip")
+camera = NodePath("../RiftCamera")

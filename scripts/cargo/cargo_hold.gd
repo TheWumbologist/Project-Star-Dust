@@ -61,6 +61,24 @@ func total_count() -> int:
 	return total
 
 
+## Credits the fence would pay for everything aboard.
+func total_value() -> int:
+	var total := 0
+	for slot in slots:
+		total += slot.count * slot.item.value
+	return total
+
+
+## Removes and returns the slot at `index` ({} if out of range).
+func take_slot(index: int) -> Dictionary:
+	if index < 0 or index >= slots.size():
+		return {}
+	var slot: Dictionary = slots[index]
+	slots.remove_at(index)
+	changed.emit()
+	return slot
+
+
 ## Removes and returns the last slot ({} if empty).
 func take_last_slot() -> Dictionary:
 	if slots.is_empty():

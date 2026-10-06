@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://luedaqe5tiiw" path="res://scenes/ship/player_ship.tscn" id="2_ship"]
 [ext_resource type="Script" uid="uid://cjqqgtdno4s7b" path="res://scripts/camera/rift_camera.gd" id="3_cam"]
 [ext_resource type="PackedScene" uid="uid://h8jwjbgny8xj" path="res://scenes/world/asteroid.tscn" id="4_ast"]
-[ext_resource type="PackedScene" uid="uid://djmbuxfr7wgmm" path="res://scenes/ui/flight_hud.tscn" id="7_hud"]
+[ext_resource type="PackedScene" uid="uid://b1w2irwcw0s1x" path="res://scenes/ui/game_ui.tscn" id="7_hud"]
 [ext_resource type="Shader" uid="uid://cvgk0dsj2qwac" path="res://shaders/space_grid.gdshader" id="8_grid"]
 [ext_resource type="PackedScene" uid="uid://bli67hfl6l71o" path="res://scenes/world/ore_asteroid.tscn" id="9_ore"]
 [ext_resource type="Script" uid="uid://ba1838tqkdnjj" path="res://scripts/world/arena_scatter.gd" id="10_scatter"]
@@ -54,9 +54,8 @@ size = Vector3(4, 6, 228)
 material = SubResource("Mat_wall")
 size = Vector3(4, 0.3, 228)
 
-[node name="CombatTest" type="Node3D" unique_id=1820054481 node_paths=PackedStringArray("spawn_point")]
+[node name="CombatTest" type="Node3D" unique_id=1820054481]
 script = ExtResource("1_level")
-spawn_point = NodePath("SpawnPoint")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=239064458]
 environment = SubResource("Env")
@@ -131,8 +130,6 @@ far = 400.0
 script = ExtResource("3_cam")
 target = NodePath("../PlayerShip")
 
-[node name="SpawnPoint" type="Marker3D" parent="." unique_id=403496076]
-
 [node name="Asteroids" type="Node3D" parent="." unique_id=2598002]
 script = ExtResource("10_scatter")
 rock_scene = ExtResource("4_ast")
@@ -144,5 +141,6 @@ drone_scene = ExtResource("12_drone")
 cutter_scene = ExtResource("13_cutter")
 warp_flash = ExtResource("14_warp")
 
-[node name="FlightHud" parent="." unique_id=2143858663 node_paths=PackedStringArray("ship") instance=ExtResource("7_hud")]
+[node name="GameUI" parent="." unique_id=1318702957 node_paths=PackedStringArray("ship", "camera") instance=ExtResource("7_hud")]
 ship = NodePath("../PlayerShip")
+camera = NodePath("../RiftCamera")

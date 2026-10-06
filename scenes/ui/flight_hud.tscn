@@ -35,6 +35,20 @@ corner_radius_top_right = 3
 corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
+[sub_resource type="StyleBoxFlat" id="Style_rift_fill"]
+bg_color = Color(0.65, 0.3, 1, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="Style_extract_fill"]
+bg_color = Color(0.5, 1, 0.6, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
 [sub_resource type="StyleBoxFlat" id="Style_panel"]
 content_margin_left = 14.0
 content_margin_top = 10.0
@@ -155,9 +169,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -400.0
-offset_top = 120.0
+offset_top = 150.0
 offset_right = 400.0
-offset_bottom = 180.0
+offset_bottom = 210.0
 grow_horizontal = 2
 theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
 theme_override_colors/font_outline_color = Color(0.1, 0.05, 0.02, 1)
@@ -165,8 +179,72 @@ theme_override_constants/outline_size = 8
 theme_override_font_sizes/font_size = 40
 horizontal_alignment = 1
 
+[node name="RiftPanel" type="VBoxContainer" parent="." unique_id=1088477839]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -260.0
+offset_top = 16.0
+offset_right = 260.0
+offset_bottom = 130.0
+grow_horizontal = 2
+theme_override_constants/separation = 4
+
+[node name="InstabilityLabel" type="Label" parent="RiftPanel" unique_id=588740853]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.7, 1, 1)
+theme_override_colors/font_outline_color = Color(0.05, 0.02, 0.1, 1)
+theme_override_constants/outline_size = 6
+text = "RIFT INSTABILITY"
+horizontal_alignment = 1
+
+[node name="InstabilityBar" type="ProgressBar" parent="RiftPanel" unique_id=1981158829]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(520, 16)
+layout_mode = 2
+theme_override_styles/background = SubResource("Style_bar_bg")
+theme_override_styles/fill = SubResource("Style_rift_fill")
+show_percentage = false
+
+[node name="ExtractLabel" type="Label" parent="RiftPanel" unique_id=723927490]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 1, 0.7, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.08, 0.04, 1)
+theme_override_constants/outline_size = 6
+horizontal_alignment = 1
+
+[node name="ExtractBar" type="ProgressBar" parent="RiftPanel" unique_id=349741090]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(520, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("Style_bar_bg")
+theme_override_styles/fill = SubResource("Style_extract_fill")
+show_percentage = false
+
+[node name="KeyHint" type="Label" parent="." unique_id=492993949]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -420.0
+offset_top = -44.0
+offset_right = -24.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.7, 0.65, 0.55, 0.8)
+theme_override_font_sizes/font_size = 14
+text = "F1 controls    Tab / Back: ship    Esc / Start: menu"
+horizontal_alignment = 2
+
 [node name="HelpPanel" type="PanelContainer" parent="." unique_id=541700339]
 unique_name_in_owner = true
+visible = false
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -191,10 +269,12 @@ Brake: Ctrl  |  LT
 Boost (hold): Shift  |  A
 Drift (hold): Space  |  B or LB
 Jettison cargo: X  |  X
-Restart: R  |  Start
-Hide this: F1  |  Back
+Ship screen: Tab  |  Back
+Pause menu: Esc  |  Start
+Hide this: F1
 
 Shoot glowing asteroids to chip ore loose,
 fly close to scoop it up. Torpedoes crack
-rocks fast. Die and you lose your cargo.
-Drift kicks and boost-rams still work."
+rocks fast. In a rift, follow the compass
+to an extraction beacon before it collapses.
+Die and you lose your cargo."

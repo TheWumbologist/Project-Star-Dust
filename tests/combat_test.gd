@@ -227,15 +227,23 @@ func _test_cargo_limits() -> void:
 func _test_death() -> void:
 	_place(Vector3(10, 0, 10))
 	_ship.cargo.add(ORE, 5)
+	var ui := _level.get_node("GameUI") as GameUI
 	var deaths: Array[int] = []
 	_ship.destroyed.connect(func(_s): deaths.append(1))
 	_ship.take_damage(10000.0, null)
 	await _frames(2)
 	_check(deaths.size() == 1 and not _ship.is_alive(), "losing all hull destroys the ship")
-	_check(_ship.cargo.total_count() == 0, "dying loses the cargo")
-	await _frames(int((_level.respawn_delay + 0.5) * 60.0))
-	_check(_ship.is_alive() and _ship.health.hull == _ship.health.max_hull, "the ship respawns with full hull")
-	_check(_ship.global_position.length() < 1.0, "the ship respawns at the spawn point")
+	await create_timer(ui.death_card_delay + 0.5).timeout
+	_check(ui.end_screen.is_open and ui.end_screen.visible, "the death screen appears")
+	_check(paused, "the game pauses behind the death screen")
+	_check(ui.end_screen.get_node("%Title").text == "SHIP LOST", "the death screen says SHIP LOST")
+	# Back to playing for the remaining checks.
+	ui.end_screen.visible = false
+	ui.end_screen.is_open = false
+	paused = false
+	Hitstop.clear()
+	_ship.respawn(Vector3.ZERO)
+	_check(_ship.is_alive() and _ship.health.hull == _ship.health.max_hull, "a ship can be respawned with full hull")
 
 
 func _test_waves() -> void:

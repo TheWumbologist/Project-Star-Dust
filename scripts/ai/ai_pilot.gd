@@ -23,6 +23,9 @@ extends Node
 @export var shot_speed: float = 40.0
 ## Boost to close the gap when farther than this (0 = never boost).
 @export var boost_range: float = 0.0
+## Only notice targets it can see (rocks and rift walls block the view).
+## Once chasing, it keeps after the target until the leash breaks.
+@export var needs_line_of_sight: bool = true
 ## Fire bursts: shoot for this long, then pause for burst_pause.
 @export var burst_time: float = 1.0
 @export var burst_pause: float = 0.8
@@ -86,6 +89,8 @@ func _find_target(me: ShipController) -> ShipController:
 		var other := node as ShipController
 		if not _valid(other, me, best_dist):
 			continue
+		if needs_line_of_sight and other != target and not _can_see(me, other):
+			continue
 		best = other
 		best_dist = me.global_position.distance_to(other.global_position)
 	return best
@@ -95,3 +100,8 @@ func _valid(other: ShipController, me: ShipController, max_range: float) -> bool
 	return other != null and is_instance_valid(other) and other != me \
 		and other.team != me.team and other.is_alive() \
 		and me.global_position.distance_to(other.global_position) <= max_range
+
+
+func _can_see(me: ShipController, other: ShipController) -> bool:
+	var query := PhysicsRayQueryParameters3D.create(me.global_position, other.global_position, 1)
+	return me.get_world_3d().direct_space_state.intersect_ray(query).is_empty()

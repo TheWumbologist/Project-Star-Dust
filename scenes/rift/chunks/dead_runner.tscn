@@ -1,0 +1,82 @@
+[gd_scene format=3 uid="uid://cvij0m3tniet"]
+
+[ext_resource type="Script" uid="uid://buljo71mablxn" path="res://scripts/rift/rift_chunk.gd" id="1_chunk"]
+[ext_resource type="PackedScene" uid="uid://c1lvr2ehxndkf" path="res://scenes/world/wreck.tscn" id="2_wreck"]
+[ext_resource type="Resource" path="res://resources/items/void_crystal.tres" id="3_void"]
+[ext_resource type="PackedScene" uid="uid://v8m8hutq1lcu" path="res://scenes/world/salvage_crate.tscn" id="4_crate"]
+[ext_resource type="PackedScene" uid="uid://h8jwjbgny8xj" path="res://scenes/world/asteroid.tscn" id="5_rock"]
+[ext_resource type="PackedScene" uid="uid://bli67hfl6l71o" path="res://scenes/world/ore_asteroid.tscn" id="6_ore"]
+[ext_resource type="Script" uid="uid://c68igyuprc2l7" path="res://scripts/rift/enemy_spawn_point.gd" id="7_spawn"]
+[ext_resource type="PackedScene" uid="uid://bhb7npvyr2ok1" path="res://scenes/enemies/scavenger_drone.tscn" id="8_drone"]
+[ext_resource type="PackedScene" uid="uid://c0qk8vwdbwojd" path="res://scenes/enemies/pirate_cutter.tscn" id="9_cutter"]
+
+[node name="DeadRunnerChunk" type="Node3D" unique_id=1890575665]
+script = ExtResource("1_chunk")
+weight = 0.8
+min_depth = 2
+
+[node name="Wreck" parent="." unique_id=1361902112 instance=ExtResource("2_wreck")]
+transform = Transform3D(-0.588501, 0, 0.808496, 0, 1, 0, -0.808496, 0, -0.588501, -22, 0, -22)
+
+[node name="Crate1" parent="." unique_id=946842538 instance=ExtResource("4_crate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, -30)
+bonus_item = ExtResource("3_void")
+bonus_chance = 0.35
+
+[node name="Crate2" parent="." unique_id=909008401 instance=ExtResource("4_crate")]
+transform = Transform3D(0.921061, 0, 0.389418, 0, 1, 0, -0.389418, 0, 0.921061, -30, 0, -12)
+bonus_item = ExtResource("3_void")
+bonus_chance = 0.35
+
+[node name="Crate3" parent="." unique_id=1143575702 instance=ExtResource("4_crate")]
+transform = Transform3D(0.696707, 0, 0.717356, 0, 1, 0, -0.717356, 0, 0.696707, -12, 0, -14)
+bonus_item = ExtResource("3_void")
+bonus_chance = 0.35
+
+[node name="Crate4" parent="." unique_id=807788155 instance=ExtResource("4_crate")]
+transform = Transform3D(0.362358, 0, 0.932039, 0, 1, 0, -0.932039, 0, 0.362358, -28, 0, -28)
+bonus_item = ExtResource("3_void")
+bonus_chance = 0.35
+
+[node name="Rock06" parent="." unique_id=692609109 instance=ExtResource("5_rock")]
+transform = Transform3D(0.937755, 0, -0.347297, 0, 1, 0, 0.347297, 0, 0.937755, 20.6765, 0, 26.3481)
+radius = 2.5
+
+[node name="Rock07" parent="." unique_id=2135603170 instance=ExtResource("5_rock")]
+transform = Transform3D(-0.890288, 0, -0.455397, 0, 1, 0, 0.455397, 0, -0.890288, -18.9074, 0, 16.9075)
+radius = 2.7
+
+[node name="Rock08" parent="." unique_id=853815956 instance=ExtResource("5_rock")]
+transform = Transform3D(-0.301825, 0, 0.953363, 0, 1, 0, -0.953363, 0, -0.301825, 24.1766, 0, -20.4411)
+radius = 2.6
+
+[node name="Rock09" parent="." unique_id=1265030488 instance=ExtResource("5_rock")]
+transform = Transform3D(-0.526752, 0, 0.850019, 0, 1, 0, -0.850019, 0, -0.526752, 14.535, 0, -25.6658)
+radius = 2.0
+
+[node name="Rock10" parent="." unique_id=1445526657 instance=ExtResource("5_rock")]
+transform = Transform3D(-0.0904234, 0, -0.995903, 0, 1, 0, 0.995903, 0, -0.0904234, 30.9692, 0, 18.6202)
+radius = 4.5
+
+[node name="Ore11" parent="." unique_id=516528548 instance=ExtResource("6_ore")]
+transform = Transform3D(0.985642, 0, -0.168847, 0, 1, 0, 0.168847, 0, 0.985642, -31.4456, 0, 30.7899)
+ore_count = 9
+radius = 3.5
+
+[node name="Spawn12" type="Marker3D" parent="." unique_id=463487922]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, 22)
+script = ExtResource("7_spawn")
+enemy = ExtResource("8_drone")
+chance = 0.9
+
+[node name="Spawn13" type="Marker3D" parent="." unique_id=514402547]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, -20)
+script = ExtResource("7_spawn")
+enemy = ExtResource("8_drone")
+chance = 0.6
+
+[node name="Spawn14" type="Marker3D" parent="." unique_id=422530740]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 0)
+script = ExtResource("7_spawn")
+enemy = ExtResource("9_cutter")
+chance = 0.4
