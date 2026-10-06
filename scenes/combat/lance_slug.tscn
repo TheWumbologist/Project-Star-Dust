@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://cc3p7hnd0rs0h"]
+
+[ext_resource type="Script" uid="uid://bhlxub0blb5r5" path="res://scripts/combat/projectile.gd" id="1_proj"]
+[ext_resource type="PackedScene" uid="uid://7gpkb2mjv5rv" path="res://scenes/combat/impact_sparks.tscn" id="impact_sparks"]
+
+[sub_resource type="SphereShape3D" id="Shape_shot"]
+radius = 0.3
+
+[sub_resource type="StandardMaterial3D" id="Mat_shot"]
+shading_mode = 0
+albedo_color = Color(1, 0.4, 0.15, 1)
+
+[sub_resource type="CapsuleMesh" id="Mesh_shot"]
+material = SubResource("Mat_shot")
+radius = 0.16
+height = 2.6
+radial_segments = 6
+rings = 1
+
+[node name="LanceSlug" type="Area3D" unique_id=1092063970]
+collision_layer = 8
+collision_mask = 3
+monitorable = false
+script = ExtResource("1_proj")
+lifetime = 0.7
+impact = ExtResource("impact_sparks")
+impact_color = Color(1, 0.45, 0.2, 1)
+
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=11284761]
+shape = SubResource("Shape_shot")
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=2003753718]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_shot")

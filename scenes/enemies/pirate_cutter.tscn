@@ -44,7 +44,6 @@ stats = ExtResource("2_stats")
 input_source = NodePath("Input")
 visual_root = NodePath("Visual")
 team = 1
-threat_tier = 2
 free_on_death = true
 death_explosion = ExtResource("11_boom")
 

@@ -205,9 +205,9 @@ func _test_minimap(run: RiftRun) -> void:
 	await process_frame
 	await process_frame
 	_check(mined and map.visible_objects().size() == before - 1, "a mined-out rock drops off the minimap (%d -> %d)" % [before, map.visible_objects().size()])
-	var cutter: ShipController = load("res://scenes/enemies/pirate_cutter.tscn").instantiate()
+	var cutter: ShipController = load("res://scenes/enemies/broadside_galleon.tscn").instantiate()
 	var drone: ShipController = load("res://scenes/enemies/scavenger_drone.tscn").instantiate()
-	_check(cutter.threat_tier > drone.threat_tier, "cutters get bigger map dots than drones")
+	_check(cutter.threat_tier > drone.threat_tier, "tier 3 galleons get bigger map dots than tier 1 drones")
 	cutter.free()
 	drone.free()
 
@@ -428,6 +428,12 @@ func _test_tears(run: RiftRun) -> void:
 
 
 func _test_extraction(run: RiftRun) -> void:
+	# Clear the hostiles: mite blasts and mines shove the ship out of the ring.
+	for e in run.generator.enemies:
+		if is_instance_valid(e):
+			e.free()
+	for mine in get_nodes_in_group("mines"):
+		mine.free()
 	var ship := run.player
 	ship.health.max_hull = 100000.0
 	ship.health.reset()
@@ -585,22 +591,28 @@ func _test_tutorial() -> void:
 func _test_tiers() -> void:
 	Deployment.choose(3)
 	_check(not Deployment.tutorial and Deployment.tier == 3, "with the compass the chart sends you where you picked")
-	var sample: Node = load("res://scenes/enemies/scavenger_drone.tscn").instantiate()
-	var base: float = sample.get_node("Health").max_hull
-	sample.free()
 	var run := await _load_rift(SEED + 3)
 	await _frames(2)
 	_check(run.has_instability and is_equal_approx(run.collapse_time, 260.0), "tier III collapses sooner (%.0f s)" % run.collapse_time)
-	var drone: ShipController = null
+	var scaled := true
+	var tiers := {}
 	for e in run.generator.enemies:
-		if is_instance_valid(e) and e.threat_tier == 1:
-			drone = e
-			break
-	_check(drone != null and is_equal_approx(drone.health.max_hull, base * 1.75), "tier III drones are tougher (%.0f vs %.0f)" % [drone.health.max_hull if drone != null else 0.0, base])
+		if not is_instance_valid(e):
+			continue
+		tiers[e.threat_tier] = true
+		var sample: Node = load(e.scene_file_path).instantiate()
+		var base: float = sample.get_node("Health").max_hull
+		sample.free()
+		scaled = scaled and is_equal_approx(e.health.max_hull, base * run.site.enemy_health)
+	_check(scaled and run.site.enemy_health > 1.0, "tier III enemies are tougher (x%.2f hull)" % run.site.enemy_health)
+	_check(tiers.has(2) or tiers.has(3), "tier III rifts field tier 2-3 roster enemies (%s)" % str(tiers.keys()))
 	var stray := run.spawn_stray()
 	await _frames(2)
 	if stray != null:
-		_check(stray.health.max_hull > base, "stray arrivals are scaled too")
+		var stray_sample: Node = load(stray.scene_file_path).instantiate()
+		var stray_base: float = stray_sample.get_node("Health").max_hull
+		stray_sample.free()
+		_check(stray.health.max_hull > stray_base, "stray arrivals are scaled too")
 	run.queue_free()
 	await process_frame
 

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ShipStats" format=3 uid="uid://hyl3edp54w1f"]
+
+[ext_resource type="Script" uid="uid://bx0h0fqp3m2jg" path="res://scripts/ship/ship_stats.gd" id="1_stats"]
+
+[resource]
+script = ExtResource("1_stats")
+max_speed = 13.0
+acceleration = 22.0
+turn_rate_deg = 140.0
+grip = 5.0
+boost_max_speed = 26.0
+ram_damage = 15.0

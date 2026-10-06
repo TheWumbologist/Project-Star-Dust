@@ -40,3 +40,6 @@ jobs:
 
       - name: Run economy test
         run: tools/run_godot_test.sh ./godot res://tests/economy_test.gd 180
+
+      - name: Run enemy roster test
+        run: tools/run_godot_test.sh ./godot res://tests/roster_test.gd 240

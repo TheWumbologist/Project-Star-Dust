@@ -5,7 +5,9 @@ extends Node
 ##
 ## Behaviour: idle until a hostile ship comes within aggro range, then hold
 ## a preferred range from it, circling, and shoot with a lead when lined up.
-## Different enemies are different settings on this one script.
+## Many enemies are just different settings on this script; the ones that
+## fight differently (kamikazes, snipers, broadsides...) extend it and
+## override _fly(). See EnemyRoster for the full line-up.
 
 ## Start chasing hostiles within this range.
 @export var aggro_range: float = 45.0
@@ -35,6 +37,11 @@ var target: ShipController = null
 var _orbit_sign: float = 1.0
 var _burst_clock: float = 0.0
 var _retarget: float = 0.0
+## Boost hysteresis: seconds left to keep burning / to wait before the next
+## burn. Each new burn kicks the ship forward, so flickering it would stack
+## kicks far past the speed cap.
+var _boost_hold: float = 0.0
+var _boost_rest: float = 0.0
 
 
 func _ready() -> void:
@@ -51,35 +58,110 @@ func get_intent(ship: Node3D) -> ShipIntent:
 		_retarget = 0.5
 		target = _find_target(me)
 	if target == null:
-		return intent
+		_idle(me, intent, delta)
+	else:
+		_fly(me, intent, delta)
+	intent.boost_held = _gate_boost(intent.boost_held, delta)
+	return intent
 
-	var to_target := target.global_position - me.global_position
-	to_target.y = 0.0
-	var dist := to_target.length()
-	var dir := to_target / maxf(dist, 0.01)
 
-	# Steering: blend approaching/backing off with circling the target.
+## Steering and trigger for this tick, with a live `target`. Override for
+## other fighting styles; the default holds range, circles and shoots.
+func _fly(me: ShipController, intent: ShipIntent, delta: float) -> void:
+	var dist := _distance(me)
+	var dir := _direction(me)
+	_hold_range(me, intent, dir, dist, preferred_range, orbit_bias)
+	intent.boost_held = boost_range > 0.0 and dist > boost_range and me.forward().dot(dir) > 0.8
+	_aim_with_lead(me, intent, shot_speed)
+	intent.fire_held = dist <= fire_range and _burst(delta)
+
+
+## What to do with no target in reach. The default drifts to a stop.
+func _idle(_me: ShipController, _intent: ShipIntent, _delta: float) -> void:
+	pass
+
+
+# --- Helpers for pilots --------------------------------------------------------
+
+## Flat distance to the target.
+func _distance(me: Node3D) -> float:
+	var to := target.global_position - me.global_position
+	to.y = 0.0
+	return to.length()
+
+
+## Flat unit direction to the target.
+func _direction(me: Node3D) -> Vector3:
+	var to := target.global_position - me.global_position
+	to.y = 0.0
+	return to / maxf(to.length(), 0.01)
+
+
+## Blends approaching/backing off with circling the target.
+func _hold_range(_me: ShipController, intent: ShipIntent, dir: Vector3, dist: float, want: float, orbit: float) -> void:
 	var tangent := dir.cross(Vector3.UP) * _orbit_sign
-	var range_error := clampf((dist - preferred_range) / maxf(preferred_range, 1.0), -1.0, 1.0)
-	var move := dir * range_error + tangent * orbit_bias
+	var range_error := clampf((dist - want) / maxf(want, 1.0), -1.0, 1.0)
+	var move := dir * range_error + tangent * orbit
 	if move.length() > 0.05:
 		intent.steer = move.normalized()
 		# Full throttle to close or open the gap, a gentler circle once in range
 		# so the player can line up shots.
-		intent.thrust = clampf(0.35 + absf(range_error) * 0.9 + orbit_bias * 0.3, 0.0, 1.0)
-	intent.boost_held = boost_range > 0.0 and dist > boost_range and me.forward().dot(dir) > 0.8
+		intent.thrust = clampf(0.35 + absf(range_error) * 0.9 + orbit * 0.3, 0.0, 1.0)
 
-	# Aim with a lead on the target's velocity.
-	var time_to_hit := dist / maxf(shot_speed, 1.0)
-	var lead_point := target.global_position + target.velocity * time_to_hit * lead_factor
-	var aim := lead_point - me.global_position
+
+## Where the target will be when a shot at `speed` gets there.
+func _lead_point(me: Node3D, speed: float) -> Vector3:
+	var time_to_hit := _distance(me) / maxf(speed, 1.0)
+	return target.global_position + target.velocity * time_to_hit * lead_factor
+
+
+## Aims at the target's lead point.
+func _aim_with_lead(me: Node3D, intent: ShipIntent, speed: float) -> void:
+	var aim := _lead_point(me, speed) - me.global_position
 	aim.y = 0.0
 	if aim.length() > 0.1:
 		intent.aim = aim.normalized()
 
+
+## Bends `steer` away from walls and rocks dead ahead (looks `look` metres
+## out), so fleeing or charging ships don't grind along the rift walls.
+func _avoid(me: ShipController, steer: Vector3, look: float = 9.0) -> Vector3:
+	if steer == Vector3.ZERO:
+		return steer
+	var space := me.get_world_3d().direct_space_state
+	if _clear_line(space, me, steer, look):
+		return steer
+	for turn in [0.6, -0.6, 1.2, -1.2, 1.9, -1.9]:
+		var bent := steer.rotated(Vector3.UP, turn * _orbit_sign)
+		if _clear_line(space, me, bent, look):
+			return bent
+	return -steer
+
+
+func _clear_line(space: PhysicsDirectSpaceState3D, me: ShipController, dir: Vector3, length: float) -> bool:
+	var query := PhysicsRayQueryParameters3D.create(me.global_position, me.global_position + dir * length, 1)
+	return space.intersect_ray(query).is_empty()
+
+
+## Turns a pilot's raw "boost now" into burns of at least half a second
+## with a rest between them.
+func _gate_boost(wanted: bool, delta: float) -> bool:
+	_boost_hold = maxf(_boost_hold - delta, 0.0)
+	_boost_rest = maxf(_boost_rest - delta, 0.0)
+	if _boost_hold > 0.0:
+		if _boost_hold <= delta:
+			_boost_rest = 0.8
+		return true
+	if wanted and _boost_rest <= 0.0:
+		_boost_hold = 0.5
+		return true
+	return false
+
+
+## Advances the burst clock; true while in the firing part of a burst.
+func _burst(delta: float) -> bool:
 	_burst_clock = fmod(_burst_clock + delta, burst_time + burst_pause)
-	intent.fire_held = dist <= fire_range and _burst_clock < burst_time
-	return intent
+	return _burst_clock < burst_time
 
 
 func _find_target(me: ShipController) -> ShipController:

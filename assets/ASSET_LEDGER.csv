@@ -25,3 +25,16 @@ assets/_ai_generated/models/cutter__AI.obj,generated,Claude,project-owned placeh
 assets/_ai_generated/models/drone__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly model; replace with a Blender model
 assets/_ai_generated/models/sloop__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly model; replace with a Blender model
 assets/_ai_generated/models/wreck__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly model; replace with a Blender model
+assets/_ai_generated/audio/sfx_fuse__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_charge__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_lance__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_broadside__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_blink__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/audio/sfx_mine_drop__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/models/spark_mite__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly enemy model; replace with a Blender model
+assets/_ai_generated/models/void_wasp__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly enemy model; replace with a Blender model
+assets/_ai_generated/models/corsair_lancer__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly enemy model; replace with a Blender model
+assets/_ai_generated/models/broadside_galleon__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly enemy model; replace with a Blender model
+assets/_ai_generated/models/scrap_hauler__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly enemy model; replace with a Blender model
+assets/_ai_generated/models/torpedo_ketch__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly enemy model; replace with a Blender model
+assets/_ai_generated/models/rift_warden__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly enemy model; replace with a Blender model

@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://b7jwiwwd708aw"]
+
+[ext_resource type="Script" uid="uid://bhlxub0blb5r5" path="res://scripts/combat/projectile.gd" id="1_proj"]
+[ext_resource type="PackedScene" uid="uid://7gpkb2mjv5rv" path="res://scenes/combat/impact_sparks.tscn" id="impact_sparks"]
+
+[sub_resource type="SphereShape3D" id="Shape_shot"]
+radius = 0.4
+
+[sub_resource type="StandardMaterial3D" id="Mat_shot"]
+shading_mode = 0
+albedo_color = Color(1, 0.42, 0.18, 1)
+
+[sub_resource type="SphereMesh" id="Mesh_shot"]
+material = SubResource("Mat_shot")
+radius = 0.32
+height = 0.64
+radial_segments = 8
+rings = 4
+
+[node name="EnemyCannonball" type="Area3D" unique_id=1178870325]
+collision_layer = 8
+collision_mask = 3
+monitorable = false
+script = ExtResource("1_proj")
+lifetime = 1.2
+impact = ExtResource("impact_sparks")
+impact_color = Color(1, 0.5, 0.25, 1)
+
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=857605545]
+shape = SubResource("Shape_shot")
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1309761939]
+cast_shadow = 0
+mesh = SubResource("Mesh_shot")

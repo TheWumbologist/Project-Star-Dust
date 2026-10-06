@@ -1,0 +1,71 @@
+[gd_scene format=3 uid="uid://qir4xh5kyr4o"]
+
+[ext_resource type="Script" uid="uid://co6ig6xqqr5mx" path="res://scripts/combat/proximity_mine.gd" id="1_mine"]
+[ext_resource type="PackedScene" uid="uid://yh6ia4pyaayf" path="res://scenes/combat/explosion.tscn" id="2_boom"]
+[ext_resource type="Material" uid="uid://y8q6emcas1lb" path="res://resources/materials/dark_iron.tres" id="mat_dark_iron"]
+
+[sub_resource type="SphereShape3D" id="Shape_mine"]
+radius = 0.6
+
+[sub_resource type="SphereMesh" id="Mesh_mine"]
+radial_segments = 8
+rings = 4
+
+[sub_resource type="CylinderMesh" id="Mesh_spike"]
+top_radius = 0.0
+bottom_radius = 0.1
+height = 0.5
+radial_segments = 4
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Mat_light"]
+shading_mode = 0
+albedo_color = Color(1, 0.15, 0.1, 1)
+
+[sub_resource type="SphereMesh" id="Mesh_light"]
+material = SubResource("Mat_light")
+radius = 0.17
+height = 0.34
+radial_segments = 6
+rings = 3
+
+[node name="ProximityMine" type="AnimatableBody3D" unique_id=1845655546 node_paths=PackedStringArray("light")]
+collision_layer = 4
+collision_mask = 0
+sync_to_physics = false
+script = ExtResource("1_mine")
+explosion_scene = ExtResource("2_boom")
+light = NodePath("Light")
+
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=163018794]
+shape = SubResource("Shape_mine")
+
+[node name="Body" type="MeshInstance3D" parent="." unique_id=235339133]
+mesh = SubResource("Mesh_mine")
+surface_material_override/0 = ExtResource("mat_dark_iron")
+
+[node name="SpikeX" type="MeshInstance3D" parent="Body" unique_id=811132319]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0.6, 0, 0)
+mesh = SubResource("Mesh_spike")
+surface_material_override/0 = ExtResource("mat_dark_iron")
+
+[node name="SpikeNX" type="MeshInstance3D" parent="Body" unique_id=105993340]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, -0.6, 0, 0)
+mesh = SubResource("Mesh_spike")
+surface_material_override/0 = ExtResource("mat_dark_iron")
+
+[node name="SpikeZ" type="MeshInstance3D" parent="Body" unique_id=2051153988]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0.6)
+mesh = SubResource("Mesh_spike")
+surface_material_override/0 = ExtResource("mat_dark_iron")
+
+[node name="SpikeNZ" type="MeshInstance3D" parent="Body" unique_id=1522549268]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, -0.6)
+mesh = SubResource("Mesh_spike")
+surface_material_override/0 = ExtResource("mat_dark_iron")
+
+[node name="Light" type="MeshInstance3D" parent="." unique_id=325905220]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+visible = false
+cast_shadow = 0
+mesh = SubResource("Mesh_light")

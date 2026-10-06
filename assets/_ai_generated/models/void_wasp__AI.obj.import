@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://b75myugkknr8j"
+path="res://.godot/imported/void_wasp__AI.obj-a909fcd857351a073401d6a783e8e76f.mesh"
+
+[deps]
+
+files=["res://.godot/imported/void_wasp__AI.obj-a909fcd857351a073401d6a783e8e76f.mesh"]
+
+source_file="res://assets/_ai_generated/models/void_wasp__AI.obj"
+dest_files=["res://.godot/imported/void_wasp__AI.obj-a909fcd857351a073401d6a783e8e76f.mesh", "res://.godot/imported/void_wasp__AI.obj-a909fcd857351a073401d6a783e8e76f.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

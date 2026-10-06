@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://c0qk8vwdbwojd" path="res://scenes/enemies/pirate_cutter.tscn" id="7_cutter"]
 [ext_resource type="PackedScene" uid="uid://bhb7npvyr2ok1" path="res://scenes/enemies/scavenger_drone.tscn" id="8_drone"]
 [ext_resource type="PackedScene" uid="uid://ds5c06x0x5qa0" path="res://scenes/rift/augment_cache.tscn" id="9_cache"]
+[ext_resource type="PackedScene" uid="uid://ci3py26vn2qsq" path="res://scenes/enemies/scrap_hauler.tscn" id="20_hauler"]
 
 [node name="PirateNestChunk" type="Node3D" unique_id=1694377309]
 script = ExtResource("1_chunk")
@@ -71,6 +72,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 26)
 script = ExtResource("6_spawn")
 enemy = ExtResource("8_drone")
 chance = 0.8
+
+[node name="SpawnSpecialist1" type="Marker3D" parent="." unique_id=893712977]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 6)
+script = ExtResource("6_spawn")
+enemy = ExtResource("20_hauler")
+chance = 0.5
 
 [node name="AugmentCache" parent="." unique_id=517640312 instance=ExtResource("9_cache")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 8)
