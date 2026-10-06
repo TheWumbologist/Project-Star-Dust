@@ -1,0 +1,117 @@
+[gd_scene format=3 uid="uid://cmqps7vq3vgjk"]
+
+[ext_resource type="Script" uid="uid://pvmtxb0ojx8a" path="res://scripts/ui/hangar.gd" id="1_hangar"]
+[ext_resource type="Theme" uid="uid://dut2nb1aouh7e" path="res://resources/ui/menu_theme.tres" id="2_theme"]
+[ext_resource type="Shader" uid="uid://cuy60rdbt83yh" path="res://shaders/menu_starfield.gdshader" id="3_stars"]
+
+[sub_resource type="ShaderMaterial" id="Mat_stars"]
+shader = ExtResource("3_stars")
+
+[node name="Hangar" type="Control" unique_id=1770220732]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_hangar")
+
+[node name="Background" type="ColorRect" parent="." unique_id=722636452]
+material = SubResource("Mat_stars")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=98180752]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 70
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 70
+theme_override_constants/margin_bottom = 50
+
+[node name="Columns" type="HBoxContainer" parent="Margin" unique_id=1572626243]
+layout_mode = 2
+theme_override_constants/separation = 60
+
+[node name="Left" type="VBoxContainer" parent="Margin/Columns" unique_id=609590509]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Margin/Columns/Left" unique_id=1852344595]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+theme_override_font_sizes/font_size = 44
+text = "HANGAR"
+
+[node name="Wallet" type="Label" parent="Margin/Columns/Left" unique_id=1168776637]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.92, 0.75, 1)
+theme_override_font_sizes/font_size = 24
+text = "0 credits    0 Void Essence"
+
+[node name="UpgradesTitle" type="Label" parent="Margin/Columns/Left" unique_id=1425907210]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.75, 0.35, 1)
+theme_override_font_sizes/font_size = 20
+text = "SHIPWRIGHT  (permanent upgrades)"
+
+[node name="Upgrades" type="VBoxContainer" parent="Margin/Columns/Left" unique_id=121883121]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Spacer" type="Control" parent="Margin/Columns/Left" unique_id=1281799835]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LaunchButton" type="Button" parent="Margin/Columns/Left" unique_id=361803272]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Launch into a rift"
+
+[node name="MenuButton" type="Button" parent="Margin/Columns/Left" unique_id=2069315359]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Main menu"
+
+[node name="Right" type="VBoxContainer" parent="Margin/Columns" unique_id=1077463755]
+custom_minimum_size = Vector2(440, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ReportTitle" type="Label" parent="Margin/Columns/Right" unique_id=549168152]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.75, 0.35, 1)
+theme_override_font_sizes/font_size = 20
+text = "LAST RUN"
+
+[node name="Report" type="Label" parent="Margin/Columns/Right" unique_id=695535245]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.84, 0.75, 1)
+theme_override_font_sizes/font_size = 17
+text = "No runs yet."
+
+[node name="Tips" type="Label" parent="Margin/Columns/Right" unique_id=1950842485]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.6, 0.52, 1)
+theme_override_font_sizes/font_size = 15
+text = "Extract: the hold sells for credits and your
+augments break down into Void Essence.
+Die: augments are gone and only the Secured
+Locker (your most valuable cargo slot) pays out."

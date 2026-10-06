@@ -88,7 +88,7 @@ metadata/_tab_index = 2
 
 [node name="AugmentInfo" type="Label" parent="Root/Center/Frame/Tabs/Augments" unique_id=1826815577]
 layout_mode = 2
-text = "Augments are wild run-only upgrades found in augment caches deep in rifts. They stack and combine, and they're lost when the run ends (extracting turns them into Void Essence). Caches arrive with the economy milestone, so these slots stay empty for now."
+text = "Augments are wild run-only upgrades found in augment caches deep in rifts. They stack and combine for this run only: extract and they break down into Void Essence, die and they're lost. Fly into a glowing teal cache to pick one of three."
 autowrap_mode = 3
 
 [node name="AugmentGrid" type="GridContainer" parent="Root/Center/Frame/Tabs/Augments" unique_id=19291019]
@@ -96,7 +96,7 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/h_separation = 12
 theme_override_constants/v_separation = 12
-columns = 8
+columns = 4
 
 [node name="Cargo" type="VBoxContainer" parent="Root/Center/Frame/Tabs" unique_id=1057651280]
 visible = false

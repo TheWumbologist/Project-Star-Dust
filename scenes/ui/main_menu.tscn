@@ -103,5 +103,5 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_colors/font_color = Color(0.6, 0.55, 0.7, 1)
 theme_override_font_sizes/font_size = 14
-text = "Prototype · milestone 3 · grey-box"
+text = "Prototype · milestone 4 · grey-box"
 horizontal_alignment = 2

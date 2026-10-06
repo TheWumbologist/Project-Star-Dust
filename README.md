@@ -8,7 +8,7 @@ A sci-fi roguelike looter with space-pirate aesthetics, fast movement and proced
 
 1. Install **Godot 4.6 or newer** (standard build, not .NET). 4.6 and 4.7 are tested.
 2. Open Godot, click **Import**, pick `project.godot` in this folder, then **Import & Edit**.
-3. Press **F5** (or the ▶ button top right). The start screen opens: **Enter the Rift** starts a run, and the two test arenas (combat and flight) are there too.
+3. Press **F5** (or the ▶ button top right). The start screen opens: **Enter the Rift** goes to the hangar, where **Launch into a rift** starts a run. The two test arenas (combat and flight) are on the start screen too.
 
 The first open takes a few seconds while Godot imports the project.
 
@@ -31,7 +31,9 @@ Twin-stick: fly with one hand, aim with the other.
 | Restart (test arenas only) | R | |
 | Show/hide controls | F1 | |
 
-**In a rift:** each run builds a new rift from hand-made chunks. Mine, loot wrecks and fight your way to an extraction beacon (the green arrow on the edge of the screen, your Rift Compass reading, points to the nearest one; red edge arrows show nearby enemies off screen), then hold position in the ring to escape with your cargo. Rift instability climbs the whole time (a full collapse takes 5 minutes, with a countdown from 50%): more stray enemies warp in as it rises, and at 100% the rift collapses and tears your hull apart. Die and the cargo is lost.
+**In a rift:** each run builds a new rift from hand-made chunks. Mine, loot wrecks and fight your way to an extraction beacon (the green arrow on the edge of the screen, your Rift Compass reading, points to the nearest one; red edge arrows show nearby enemies off screen; the minimap in the top right fills in as you explore, with enemies in red sized by threat, ore in its colour, crates, wrecks and the exits), then hold position in the ring to escape with your cargo. Rift instability climbs the whole time (a full collapse takes 5 minutes, with a countdown from 50%): more stray enemies warp in as it rises, and at 100% the rift collapses and tears your hull apart.
+
+**Loot and the hangar:** fly into a glowing teal **augment cache** (some chunks have one, and pirate cutters sometimes drop one) to pick one of three augments. Augments boost the ship for this run only and stack. Extract and the hold sells for credits while augments break down into **Void Essence**. Die and the augments are lost and the hold with them, except the **Secured Locker** (your most valuable cargo slot), which still pays out. Between runs the hangar's shipwright sells permanent upgrades (hull, shields, cargo racks, cannon, torpedoes, engine) for credits and essence. Progress is saved in `user://profile.json` (on Windows: `%APPDATA%\Godot\app_userdata\Rift Runners\`); delete it to start over.
 
 In the combat arena (a test level): shoot the asteroids with glowing crystals to chip ore loose and fly close to scoop it up (torpedoes crack them fastest). Waves of scavenger drones and pirate cutters warp in, marked by a purple flash; they drop scrap. Your hold has 6 slots, and if your hull is destroyed you lose everything in it and respawn at the centre.
 
@@ -43,7 +45,7 @@ All handling numbers live in `resources/ships/sloop_stats.tres`. Open it in the 
 
 ### Building rift chunks
 
-Chunks live in `scenes/rift/chunks/`. Each is a `RiftChunk` (80 x 80 m) holding rocks, ore, wrecks, crates, wind streams and `EnemySpawnPoint` markers (pick the enemy and a spawn chance). Leave a clear cross about 12 m either side of the middle, because doorways open at the middle of each edge; the generator rotates chunks and builds the walls itself. Set `kind` (start, extract, normal), `weight` and `min_depth` on the root, then add the scene to the matching list on the `Generator` node.
+Chunks live in `scenes/rift/chunks/`. Each is a `RiftChunk` (80 x 80 m) holding rocks, ore, wrecks, crates, wind streams and `EnemySpawnPoint` markers (pick the enemy and a spawn chance). Leave a clear cross about 12 m either side of the middle, because doorways open at the middle of each edge; the generator rotates chunks and builds the walls itself. Set `kind` (start, extract, normal), `weight` and `min_depth` on the root, then add the scene to the matching list on the `Generator` node. Exits are never placed closer than `min_exit_depth` chunks of travel (4) or `min_exit_spread` grid cells in a straight line (3) from the start; both are on the `Generator` node.
 
 ## Layout
 
@@ -51,8 +53,10 @@ Chunks live in `scenes/rift/chunks/`. Each is a `RiftChunk` (80 x 80 m) holding 
 project.godot            engine settings and input map
 scenes/
   ui/main_menu.tscn      start screen (main scene)
+  ui/hangar.tscn         between runs: wallet, last run, upgrades, launch
   rift/rift_run.tscn     a rift run: generator, player, UI
   rift/chunks/           hand-made rift pieces
+  rift/augment_cache.tscn  pick-one-of-three augment cache
   test/combat_test.tscn  milestone 2 combat and mining arena
   test/flight_test.tscn  milestone 1 flight arena
   ship/player_ship.tscn  player ship: hull, weapons, health, cargo, effects, reticle
@@ -60,23 +64,25 @@ scenes/
   world/                 asteroids (plain and ore), wrecks, salvage crates, target dummy, wind stream
   combat/                projectiles, torpedo, explosions
   cargo/                 loose cargo pickup
-  ui/                    HUD, pause menu, ship screen, end-of-run card, screen effects
+  ui/                    HUD, minimap, pause menu, ship screen, augment picker, end-of-run card, screen effects
 scripts/
   ship/                  flight model (ShipController), stats, input, effects, reticle
   ai/                    enemy pilots (AIPilot)
   camera/                tilted look-ahead camera (RiftCamera)
   combat/                weapons, projectiles, explosions, health, hit flashes
   cargo/                 item definitions, cargo hold, pickups, loot drops
-  rift/                  rift generator, run rules (instability, extraction)
+  rift/                  rift generator, run rules (instability, extraction, payout), augment caches
+  economy/               augments, ship loadout (upgrades + augments -> live stats), Profile save and upgrade shop
   world/                 targets, asteroids, mining, crates, wind streams, waves, layout
   fx/                    hitstop
   ui/                    HUD, menus, scene switching
 resources/ships/         per-hull ShipStats (.tres), enemies included
 resources/items/         one ItemDefinition per kind of loot (scrap, ore, void crystal)
+resources/augments/      the 10 augments (AugmentDefinition .tres)
 resources/ui/            menu theme
 shaders/                 grid floor, wind stream, screen effects and menu starfield
 assets/                  art/audio; every file listed in ASSET_LEDGER.csv
-tests/                   headless smoke tests (flight, combat, rift and menus)
+tests/                   headless smoke tests (flight, combat, rift and menus, economy)
 tools/                   asset ledger check
 ```
 
@@ -85,7 +91,8 @@ tools/                   asset ledger check
 - **Input is separate from rules.** `ShipController` never reads the keyboard or gamepad. It asks its `input_source` for a `ShipIntent` each physics tick. `PlayerShipInput` is one source; the tests use a scripted one, and enemies use `AIPilot`, so they fly by the same rules as the player. A co-op player is just another source.
 - **Ships are built from parts.** Weapons (`ShipWeapon`, primary or heavy slot), `Health` (hull and shields) and `CargoHold` are child nodes, and teams decide who can hurt whom. Enemies are the same `ShipController` with different parts and stats.
 - **No singletons** that assume one player. The camera and HUD are pointed at a ship, not at "the player".
-- **Stats and loot are Resources**, so new hulls and items are new `.tres` files, and hub upgrades can produce modified copies later.
+- **Stats and loot are Resources**, so new hulls, items and augments are new `.tres` files. A ship's `ShipLoadout` child turns upgrades and augments into live numbers on a duplicated copy of its stats, so the shared `.tres` never changes.
+- **The save is one static class** (`Profile`), not an autoload, so `project.godot` stays untouched.
 
 ## Assets and AI tagging
 
@@ -99,16 +106,17 @@ godot --headless --import
 godot --headless --script res://tests/smoke_test.gd
 godot --headless --script res://tests/combat_test.gd
 godot --headless --script res://tests/rift_test.gd
+godot --headless --script res://tests/economy_test.gd
 ```
 
-The flight test checks thrust, braking, steering, hold-to-burn boost, drift charge and kick, shooting and target respawn, the aim reticle, wind streams and camera framing. The combat test checks mining, cargo pickup and limits, jettison, torpedoes, both enemy types, shields, death and respawn, and waves. The rift test checks the generated layout (reachable chunks, doorways and walls, exits, enemies, same seed = same rift), instability and stray arrivals, the collapse countdown, the edge arrows, extraction, collapse and death, the pause menu and ship screen (including the real Tab key), and the boost camera. CI runs all of them on every pull request.
+The flight test checks thrust, braking, steering, hold-to-burn boost, drift charge and kick, shooting and target respawn, the aim reticle, wind streams and camera framing. The combat test checks mining, cargo pickup and limits, jettison, torpedoes, both enemy types, shields, death and respawn, and waves. The rift test checks the generated layout (reachable chunks, doorways and walls, exits kept away from the start, enemies, same seed = same rift), the minimap, instability and stray arrivals, the collapse countdown, the edge arrows, extraction, collapse and death, the pause menu and ship screen (including the real Tab key), the boost camera, augment caches, the extraction payout, the Secured Locker and the hangar. The economy test checks augment and upgrade maths, the augment catalog, and saving and buying with the profile. Tests use their own save file. CI runs all of them on every pull request.
 
 ## Milestones (from the GDD)
 
 1. **Flight feel** (done) - movement, boost, drift, camera in a grey-box arena. (The grapple was cut from core movement; it may return as a salvage-grabbing augment.)
 2. **Combat and mining** (done) - cannon and torpedoes, scavenger drones and pirate cutters, mineable asteroids, cargo hold.
-3. **One rift** (this) - generator from 8 grey-box chunks, instability, stray arrivals, extraction, death and loss. Also the start screen, pause menu, ship screen and game-feel pass.
-4. Dual economy - augment caches and 10 augments, loot tables, run and profile inventories, saving.
+3. **One rift** (done) - generator from 8 grey-box chunks, instability, stray arrivals, extraction, death and loss. Also the start screen, pause menu, ship screen and game-feel pass.
+4. **Dual economy** (this) - minimap and exit-distance rule, 10 augments in caches, credits and Void Essence, Secured Locker, saved profile, permanent upgrades at a stand-in hangar. Later: richer loot tables and an item stash at the hub.
 5. Hub - shipwright, gate selection, spending cargo on parts. Full loop end to end.
 6. Content and art pass.
 7. Polish and performance (Steam Deck / GTX 1060 at 60 fps).

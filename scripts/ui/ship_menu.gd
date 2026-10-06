@@ -1,9 +1,8 @@
 class_name ShipMenu
 extends CanvasLayer
 ## Tab / Back: the ship screen. Pauses the game and shows four pages:
-## ship stats, skills (what the ship can do), augments (empty until the
-## economy milestone adds augment caches) and the cargo hold, where cargo
-## can be dumped slot by slot.
+## ship stats, skills (what the ship can do), the augments fitted this run
+## and the cargo hold, where cargo can be dumped slot by slot.
 
 signal opened
 signal closed
@@ -130,10 +129,37 @@ func _fill_skills() -> void:
 
 func _fill_augments() -> void:
 	_clear(_augment_grid)
-	for i in AUGMENT_SLOTS:
-		var slot := FlightHud.make_slot_box({}, 72)
-		slot.tooltip_text = "Empty augment slot"
-		_augment_grid.add_child(slot)
+	var loadout := ship.loadout
+	var fitted: Array[AugmentDefinition] = []
+	if loadout != null:
+		fitted = loadout.augments
+	var slots := loadout.augment_slots if loadout != null else AUGMENT_SLOTS
+	for i in slots:
+		if i < fitted.size():
+			_augment_grid.add_child(_augment_tile(fitted[i]))
+		else:
+			var slot := FlightHud.make_slot_box({}, 72)
+			slot.tooltip_text = "Empty augment slot. Fly into augment caches in the rift to fill it."
+			_augment_grid.add_child(slot)
+
+
+func _augment_tile(a: AugmentDefinition) -> Control:
+	var box := VBoxContainer.new()
+	box.custom_minimum_size = Vector2(150, 72)
+	box.tooltip_text = "%s (%s)\n%s\nBreaks down into %d Void Essence if you extract." % [a.display_name, a.rarity_name(), a.description, a.essence_value]
+	var title := Label.new()
+	title.text = a.display_name
+	title.add_theme_font_size_override("font_size", 16)
+	title.add_theme_color_override("font_color", a.rarity_color())
+	var desc := Label.new()
+	desc.text = a.description
+	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	desc.custom_minimum_size = Vector2(150, 0)
+	desc.add_theme_font_size_override("font_size", 13)
+	desc.add_theme_color_override("font_color", Color(0.8, 0.76, 0.68))
+	box.add_child(title)
+	box.add_child(desc)
+	return box
 
 
 func _fill_cargo() -> void:

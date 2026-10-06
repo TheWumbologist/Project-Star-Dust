@@ -23,6 +23,7 @@ extends CanvasLayer
 @onready var _instability_bar: ProgressBar = %InstabilityBar
 @onready var _countdown_label: Label = %CountdownLabel
 @onready var _edge_markers: EdgeMarkers = %EdgeMarkers
+@onready var _minimap: Minimap = %Minimap
 @onready var _extract_label: Label = %ExtractLabel
 @onready var _extract_bar: ProgressBar = %ExtractBar
 
@@ -49,6 +50,7 @@ func bind(target: ShipController) -> void:
 	_bound = true
 	ship = target
 	_edge_markers.ship = ship
+	_minimap.ship = ship
 	ship.drift_kicked.connect(func(tier): _callout("DRIFT KICK " + "I".repeat(tier)))
 	ship.rammed.connect(func(_t): _callout("RAM!"))
 	ship.picked_up.connect(func(item, count): _callout("+%d %s" % [count, item.display_name.to_upper()]))

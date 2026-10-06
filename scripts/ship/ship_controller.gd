@@ -9,7 +9,8 @@ extends CharacterBody3D
 ## node with `get_intent(ship) -> ShipIntent`). It owns no input or camera
 ## code, so a second player or an AI pilot is just another input source.
 ## Optional child components the ship drives or exposes: ShipWeapon nodes,
-## a Health named "Health" and a CargoHold named "Cargo".
+## a Health named "Health", a CargoHold named "Cargo" and a ShipLoadout
+## named "Loadout".
 
 signal boost_started
 signal boost_ended
@@ -18,7 +19,8 @@ signal drift_kicked(tier: int)
 signal rammed(target: Node)
 signal damaged(amount: float, source: Node)
 signal destroyed(ship: ShipController)
-## Cargo collected from a pickup.
+## Cargo collected from a pickup (emitted by the Pickup).
+@warning_ignore("unused_signal")
 signal picked_up(item: ItemDefinition, count: int)
 
 @export var stats: ShipStats
@@ -30,6 +32,9 @@ signal picked_up(item: ItemDefinition, count: int)
 @export var turret: Node3D
 ## Ships only hurt ships on other teams (0 = player crews, 1 = hostiles).
 @export var team: int = 0
+## How dangerous this ship is (1 = drone, 2 = cutter, 3 = elites later).
+## Sizes its dot on the minimap.
+@export_range(1, 3) var threat_tier: int = 1
 ## Free the ship when destroyed (enemies). Otherwise it is disabled and
 ## waits for respawn() (players).
 @export var free_on_death: bool = false
@@ -66,6 +71,8 @@ var _alive: bool = true
 ## The primary and heavy weapons, if fitted (for HUDs and tests).
 @onready var primary: ShipWeapon = _find_weapon(ShipWeapon.Slot.PRIMARY)
 @onready var heavy: ShipWeapon = _find_weapon(ShipWeapon.Slot.HEAVY)
+## Upgrades and run augments, if the ship has a "Loadout" child.
+@onready var loadout: ShipLoadout = get_node_or_null("Loadout") as ShipLoadout
 
 
 func _ready() -> void:

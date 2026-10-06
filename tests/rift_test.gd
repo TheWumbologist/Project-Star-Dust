@@ -24,18 +24,27 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	# Never touch the real save.
+	Profile.path = "user://test_rift_profile.json"
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(Profile.path))
+	Profile.load_profile()
 	await _test_main_menu()
 	var run := await _load_rift(SEED)
 	await _test_layout(run)
 	await _test_same_seed(run)
+	await _test_minimap(run)
 	await _test_instability(run)
 	await _test_menus(run)
 	await _test_camera(run)
+	await _test_augment_cache(run)
 	await _test_extraction(run)
 	run.queue_free()
 	await process_frame
+	await _test_hangar()
 	run = await _load_rift(SEED + 1)
+	_check(run.player.health.max_hull > 100.0, "hangar upgrades apply in the next rift (hull %.0f)" % run.player.health.max_hull)
 	await _test_collapse_and_death(run)
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(Profile.path))
 
 	if _failures.is_empty():
 		print("RIFT TEST: all checks passed")
@@ -73,15 +82,30 @@ func _test_layout(run: RiftRun) -> void:
 	_check(exits >= 1 and exits <= 2, "the rift has 1 or 2 extraction beacons (%d)" % exits)
 	var far := true
 	for cell in gen.extract_cells:
-		if gen.cells[cell]["depth"] < 3:
+		if gen.cells[cell]["depth"] < gen.min_exit_depth or absi(cell.x) + absi(cell.y) < gen.min_exit_spread:
 			far = false
-	_check(far, "extraction is at least 3 chunks from the start")
+	_check(far, "extraction is at least %d chunks of travel and %d cells away from the start" % [gen.min_exit_depth, gen.min_exit_spread])
+	# The same rule over many layouts, without building chunks.
+	var planner := RiftGenerator.new()
+	var bad := 0
+	for s in range(1, 401):
+		planner.plan_layout(s)
+		for cell in planner.extract_cells:
+			if planner.cells[cell]["depth"] < planner.min_exit_depth or absi(cell.x) + absi(cell.y) < planner.min_exit_spread:
+				bad += 1
+	planner.free()
+	_check(bad == 0, "no exit lands near the start across 400 random layouts (%d bad)" % bad)
 	_check(gen.enemies.size() >= 4, "chunks place enemies when the rift is built (%d)" % gen.enemies.size())
 	var start_clear := true
 	for enemy in gen.enemies:
 		if gen.cell_at(enemy.global_position) == Vector2i.ZERO:
 			start_clear = false
 	_check(start_clear, "the start chunk has no enemies")
+	var caches_ok := true
+	for cache in gen.augment_caches:
+		caches_ok = caches_ok and cache.is_inside_tree()
+	print("        (%d augment caches rolled)" % gen.augment_caches.size())
+	_check(caches_ok, "rolled augment caches are in the rift")
 
 	# Doorways are open, other edges are walled.
 	var space := run.get_world_3d().direct_space_state
@@ -115,6 +139,37 @@ func _test_same_seed(run: RiftRun) -> void:
 	await process_frame
 
 
+func _test_minimap(run: RiftRun) -> void:
+	var map := run.game_ui.hud.get_node("%Minimap") as Minimap
+	await process_frame
+	_check(map.visible, "the minimap shows in a rift")
+	_check(map.is_revealed(run.player.global_position), "the minimap reveals where the ship is")
+	var far := run.generator.cell_center(run.generator.extract_cells[0])
+	_check(not map.is_revealed(far), "the far exit chunk stays dark until visited")
+	map.reveal_around(far, 20.0)
+	_check(map.is_revealed(far), "flying somewhere reveals it on the map")
+	# Mining a rock out frees it; the map must just drop its dot.
+	for cell in run.generator.cells:
+		map.reveal_around(run.generator.cell_center(cell), 60.0)
+	var before := map.visible_objects().size()
+	var rock: MineableAsteroid = null
+	for o in map.visible_objects():
+		if o.node is MineableAsteroid:
+			rock = o.node
+	var mined := rock != null
+	if mined:
+		rock.free()
+	map.queue_redraw()
+	await process_frame
+	await process_frame
+	_check(mined and map.visible_objects().size() == before - 1, "a mined-out rock drops off the minimap (%d -> %d)" % [before, map.visible_objects().size()])
+	var cutter: ShipController = load("res://scenes/enemies/pirate_cutter.tscn").instantiate()
+	var drone: ShipController = load("res://scenes/enemies/scavenger_drone.tscn").instantiate()
+	_check(cutter.threat_tier > drone.threat_tier, "cutters get bigger map dots than drones")
+	cutter.free()
+	drone.free()
+
+
 func _test_instability(run: RiftRun) -> void:
 	_check(run.instability < 0.05, "instability starts near zero")
 	var stages: Array[int] = []
@@ -143,8 +198,10 @@ func _test_instability(run: RiftRun) -> void:
 	if on_screen:
 		_check(exit_marks.is_empty(), "no edge arrow while the extraction beacon is on screen")
 	else:
-		var want := (cam.unproject_position(exit.global_position) - cam.get_viewport().get_visible_rect().size * 0.5).normalized()
-		_check(exit_marks.size() == 1 and exit_marks[0].direction.dot(want) > 0.95, "an edge arrow points to the nearest extraction")
+		# Screen right is world +X and screen down is world +Z (fixed camera yaw).
+		var flat := exit.global_position - run.player.global_position
+		var want := Vector2(flat.x, flat.z).normalized()
+		_check(exit_marks.size() == 1 and exit_marks[0].direction.dot(want) > 0.8, "an edge arrow points to the nearest extraction")
 	# An enemy just off screen gets a red edge arrow.
 	var probe: ShipController = load("res://scenes/enemies/scavenger_drone.tscn").instantiate()
 	probe.input_source = null
@@ -206,11 +263,47 @@ func _test_camera(run: RiftRun) -> void:
 	await _frames(60)
 
 
+func _test_augment_cache(run: RiftRun) -> void:
+	var ui := run.game_ui
+	var ship := run.player
+	var cache: AugmentCache = run.augment_cache.instantiate()
+	run.add_child(cache)
+	cache.global_position = ship.global_position + Vector3(12, 0, 0)
+	await _frames(2)
+	_check(not ui.augment_picker.is_open, "the cache waits for the ship")
+	var damage := ship.primary.damage
+	ship.global_position = cache.global_position
+	ship.velocity = Vector3.ZERO
+	await _frames(4)
+	_check(ui.augment_picker.is_open and paused, "flying into a cache opens the augment picker and pauses")
+	var offered := ui.augment_picker.offered
+	var distinct := offered.size() == 3 and offered[0] != offered[1] and offered[1] != offered[2] and offered[0] != offered[2]
+	_check(distinct, "the cache offers three different augments")
+	_press("pause")
+	await process_frame
+	await process_frame
+	_check(not ui.pause_menu.visible, "Esc doesn't open the pause menu over the picker")
+	ui.augment_picker.choose(load("res://resources/augments/overcharged_cannons.tres"))
+	await process_frame
+	_check(not paused and not ui.augment_picker.is_open, "picking an augment resumes the run")
+	_check(ship.loadout.augments.size() == 1, "the picked augment is fitted")
+	_check(is_equal_approx(ship.primary.damage, damage * 1.25), "Overcharged Cannons adds 25%% cannon damage (%.1f -> %.1f)" % [damage, ship.primary.damage])
+	_check(not is_instance_valid(cache) or cache.is_queued_for_deletion(), "an opened cache is used up")
+	_press("ship_menu")
+	await process_frame
+	var tile := ui.ship_menu.get_node("%AugmentGrid").get_child(0)
+	_check(tile is VBoxContainer and "Overcharged" in tile.get_child(0).text, "the ship screen lists fitted augments")
+	_press("ship_menu")
+	await process_frame
+
+
 func _test_extraction(run: RiftRun) -> void:
 	var ship := run.player
 	ship.health.max_hull = 100000.0
 	ship.health.reset()
+	ship.cargo.clear()
 	ship.cargo.add(ORE, 3)
+	var credits_before := Profile.credits
 	var results: Array[bool] = []
 	run.run_ended.connect(func(e): results.append(e))
 	var exit := run.nearest_extraction(ship.global_position)
@@ -224,6 +317,12 @@ func _test_extraction(run: RiftRun) -> void:
 	var end := run.game_ui.end_screen
 	_check(end.visible and end.get_node("%Title").text == "EXTRACTED", "the result card says EXTRACTED")
 	_check("Cargo banked" in end.get_node("%Stats").text, "the result card shows the cargo banked")
+	_check(Profile.credits == credits_before + 3 * ORE.value, "extracting sells the hold for credits (%d)" % Profile.credits)
+	_check(Profile.essence == ship.loadout.essence_value() and Profile.essence > 0, "augments break down into Void Essence (%d)" % Profile.essence)
+	_check(end.get_node("%RetryButton").text == "To the hangar", "the card leads on to the hangar")
+	var saved := Profile.credits
+	Profile.load_profile()
+	_check(Profile.credits == saved and Profile.extractions == 1, "the payout is saved to disk")
 	paused = false
 
 
@@ -237,14 +336,33 @@ func _test_collapse_and_death(run: RiftRun) -> void:
 	await _frames(30)
 	_check(stages.has(3), "at 100% the rift collapses")
 	_check(ship.health.hull < hull, "a collapsed rift tears at the hull (%.0f -> %.0f)" % [hull, ship.health.hull])
+	ship.cargo.clear()
+	ship.cargo.add(ORE, 2)
+	ship.cargo.add(load("res://resources/items/void_crystal.tres"), 2)
+	var credits_before := Profile.credits
 	ship.take_damage(100000.0, null)
 	await create_timer(run.end_card_delay + 1.5).timeout
+	_check(Profile.credits == credits_before + 2 * 25, "the Secured Locker pays out the most valuable slot only (%d -> %d)" % [credits_before, Profile.credits])
 	var end := run.game_ui.end_screen
 	_check(run.ended and not run.extracted, "dying in the rift ends the run")
 	_check(end.visible and end.get_node("%Title").text == "SHIP LOST", "the death screen says SHIP LOST")
 	_check("collapsed" in end.get_node("%Subtitle").text, "the death screen says the rift collapsed")
 	paused = false
 	Hitstop.clear()
+
+
+func _test_hangar() -> void:
+	Profile.credits = 1000
+	var hangar: Hangar = load(Scenes.HANGAR).instantiate()
+	root.add_child(hangar)
+	await process_frame
+	_check(hangar.get_node("%LaunchButton").has_focus(), "the hangar focuses Launch")
+	_check(str(Profile.credits) in hangar.get_node("%Wallet").text, "the hangar shows the wallet")
+	_check("EXTRACTED" in hangar.get_node("%Report").text, "the hangar shows the last run")
+	_check(hangar.buy(&"hull") and Profile.level(&"hull") == 1 and Profile.credits == 1000 - 120, "buying hull plating spends credits and saves the level")
+	_check(not hangar.buy(&"engine") or Profile.essence >= 15, "upgrades that need essence wait for it")
+	hangar.queue_free()
+	await process_frame
 
 
 # --- Helpers -----------------------------------------------------------------

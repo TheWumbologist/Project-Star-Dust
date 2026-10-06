@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bli67hfl6l71o" path="res://scenes/world/ore_asteroid.tscn" id="4_ore"]
 [ext_resource type="Script" uid="uid://c68igyuprc2l7" path="res://scripts/rift/enemy_spawn_point.gd" id="5_spawn"]
 [ext_resource type="PackedScene" uid="uid://bhb7npvyr2ok1" path="res://scenes/enemies/scavenger_drone.tscn" id="6_drone"]
+[ext_resource type="PackedScene" uid="uid://ds5c06x0x5qa0" path="res://scenes/rift/augment_cache.tscn" id="9_cache"]
 
 [node name="WindRunChunk" type="Node3D" unique_id=327521920]
 script = ExtResource("1_chunk")
@@ -54,3 +55,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, -24)
 script = ExtResource("5_spawn")
 enemy = ExtResource("6_drone")
 chance = 0.8
+
+[node name="AugmentCache" parent="." unique_id=1542563778 instance=ExtResource("9_cache")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 10)
+spawn_chance = 0.35

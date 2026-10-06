@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://cvlhlxpb1nkur" path="res://scripts/combat/hit_flash.gd" id="11_flash"]
 [ext_resource type="PackedScene" uid="uid://yh6ia4pyaayf" path="res://scenes/combat/explosion.tscn" id="12_boom"]
 [ext_resource type="PackedScene" uid="uid://bdeowowjpld5l" path="res://scenes/cargo/pickup.tscn" id="13_pick"]
+[ext_resource type="Script" uid="uid://dd1m8yuhurplu" path="res://scripts/economy/ship_loadout.gd" id="14_loadout"]
 
 [sub_resource type="SphereShape3D" id="Shape_hull"]
 radius = 1.25
@@ -262,6 +263,9 @@ max_shield = 50.0
 
 [node name="Cargo" type="Node" parent="." unique_id=470237799]
 script = ExtResource("10_cargo")
+
+[node name="Loadout" type="Node" parent="." unique_id=2094109336]
+script = ExtResource("14_loadout")
 
 [node name="Shield" type="MeshInstance3D" parent="." unique_id=1002842947]
 cast_shadow = 0

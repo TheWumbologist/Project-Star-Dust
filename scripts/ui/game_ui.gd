@@ -17,6 +17,7 @@ extends Node
 @onready var pause_menu: PauseMenu = $PauseMenu
 @onready var ship_menu: ShipMenu = $ShipMenu
 @onready var end_screen: RunEndScreen = $RunEndScreen
+@onready var augment_picker: AugmentPicker = $AugmentPicker
 
 var kills: int = 0
 var elapsed: float = 0.0
@@ -30,6 +31,9 @@ func _ready() -> void:
 	pause_menu.closed.connect(func(): ship_menu.blocked = false)
 	ship_menu.opened.connect(func(): pause_menu.blocked = true)
 	ship_menu.closed.connect(func(): pause_menu.blocked = false)
+	augment_picker.opened.connect(_set_menus_blocked.bind(true))
+	augment_picker.closed.connect(_set_menus_blocked.bind(false))
+	augment_picker.picked.connect(_on_augment_picked)
 	get_tree().node_added.connect(_on_node_added)
 	if ship != null:
 		ship.destroyed.connect(_on_ship_destroyed)
@@ -38,6 +42,16 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if ship != null and ship.is_alive() and not end_screen.is_open:
 		elapsed += delta
+
+
+func _set_menus_blocked(blocked: bool) -> void:
+	pause_menu.blocked = blocked
+	ship_menu.blocked = blocked
+
+
+func _on_augment_picked(augment: AugmentDefinition) -> void:
+	if augment != null:
+		hud._callout("AUGMENT: " + augment.display_name.to_upper())
 
 
 func _on_node_added(node: Node) -> void:
@@ -53,13 +67,17 @@ func _on_ship_destroyed(_s: ShipController) -> void:
 
 
 ## Locks the menus and shows the end-of-run card with this run's numbers.
-func show_end(extracted: bool, subtitle: String, extra: PackedStringArray = []) -> void:
+## With `continue_scene`, the card's main button goes there (the hangar)
+## instead of restarting.
+func show_end(extracted: bool, subtitle: String, extra: PackedStringArray = [], continue_scene: String = "") -> void:
 	if end_screen.is_open:
 		return
 	if pause_menu.is_open:
 		pause_menu.close()
 	if ship_menu.is_open:
 		ship_menu.close()
+	if augment_picker.is_open:
+		augment_picker.choose(null)
 	pause_menu.blocked = true
 	ship_menu.blocked = true
 	var cargo_value := ship.cargo.total_value() if ship.cargo != null else 0
@@ -70,4 +88,4 @@ func show_end(extracted: bool, subtitle: String, extra: PackedStringArray = []) 
 	]
 	lines.append_array(extra)
 	Hitstop.clear()
-	end_screen.show_result(extracted, subtitle, lines)
+	end_screen.show_result(extracted, subtitle, lines, continue_scene)
