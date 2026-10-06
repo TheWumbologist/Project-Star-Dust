@@ -21,3 +21,7 @@ assets/_ai_generated/audio/sfx_torpedo__AI.wav,generated,Claude,project-owned pl
 assets/_ai_generated/audio/sfx_ui_click__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
 assets/_ai_generated/audio/sfx_ui_confirm__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
 assets/_ai_generated/audio/sfx_warp_in__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
+assets/_ai_generated/models/cutter__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly model; replace with a Blender model
+assets/_ai_generated/models/drone__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly model; replace with a Blender model
+assets/_ai_generated/models/sloop__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly model; replace with a Blender model
+assets/_ai_generated/models/wreck__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly model; replace with a Blender model

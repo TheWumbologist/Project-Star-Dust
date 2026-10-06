@@ -41,8 +41,7 @@ func _run() -> void:
 
 	# Let the audio server release playing sounds before quitting.
 	Sfx.stop_all()
-	for i in 4:
-		await process_frame
+	await create_timer(0.2, true, false, true).timeout
 	if _failures.is_empty():
 		print("SMOKE TEST: all checks passed")
 		quit(0)

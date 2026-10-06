@@ -8,6 +8,9 @@ extends Area3D
 ## collision mask (player shots vs enemy shots).
 
 @export var lifetime: float = 1.6
+## Spark burst where the shot hits something, and its colour.
+@export var impact: PackedScene
+@export var impact_color: Color = Color(1, 0.8, 0.4)
 
 var velocity: Vector3 = Vector3.ZERO
 var damage: float = 10.0
@@ -66,4 +69,9 @@ func _finish(hit: Node) -> void:
 		shooter = null
 	if hit != null and hit != shooter and hit.has_method("take_damage"):
 		hit.take_damage(damage, shooter)
+		if impact != null:
+			var sparks := impact.instantiate() as Node3D
+			sparks.set("tint", impact_color)
+			get_parent().add_child(sparks)
+			sparks.global_position = global_position
 	queue_free()

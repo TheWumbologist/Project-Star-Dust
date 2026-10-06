@@ -33,10 +33,24 @@ vertex_color_use_as_albedo = true
 material = SubResource("Mat_debris")
 size = Vector3(0.25, 0.25, 0.25)
 
-[node name="Explosion" type="Node3D" unique_id=890556296 node_paths=PackedStringArray("flash", "debris")]
+[sub_resource type="StandardMaterial3D" id="Mat_ring"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(1, 0.75, 0.4, 1)
+
+[sub_resource type="TorusMesh" id="Mesh_ring"]
+material = SubResource("Mat_ring")
+inner_radius = 0.88
+rings = 32
+ring_segments = 3
+
+[node name="Explosion" type="Node3D" unique_id=890556296 node_paths=PackedStringArray("flash", "debris", "ring")]
 script = ExtResource("1_boom")
 flash = NodePath("Flash")
 debris = NodePath("Debris")
+ring = NodePath("Ring")
 
 [node name="Flash" type="MeshInstance3D" parent="." unique_id=11735394]
 cast_shadow = 0
@@ -51,3 +65,8 @@ one_shot = true
 explosiveness = 1.0
 process_material = SubResource("Debris_process")
 draw_pass_1 = SubResource("Mesh_debris")
+
+[node name="Ring" type="MeshInstance3D" parent="." unique_id=1999131762]
+transform = Transform3D(1, 0, 0, 0, 0.15, 0, 0, 0, 1, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_ring")
