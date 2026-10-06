@@ -56,6 +56,7 @@ func _ready() -> void:
 		target.boost_started.connect(func(): add_shake(0.2))
 		target.drift_kicked.connect(func(tier): add_shake(0.2 + 0.15 * tier))
 		target.rammed.connect(func(_t): add_shake(0.5))
+		target.damaged.connect(func(amount, _s): add_shake(clampf(amount / 40.0, 0.1, 0.6)))
 	_apply_transform(Vector3.ZERO)
 
 

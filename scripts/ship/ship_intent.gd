@@ -21,4 +21,9 @@ var aim: Vector3 = Vector3.ZERO
 var aim_distance: float = 0.0
 var boost_held: bool = false
 var drift_held: bool = false
+## Primary weapon trigger.
 var fire_held: bool = false
+## Heavy weapon trigger.
+var heavy_held: bool = false
+## Throw out the last cargo slot (true for one tick per press).
+var jettison: bool = false

@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://bdeowowjpld5l"]
+
+[ext_resource type="Script" uid="uid://bweaj0w3rk7qt" path="res://scripts/cargo/pickup.gd" id="1_pick"]
+
+[sub_resource type="SphereShape3D" id="Shape_pick"]
+radius = 1.0
+
+[sub_resource type="BoxMesh" id="Mesh_pick"]
+size = Vector3(0.6, 0.6, 0.6)
+
+[node name="Pickup" type="Area3D" unique_id=1975499531 node_paths=PackedStringArray("mesh")]
+collision_layer = 32
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_pick")
+mesh = NodePath("Mesh")
+
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=1805528414]
+shape = SubResource("Shape_pick")
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=168937825]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_pick")

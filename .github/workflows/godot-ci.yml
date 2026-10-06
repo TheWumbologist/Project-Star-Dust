@@ -31,3 +31,6 @@ jobs:
       - name: Run flight smoke test
         # timeout guards against a script error leaving the test hanging.
         run: timeout 180 ./godot --headless --script res://tests/smoke_test.gd
+
+      - name: Run combat and mining smoke test
+        run: timeout 180 ./godot --headless --script res://tests/combat_test.gd

@@ -1,0 +1,148 @@
+[gd_scene format=3 uid="uid://bn3a4tdvu48f1"]
+
+[ext_resource type="Script" uid="uid://be0t3fxq1rmcj" path="res://scripts/test/combat_test.gd" id="1_level"]
+[ext_resource type="PackedScene" uid="uid://luedaqe5tiiw" path="res://scenes/ship/player_ship.tscn" id="2_ship"]
+[ext_resource type="Script" uid="uid://cjqqgtdno4s7b" path="res://scripts/camera/rift_camera.gd" id="3_cam"]
+[ext_resource type="PackedScene" uid="uid://h8jwjbgny8xj" path="res://scenes/world/asteroid.tscn" id="4_ast"]
+[ext_resource type="PackedScene" uid="uid://djmbuxfr7wgmm" path="res://scenes/ui/flight_hud.tscn" id="7_hud"]
+[ext_resource type="Shader" uid="uid://cvgk0dsj2qwac" path="res://shaders/space_grid.gdshader" id="8_grid"]
+[ext_resource type="PackedScene" uid="uid://bli67hfl6l71o" path="res://scenes/world/ore_asteroid.tscn" id="9_ore"]
+[ext_resource type="Script" uid="uid://ba1838tqkdnjj" path="res://scripts/world/arena_scatter.gd" id="10_scatter"]
+[ext_resource type="Script" uid="uid://cmwheio217130" path="res://scripts/world/encounter_director.gd" id="11_director"]
+[ext_resource type="PackedScene" uid="uid://bhb7npvyr2ok1" path="res://scenes/enemies/scavenger_drone.tscn" id="12_drone"]
+[ext_resource type="PackedScene" uid="uid://c0qk8vwdbwojd" path="res://scenes/enemies/pirate_cutter.tscn" id="13_cutter"]
+[ext_resource type="PackedScene" uid="uid://dotenp0gf0pxr" path="res://scenes/combat/warp_flash.tscn" id="14_warp"]
+
+[sub_resource type="Environment" id="Env"]
+background_mode = 1
+background_color = Color(0.02, 0.016, 0.05, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.35, 0.3, 0.5, 1)
+ambient_light_energy = 0.6
+tonemap_mode = 2
+glow_enabled = true
+glow_intensity = 0.9
+glow_bloom = 0.15
+fog_enabled = true
+fog_light_color = Color(0.12, 0.06, 0.2, 1)
+fog_density = 0.004
+
+[sub_resource type="ShaderMaterial" id="Mat_grid"]
+render_priority = 0
+shader = ExtResource("8_grid")
+
+[sub_resource type="PlaneMesh" id="Mesh_grid"]
+material = SubResource("Mat_grid")
+size = Vector2(280, 280)
+
+[sub_resource type="BoxShape3D" id="Shape_wall_x"]
+size = Vector3(228, 6, 4)
+
+[sub_resource type="StandardMaterial3D" id="Mat_wall"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.6, 0.3, 1, 0.25)
+
+[sub_resource type="BoxMesh" id="Mesh_wall_x"]
+material = SubResource("Mat_wall")
+size = Vector3(228, 0.3, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_wall_z"]
+size = Vector3(4, 6, 228)
+
+[sub_resource type="BoxMesh" id="Mesh_wall_z"]
+material = SubResource("Mat_wall")
+size = Vector3(4, 0.3, 228)
+
+[node name="CombatTest" type="Node3D" unique_id=1820054481 node_paths=PackedStringArray("spawn_point")]
+script = ExtResource("1_level")
+spawn_point = NodePath("SpawnPoint")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=239064458]
+environment = SubResource("Env")
+
+[node name="StarLight" type="DirectionalLight3D" parent="." unique_id=1443466721]
+transform = Transform3D(0.8253356, -0.45928895, 0.328443, 0, 0.5816831, 0.8134155, -0.5646425, -0.6713408, 0.4800838, 0, 0, 0)
+light_color = Color(1, 0.9, 0.75, 1)
+light_energy = 1.2
+shadow_enabled = true
+directional_shadow_max_distance = 120.0
+
+[node name="Grid" type="MeshInstance3D" parent="." unique_id=1908623538]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.5, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_grid")
+
+[node name="Walls" type="Node3D" parent="." unique_id=641614818]
+
+[node name="North" type="StaticBody3D" parent="Walls" unique_id=204809628]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -112)
+collision_mask = 0
+
+[node name="Collision" type="CollisionShape3D" parent="Walls/North" unique_id=1610908178]
+shape = SubResource("Shape_wall_x")
+
+[node name="Mesh" type="MeshInstance3D" parent="Walls/North" unique_id=330920550]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_wall_x")
+
+[node name="South" type="StaticBody3D" parent="Walls" unique_id=1520917597]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 112)
+collision_mask = 0
+
+[node name="Collision" type="CollisionShape3D" parent="Walls/South" unique_id=58900189]
+shape = SubResource("Shape_wall_x")
+
+[node name="Mesh" type="MeshInstance3D" parent="Walls/South" unique_id=170516033]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_wall_x")
+
+[node name="West" type="StaticBody3D" parent="Walls" unique_id=1052918159]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -112, 0, 0)
+collision_mask = 0
+
+[node name="Collision" type="CollisionShape3D" parent="Walls/West" unique_id=1260555963]
+shape = SubResource("Shape_wall_z")
+
+[node name="Mesh" type="MeshInstance3D" parent="Walls/West" unique_id=1711254603]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_wall_z")
+
+[node name="East" type="StaticBody3D" parent="Walls" unique_id=897430107]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 112, 0, 0)
+collision_mask = 0
+
+[node name="Collision" type="CollisionShape3D" parent="Walls/East" unique_id=135467703]
+shape = SubResource("Shape_wall_z")
+
+[node name="Mesh" type="MeshInstance3D" parent="Walls/East" unique_id=231946918]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_wall_z")
+
+[node name="PlayerShip" parent="." unique_id=1250059811 instance=ExtResource("2_ship")]
+
+[node name="RiftCamera" type="Camera3D" parent="." unique_id=1348088081 node_paths=PackedStringArray("target")]
+fov = 50.0
+far = 400.0
+script = ExtResource("3_cam")
+target = NodePath("../PlayerShip")
+
+[node name="SpawnPoint" type="Marker3D" parent="." unique_id=403496076]
+
+[node name="Asteroids" type="Node3D" parent="." unique_id=2598002]
+script = ExtResource("10_scatter")
+rock_scene = ExtResource("4_ast")
+ore_rock_scene = ExtResource("9_ore")
+
+[node name="EncounterDirector" type="Node3D" parent="." unique_id=1473944756]
+script = ExtResource("11_director")
+drone_scene = ExtResource("12_drone")
+cutter_scene = ExtResource("13_cutter")
+warp_flash = ExtResource("14_warp")
+
+[node name="FlightHud" parent="." unique_id=2143858663 node_paths=PackedStringArray("ship") instance=ExtResource("7_hud")]
+ship = NodePath("../PlayerShip")
