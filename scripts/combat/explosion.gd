@@ -65,6 +65,9 @@ func _physics_process(delta: float) -> void:
 func _apply_damage() -> void:
 	if (damage <= 0.0 and knockback <= 0.0) or damage_mask == 0:
 		return
+	# Whoever set it off may be gone already (a kamikaze blows itself up).
+	if not is_instance_valid(source):
+		source = null
 	var shape := SphereShape3D.new()
 	shape.radius = radius
 	var query := PhysicsShapeQueryParameters3D.new()

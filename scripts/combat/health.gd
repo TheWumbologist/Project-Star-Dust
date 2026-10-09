@@ -19,6 +19,8 @@ signal died(source: Node)
 
 var hull: float = 0.0
 var shield: float = 0.0
+## Ignores all damage while set (the combat arena's cheat toggle).
+var invulnerable: bool = false
 
 var _since_hit: float = 0.0
 
@@ -36,7 +38,7 @@ func _physics_process(delta: float) -> void:
 
 
 func take_damage(amount: float, source: Node = null) -> void:
-	if is_dead() or amount <= 0.0:
+	if is_dead() or amount <= 0.0 or invulnerable:
 		return
 	_since_hit = 0.0
 	var had_shield := shield > 0.0

@@ -38,7 +38,8 @@ signal run_ended(extracted: bool)
 @export var collapse_damage: float = 12.0
 ## Seconds between the ending and the result card.
 @export var end_card_delay: float = 1.2
-## Dropped by tougher enemies (threat tier 2+) now and then.
+## Dropped by tougher enemies now and then (scaled by each roster entry's
+## "cache" weight; swarm drones and mites never drop one).
 @export var augment_cache: PackedScene
 @export_range(0.0, 1.0) var cache_drop_chance: float = 0.2
 ## The tutorial's derelict holding the Rift Compass.
@@ -133,7 +134,8 @@ func _apply_site(rules: Dictionary) -> void:
 	generator.min_exit_depth = rules.min_exit_depth
 	generator.min_exit_spread = rules.min_exit_spread
 	generator.spawn_chance_bonus = rules.spawn_bonus
-	generator.allow_cutters = rules.cutters
+	generator.enemy_tier_odds.assign(rules.enemy_tiers)
+	generator.enemy_roles.assign(rules.enemy_roles)
 	generator.allow_caches = rules.caches
 	generator.allow_void_crystals = rules.void_crystals
 	generator.use_tears = rules.get("tears", true)
@@ -229,10 +231,15 @@ func spawn_stray() -> ShipController:
 	var pos = _stray_point()
 	if pos == null:
 		return null
-	# Cutters get likelier as the rift destabilises.
+	# Gunships get likelier as the rift destabilises, and so do the
+	# roster's higher tiers.
 	var scene: PackedScene = trickle_enemies[0]
 	if trickle_enemies.size() > 1 and _rng.randf() < 0.15 + instability * 0.35:
 		scene = trickle_enemies[_rng.randi_range(1, trickle_enemies.size() - 1)]
+	var pick := generator.roster_pick(scene, _rng, instability)
+	if pick.is_empty():
+		return null
+	scene = pick.scene
 	if warp_flash != null:
 		var flash := warp_flash.instantiate() as Node3D
 		add_child(flash)
@@ -400,7 +407,10 @@ func _scale_enemy(enemy: ShipController) -> void:
 
 ## Tougher enemies sometimes leave an augment cache behind.
 func _on_enemy_destroyed(enemy: ShipController) -> void:
-	if ended or augment_cache == null or enemy.threat_tier < 2 or _rng.randf() >= cache_drop_chance:
+	if ended or augment_cache == null:
+		return
+	var weight: float = EnemyRoster.entry_for_path(enemy.scene_file_path).get("cache", 1.0)
+	if _rng.randf() >= cache_drop_chance * weight:
 		return
 	var cache := augment_cache.instantiate() as Node3D
 	var at := enemy.global_position

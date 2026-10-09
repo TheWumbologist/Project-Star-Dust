@@ -28,7 +28,8 @@ const MIN_GAP := 0.045
 const TRIM := {
 	&"cannon": -9.0, &"enemy_shot": -11.0, &"rock_chip": -8.0, &"hit_shield": -6.0,
 	&"hit_hull": -5.0, &"pickup": -7.0, &"ui_click": -10.0, &"ui_confirm": -6.0,
-	&"boost": -6.0, &"explosion_small": -3.0,
+	&"boost": -6.0, &"explosion_small": -3.0, &"broadside": -5.0, &"lance": -3.0,
+	&"fuse": -5.0, &"charge": -7.0, &"mine_drop": -6.0, &"blink": -4.0,
 }
 
 static var music_volume: float = 0.6

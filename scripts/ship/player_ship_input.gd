@@ -36,8 +36,23 @@ func get_intent(ship: Node3D) -> ShipIntent:
 	intent.fire_held = Input.is_action_pressed("fire")
 	intent.heavy_held = Input.is_action_pressed("fire_heavy")
 	intent.jettison = Input.is_action_just_pressed("jettison")
+	if _using_mouse_aim and _pointer_on_ui(ship):
+		# Clicking an on-screen button shouldn't also fire the guns.
+		intent.fire_held = false
+		intent.heavy_held = false
 	_read_aim(ship, intent)
 	return intent
+
+
+## True while the cursor is over a Control in the "blocks_fire" group (or
+## inside one), like the combat arena's tools panel.
+func _pointer_on_ui(ship: Node3D) -> bool:
+	var node: Node = ship.get_viewport().gui_get_hovered_control()
+	while node != null:
+		if node.is_in_group("blocks_fire"):
+			return true
+		node = node.get_parent()
+	return false
 
 
 func _read_aim(ship: Node3D, intent: ShipIntent) -> void:

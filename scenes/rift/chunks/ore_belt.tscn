@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://c68igyuprc2l7" path="res://scripts/rift/enemy_spawn_point.gd" id="5_spawn"]
 [ext_resource type="PackedScene" uid="uid://bhb7npvyr2ok1" path="res://scenes/enemies/scavenger_drone.tscn" id="6_drone"]
 [ext_resource type="PackedScene" uid="uid://ds5c06x0x5qa0" path="res://scenes/rift/augment_cache.tscn" id="9_cache"]
+[ext_resource type="PackedScene" uid="uid://ci3py26vn2qsq" path="res://scenes/enemies/scrap_hauler.tscn" id="20_hauler"]
 
 [node name="OreBeltChunk" type="Node3D" unique_id=1974275198]
 script = ExtResource("1_chunk")
@@ -66,6 +67,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, 0)
 script = ExtResource("5_spawn")
 enemy = ExtResource("6_drone")
 chance = 0.7
+
+[node name="SpawnSpecialist1" type="Marker3D" parent="." unique_id=1664256082]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, 0)
+script = ExtResource("5_spawn")
+enemy = ExtResource("20_hauler")
+chance = 0.55
 
 [node name="AugmentCache" parent="." unique_id=34218578 instance=ExtResource("9_cache")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 8)

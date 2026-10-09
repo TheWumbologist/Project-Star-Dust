@@ -348,11 +348,52 @@ def music_hub(rng):
     write("music_hub", soft_clip(loop(out, tail), 1.2), 0.7)
 
 
+# --- Enemy roster sounds (milestone 6c) --------------------------------------------
+# Own random stream, so adding these leaves the older files byte-identical.
+
+def sfx_roster(rng):
+    # Fuse: three quickening beeps (spark mites, mines).
+    fz = silence(0.5)
+    for k, at in enumerate((0.0, 0.17, 0.3, 0.4)):
+        place(fz, env(osc("square", 1300 + k * 120, 0.06), 0.002, 40), at, 0.5)
+    write("sfx_fuse", lowpass(fz, 4000), 0.55)
+
+    # Charge: a rising whine with a tremolo, the lancer's aim line.
+    whine = env(osc("saw", lambda t: 220 + 900 * (t / 1.1) ** 2, 1.1), 0.05, 0.4, release=0.05)
+    trem = [v * (0.7 + 0.3 * math.sin(TAU * (6 + 20 * i / RATE) * i / RATE)) for i, v in enumerate(whine)]
+    write("sfx_charge", lowpass(trem, lambda t: 800 + 2600 * t), 0.5)
+
+    # Lance: a sharp crack with a ringing metal tail.
+    crack = env(highpass(noise(0.5, rng), 1200), 0.0005, 30)
+    ring = mix(*[env(osc("sine", f, 0.5), 0.001, d) for f, d in ((180, 6), (412, 9), (733, 12))])
+    thump = env(osc("sine", lambda t: 160 * math.exp(-t * 10) + 45, 0.5), 0.001, 9)
+    write("sfx_lance", soft_clip(mix(crack, ring, thump, gains=[0.7, 0.5, 0.9]), 1.6), 0.85)
+
+    # Broadside: a deep cannon boom with a little rattle.
+    boom = env(osc("sine", lambda t: 110 * math.exp(-t * 6) + 38, 0.6), 0.002, 7)
+    rattle = env(lowpass(noise(0.6, rng), 1400), 0.001, 14)
+    write("sfx_broadside", soft_clip(mix(boom, rattle, gains=[1.0, 0.6]), 1.7), 0.85)
+
+    # Blink: a reversed swell snapping into a falling chirp (the warden).
+    swell = env(lowpass(noise(0.25, rng), lambda t: 300 + 6000 * t / 0.25), 0.2, 0.5)
+    chirp = env(osc("sine", lambda t: 2400 * math.exp(-t * 14) + 200, 0.3), 0.001, 12)
+    bl = silence(0.6)
+    place(bl, swell, 0.0, 0.5)
+    place(bl, chirp, 0.24, 0.6)
+    write("sfx_blink", bl, 0.6)
+
+    # Mine drop: a dull metal clunk and a tick.
+    clunk = mix(*[env(osc("sine", f, 0.25), 0.001, d) for f, d in ((150, 20), (370, 28), (610, 40))])
+    tick = env(highpass(noise(0.25, rng), 3000), 0.0005, 120)
+    write("sfx_mine_drop", mix(clunk, tick, gains=[0.8, 0.3]), 0.6)
+
+
 def main():
     rng = random.Random(1987)
     sfx(rng)
     music_rift(rng)
     music_hub(rng)
+    sfx_roster(random.Random(2026))
 
 
 if __name__ == "__main__":

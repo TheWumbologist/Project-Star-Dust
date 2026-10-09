@@ -1,0 +1,69 @@
+[gd_scene format=3 uid="uid://beq2oo4csragp"]
+
+[ext_resource type="Script" uid="uid://3he2rikgxm5d" path="res://scripts/combat/homing_torpedo.gd" id="1_torp"]
+[ext_resource type="PackedScene" uid="uid://yh6ia4pyaayf" path="res://scenes/combat/explosion.tscn" id="2_boom"]
+
+[sub_resource type="SphereShape3D" id="Shape_torp"]
+radius = 0.55
+
+[sub_resource type="StandardMaterial3D" id="Mat_torp"]
+albedo_color = Color(0.3, 0.27, 0.28, 1)
+metallic = 0.7
+roughness = 0.4
+emission_enabled = true
+emission = Color(1, 0.2, 0.15, 1)
+emission_energy_multiplier = 0.9
+
+[sub_resource type="CapsuleMesh" id="Mesh_torp"]
+material = SubResource("Mat_torp")
+radius = 0.32
+height = 1.5
+radial_segments = 8
+rings = 2
+
+[sub_resource type="ParticleProcessMaterial" id="Trail_process"]
+direction = Vector3(0, 0, 1)
+spread = 12.0
+initial_velocity_min = 1.0
+initial_velocity_max = 2.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.6
+scale_max = 1.2
+color = Color(1, 0.25, 0.2, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_trail"]
+shading_mode = 0
+vertex_color_use_as_albedo = true
+
+[sub_resource type="SphereMesh" id="Mesh_trail"]
+material = SubResource("Mat_trail")
+radius = 0.2
+height = 0.4
+radial_segments = 6
+rings = 3
+
+[node name="EnemyTorpedo" type="Area3D" unique_id=1490884778]
+collision_layer = 8
+collision_mask = 3
+monitorable = false
+script = ExtResource("1_torp")
+explosion_scene = ExtResource("2_boom")
+blast_radius = 4.5
+knockback = 10.0
+lifetime = 4.5
+
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=1939647052]
+shape = SubResource("Shape_torp")
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=988779597]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_torp")
+
+[node name="Trail" type="GPUParticles3D" parent="." unique_id=514497563]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.85)
+cast_shadow = 0
+amount = 32
+lifetime = 0.5
+process_material = SubResource("Trail_process")
+draw_pass_1 = SubResource("Mesh_trail")

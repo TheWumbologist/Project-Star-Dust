@@ -7,7 +7,8 @@ extends Node3D
 ## cannon (fast, unlimited), the heavy torpedo tube (few charges that refill
 ## over time) and enemy guns (bursts, spread). Augments will hook in here.
 
-signal fired(projectile: Projectile)
+## `projectile` is usually a Projectile; mine racks fire ProximityMines.
+signal fired(projectile: Node3D)
 
 enum Slot {
 	PRIMARY, ## Fires while `fire_held`.
@@ -27,6 +28,16 @@ enum Slot {
 @export var volley_spread_deg: float = 0.0
 ## Random spread either side of the aim, in degrees.
 @export var spread_deg: float = 1.5
+## Where the gun points, in degrees clockwise from the nose (90 = starboard
+## side, -90 = port, 180 = astern). Only matters with a narrow arc or a
+## fixed direction.
+@export var mount_angle_deg: float = 0.0
+## Only fires while the aim is within this many degrees of the mount
+## (180 = any direction). Broadside batteries use a narrow arc.
+@export_range(0.0, 180.0) var arc_deg: float = 180.0
+## Shoots straight along the mount instead of at the aim (mines dropped
+## astern).
+@export var fixed_direction: bool = false
 
 @export_group("Projectile")
 @export var projectile_speed: float = 60.0
@@ -61,7 +72,7 @@ func tick(ship: ShipController, intent: ShipIntent, delta: float) -> void:
 		if _recharge >= charge_time:
 			_recharge = 0.0
 			charges += 1
-	if _trigger_held(intent) and can_fire():
+	if _trigger_held(intent) and can_fire() and in_arc(ship):
 		_fire(ship)
 		_cooldown = 1.0 / maxf(fire_rate, 0.01)
 		if max_charges > 0:
@@ -70,6 +81,18 @@ func tick(ship: ShipController, intent: ShipIntent, delta: float) -> void:
 
 func can_fire() -> bool:
 	return _cooldown <= 0.0 and projectile_scene != null and (max_charges <= 0 or charges > 0)
+
+
+## The direction the gun points, from the ship's heading.
+func mount_direction(ship: ShipController) -> Vector3:
+	return ship.forward().rotated(Vector3.UP, -deg_to_rad(mount_angle_deg))
+
+
+## True when the ship's aim is inside this gun's firing arc.
+func in_arc(ship: ShipController) -> bool:
+	if arc_deg >= 180.0 or fixed_direction:
+		return true
+	return rad_to_deg(mount_direction(ship).angle_to(ship.aim_direction)) <= arc_deg
 
 
 ## 0..1 progress toward the next charge (1 when full or unlimited).
@@ -84,7 +107,8 @@ func _trigger_held(intent: ShipIntent) -> bool:
 
 
 func _fire(ship: ShipController) -> void:
-	var aim := ship.aim_direction.rotated(Vector3.UP, deg_to_rad(randf_range(-spread_deg, spread_deg)))
+	var base := mount_direction(ship) if fixed_direction else ship.aim_direction
+	var aim := base.rotated(Vector3.UP, deg_to_rad(randf_range(-spread_deg, spread_deg)))
 	var count := maxi(shots_per_volley, 1)
 	for i in count:
 		var offset := 0.0
@@ -94,12 +118,13 @@ func _fire(ship: ShipController) -> void:
 
 
 func _spawn(ship: ShipController, dir: Vector3) -> void:
-	var projectile := projectile_scene.instantiate() as Projectile
-	projectile.shooter = ship
-	projectile.damage = damage
-	projectile.velocity = dir * projectile_speed + ship.velocity * inherit_velocity
+	# Anything with shooter, damage and velocity properties can be fired.
+	var projectile := projectile_scene.instantiate() as Node3D
+	projectile.set("shooter", ship)
+	projectile.set("damage", damage)
+	projectile.set("velocity", dir * projectile_speed + ship.velocity * inherit_velocity)
 	if detonate_at_aim_point and ship.aim_distance > muzzle_offset:
-		projectile.max_distance = ship.aim_distance - muzzle_offset
+		projectile.set("max_distance", ship.aim_distance - muzzle_offset)
 	# Projectiles live in the level, not under the ship, so they don't turn
 	# with it and survive if the ship is destroyed.
 	ship.get_parent().add_child(projectile)

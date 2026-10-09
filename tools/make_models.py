@@ -46,6 +46,10 @@ def norm(a):
     return (0.0, 1.0, 0.0) if length < 1e-9 else mul(a, 1.0 / length)
 
 
+def lerp3(a, b, t):
+    return add(a, mul(sub(b, a), t))
+
+
 def rot_y(p, ang):
     c, s = math.cos(ang), math.sin(ang)
     return (p[0] * c + p[2] * s, p[1], -p[0] * s + p[2] * c)
@@ -227,6 +231,23 @@ def hull_rings(length, beam, depth, stations=10, sides=7, bow_sheer=0.3, stern_s
     return rings
 
 
+def gem(m, group, centre, radius, up, down, sides=6, turn=0.0):
+    """A faceted double pyramid (a crystal or a drone core)."""
+    top, bottom = add(centre, (0, up, 0)), add(centre, (0, -down, 0))
+    ring = [add(centre, rot_y((radius, 0, 0), turn + math.tau * i / sides)) for i in range(sides)]
+    for i in range(sides):
+        a, b = ring[i], ring[(i + 1) % sides]
+        m.tri(group, top, a, b, centre)
+        m.tri(group, bottom, a, b, centre)
+
+
+def hoop(m, group, centre, radius, thickness, segments=12, tilt=0.0):
+    """A ring of prisms (a halo or a hoop), tilted round X by `tilt`."""
+    pts = [add(centre, rot_x(rot_y((radius, 0, 0), math.tau * i / segments), tilt)) for i in range(segments)]
+    for i in range(segments):
+        prism(m, group, pts[i], pts[(i + 1) % segments], thickness, 4)
+
+
 # --- Ships -------------------------------------------------------------------------
 
 def sloop():
@@ -325,11 +346,169 @@ def wreck():
     return m
 
 
+# --- Enemy roster (milestone 6c) ------------------------------------------------------
+
+def spark_mite():
+    """Swarm tier 2: a spiky kamikaze with a hot glowing core."""
+    m = Model()
+    gem(m, "glow", (0, 0.1, 0), 0.42, 0.45, 0.4, sides=6)
+    # Armour bands above and below the core.
+    hoop(m, "metal", (0, 0.32, 0), 0.38, 0.07, segments=6)
+    hoop(m, "metal", (0, -0.12, 0), 0.4, 0.07, segments=6)
+    # Spikes all round, longest at the front.
+    for i in range(8):
+        ang = math.tau * i / 8
+        reach = 1.15 if i == 0 else 0.85
+        base = rot_y((0, 0.08, -0.3), ang)
+        tip = rot_y((0, 0.02, -reach), ang)
+        prism(m, "dark", base, tip, 0.11, 4, 0.0)
+    prism(m, "dark", (0, 0.45, 0), (0, 0.95, 0.1), 0.08, 4, 0.0)
+    return m
+
+
+def void_wasp():
+    """Swarm tier 3: a sleek dart with swept wings and a stinger."""
+    m = Model()
+    prism(m, "metal", (0, 0.1, -1.6), (0, 0.1, -0.5), 0.02, 6, 0.32)
+    prism(m, "metal", (0, 0.1, -0.5), (0, 0.1, 0.8), 0.32, 6, 0.26)
+    prism(m, "dark", (0, 0.1, 0.8), (0, 0.25, 1.9), 0.24, 6, 0.0)
+    # Cockpit bubble.
+    gem(m, "glow", (0, 0.36, -0.55), 0.17, 0.12, 0.05, sides=5)
+    for side in (-1, 1):
+        root_f = (side * 0.25, 0.1, -0.7)
+        root_b = (side * 0.25, 0.1, 0.7)
+        tip = (side * 1.9, 0.0, 1.0)
+        m.tri("metal", root_f, root_b, tip, ("dir", (0, 1, 0)))
+        m.tri("metal", root_f, tip, root_b, ("dir", (0, -1, 0)))
+        # Glowing leading-edge stripe.
+        m.tri("glow", add(root_f, (0, 0.02, 0)), add(tip, (0, 0.02, 0)), add(lerp3(root_f, tip, 0.15), (0, 0.02, 0.35)), ("dir", (0, 1, 0)))
+        # Mandibles.
+        prism(m, "dark", (side * 0.18, 0.05, -1.3), (side * 0.32, 0.0, -2.0), 0.05, 4, 0.0)
+        # Engine pods.
+        prism(m, "dark", (side * 0.55, 0.1, 0.4), (side * 0.6, 0.1, 1.1), 0.13, 6, 0.1)
+        prism(m, "glow", (side * 0.6, 0.1, 1.1), (side * 0.6, 0.1, 1.18), 0.09, 6)
+    return m
+
+
+def corsair_lancer():
+    """Gunship tier 2: a lean sniper hull with a long lance cannon."""
+    m = Model()
+    loft(m, hull_rings(5.0, 1.15, 0.5, bow_sheer=0.1, stern_sheer=0.2, deck=0.2, stern_width=0.8),
+         "hull", top_group="deck", cap_group="hull")
+    # The lance: a long barrel past the bow, ringed by coils.
+    prism(m, "iron", (0, 0.35, -1.2), (0, 0.32, -4.6), 0.13, 6, 0.07)
+    for z in (-1.8, -2.4, -3.0):
+        prism(m, "iron", (0, 0.35, z), (0, 0.35, z - 0.15), 0.24, 6)
+    box(m, "iron", (0, 0.45, -0.6), (0.5, 0.35, 1.3))
+    # One tall swept sail and two stabiliser fins.
+    m.tri("sail", (0, 0.3, -0.2), (0, 0.3, 1.6), (0, 2.3, 1.5), ("dir", (1, 0, 0)))
+    prism(m, "iron", (0, 0.3, -0.2), (0, 2.3, 1.5), 0.04, 4)
+    for side in (-1, 1):
+        m.tri("sail", (side * 0.45, 0.2, 0.6), (side * 0.5, 0.2, 2.2), (side * 1.6, 0.35, 2.4), ("dir", (0, 1, 0)))
+    prism(m, "iron", (0, 0.15, 2.3), (0, 0.15, 2.9), 0.22, 6, 0.17)
+    return m
+
+
+def broadside_galleon():
+    """Gunship tier 3: a big three-masted warship, cannons down both sides."""
+    m = Model()
+    rings = hull_rings(8.5, 3.3, 1.1, stations=12, deck=0.35, bow_sheer=0.35, stern_sheer=0.6, stern_width=0.85)
+    loft(m, rings, "hull", top_group="deck", cap_group="hull")
+    # Brass rails along the gunwales.
+    for side in (0, -1):
+        for i in range(len(rings) - 1):
+            prism(m, "brass", add(rings[i][side], (0, 0.05, 0)), add(rings[i + 1][side], (0, 0.05, 0)), 0.06, 4)
+    # Stern castle with lanterns.
+    box(m, "hull", (0, 0.9, 3.0), (2.4, 1.0, 1.9))
+    box(m, "brass", (0, 1.45, 3.0), (2.6, 0.1, 2.1))
+    for x in (-1.0, 1.0):
+        prism(m, "glow", (x, 1.5, 3.95), (x, 1.85, 3.95), 0.12, 6)
+    # Five cannons a side, poking out of the hull.
+    for side in (-1, 1):
+        for k in range(5):
+            z = -2.2 + k * 1.15
+            prism(m, "iron", (side * 1.3, 0.25, z), (side * 2.05, 0.28, z), 0.15, 6, 0.12)
+    # Three masts with square sails.
+    for z, h, w in ((-2.2, 3.4, 1.4), (0.0, 4.2, 1.8), (2.0, 3.2, 1.3)):
+        prism(m, "iron", (0, 0.35, z), (0, h, z), 0.12, 6, 0.08)
+        prism(m, "brass", (-w, h - 0.4, z), (w, h - 0.4, z), 0.05, 4)
+        m.quad("sail", (-w * 0.95, h - 0.45, z + 0.05), (w * 0.95, h - 0.45, z + 0.05), (w * 0.8, 1.1, z + 0.3), (-w * 0.8, 1.1, z + 0.3), ("dir", (0, 0, 1)))
+    # Bowsprit.
+    prism(m, "iron", (0, 0.6, -3.8), (0, 1.1, -5.4), 0.1, 5, 0.04)
+    return m
+
+
+def scrap_hauler():
+    """Specialist tier 1: a boxy salvage barge with crates and a mine rack."""
+    m = Model()
+    loft(m, hull_rings(4.6, 2.7, 0.8, bow_sheer=0.05, stern_sheer=0.05, deck=0.3, stern_width=1.0),
+         "hull", top_group="hull", cap_group="hull")
+    # Crates piled on deck.
+    for c, size in (((-0.5, 0.6, -0.3), (0.8, 0.6, 0.8)), ((0.45, 0.6, -0.2), (0.7, 0.6, 0.9)),
+                    ((-0.1, 1.15, -0.25), (0.65, 0.5, 0.65)), ((0.3, 0.55, 0.85), (0.9, 0.5, 0.7))):
+        box(m, "deck", c, size)
+    # Salvage crane.
+    prism(m, "iron", (-0.9, 0.3, 0.9), (-0.9, 2.0, 0.9), 0.09, 6)
+    prism(m, "iron", (-0.9, 1.9, 0.9), (0.2, 1.6, -1.2), 0.06, 4)
+    prism(m, "iron", (0.2, 1.6, -1.2), (0.2, 0.9, -1.2), 0.02, 4)
+    # Mine rack astern, with warning lights.
+    box(m, "iron", (0, 0.25, 2.25), (1.6, 0.5, 0.5))
+    for x in (-0.6, 0.6):
+        prism(m, "glow", (x, 0.5, 2.5), (x, 0.7, 2.5), 0.09, 6)
+    # Twin engines.
+    for x in (-0.9, 0.9):
+        prism(m, "iron", (x, 0.05, 1.8), (x, 0.05, 2.5), 0.28, 6, 0.24)
+    return m
+
+
+def torpedo_ketch():
+    """Specialist tier 2: a two-masted ketch with deck torpedo tubes."""
+    m = Model()
+    loft(m, hull_rings(5.0, 1.9, 0.65, bow_sheer=0.2, stern_sheer=0.3, deck=0.25, stern_width=0.75),
+         "hull", top_group="deck", cap_group="hull")
+    # Twin torpedo tubes on deck, angled out a touch.
+    for side in (-1, 1):
+        prism(m, "brass", (side * 0.35, 0.5, 0.6), (side * 0.5, 0.5, -1.4), 0.2, 8, 0.18)
+        prism(m, "iron", (side * 0.5, 0.5, -1.4), (side * 0.51, 0.5, -1.5), 0.21, 8)
+    # Two masts with lateen (triangular) sails.
+    for z, h in ((-0.6, 2.4), (1.1, 1.8)):
+        prism(m, "iron", (0, 0.3, z), (0, h, z), 0.07, 6, 0.05)
+        m.tri("sail", (0, h, z + 0.05), (0, 0.6, z + 0.05), (0, 0.7, z + 1.2), ("dir", (1, 0, 0)))
+    prism(m, "brass", (0, 0.1, 1.9), (0, 0.1, 2.5), 0.28, 8, 0.22)
+    return m
+
+
+def rift_warden():
+    """Specialist tier 3: a void crystal held in brass halos."""
+    m = Model()
+    gem(m, "glow", (0, 0.4, 0), 0.55, 1.1, 0.9, sides=6)
+    hoop(m, "brass", (0, 0.4, 0), 1.25, 0.07, segments=14, tilt=0.35)
+    hoop(m, "brass", (0, 0.4, 0), 1.05, 0.06, segments=12, tilt=-0.5)
+    # Three dark claws cradling the crystal.
+    for i in range(3):
+        ang = math.tau * i / 3
+        base = rot_y((0.55, -0.6, 0), ang)
+        mid = rot_y((1.0, 0.1, 0), ang)
+        tip = rot_y((0.7, 1.0, 0), ang)
+        prism(m, "dark", base, mid, 0.1, 4, 0.08)
+        prism(m, "dark", mid, tip, 0.08, 4, 0.0)
+    # A pointer fin so its facing reads from above.
+    m.tri("dark", (0, -0.2, -0.5), (0, -0.2, -1.7), (0, 0.3, -0.6), ("dir", (1, 0, 0)))
+    return m
+
+
 def main():
     sloop().write("sloop")
     cutter().write("cutter")
     drone().write("drone")
     wreck().write("wreck")
+    spark_mite().write("spark_mite")
+    void_wasp().write("void_wasp")
+    corsair_lancer().write("corsair_lancer")
+    broadside_galleon().write("broadside_galleon")
+    scrap_hauler().write("scrap_hauler")
+    torpedo_ketch().write("torpedo_ketch")
+    rift_warden().write("rift_warden")
 
 
 if __name__ == "__main__":

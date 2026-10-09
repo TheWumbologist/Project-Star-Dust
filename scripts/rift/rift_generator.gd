@@ -18,7 +18,8 @@ extends Node3D
 ## 3. Fill every cell with a chunk that fits (start, exit, or a normal chunk
 ##    allowed at that depth), rotated a random quarter turn.
 ## 4. Build walls round every cell, with doorways where cells connect.
-## 5. Roll each chunk's enemy spawn points and augment caches.
+## 5. Roll each chunk's enemy spawn points (picking each one's enemy from
+##    the EnemyRoster by role and tier) and augment caches.
 ## Same seed, same rift.
 
 signal generated
@@ -55,8 +56,12 @@ signal generated
 @export_group("Site rules")
 ## Added to every enemy spawn point's chance (negative = emptier).
 @export var spawn_chance_bonus: float = 0.0
-## Allow threat tier 2+ enemies (pirate cutters) at spawn points.
-@export var allow_cutters: bool = true
+## Odds of tier 1, 2 and 3 enemies at spawn points (see EnemyRoster).
+## Deeper chunks lean toward the higher tiers the site allows.
+@export var enemy_tier_odds: Array[float] = [1.0, 0.0, 0.0]
+## Roles spawn points may hold (EnemyRoster.Role); points for any other
+## role stay empty.
+@export var enemy_roles: Array[int] = [0, 1, 2]
 @export var allow_caches: bool = true
 ## Void crystal rocks and crate bonuses (rift loot) are removed when off.
 @export var allow_void_crystals: bool = true
@@ -333,6 +338,9 @@ func _place_chunks(rng: RandomNumberGenerator) -> void:
 	var keys: Array = cells.keys()
 	keys.sort_custom(func(a, b): return cells[a]["depth"] < cells[b]["depth"] or (cells[a]["depth"] == cells[b]["depth"] and (a.x < b.x or (a.x == b.x and a.y < b.y))))
 	var last_scene: PackedScene = null
+	var max_depth := 1
+	for cell in keys:
+		max_depth = maxi(max_depth, cells[cell]["depth"])
 	for cell in keys:
 		var scene: PackedScene
 		if cell == Vector2i.ZERO:
@@ -351,7 +359,7 @@ func _place_chunks(rng: RandomNumberGenerator) -> void:
 			chunk.rotation.y = rng.randi_range(0, 3) * PI * 0.5
 		cells[cell]["chunk"] = chunk
 		_add_floor(chunk)
-		_scan(chunk, rng, parent, cell == Vector2i.ZERO)
+		_scan(chunk, rng, parent, cell == Vector2i.ZERO, float(cells[cell]["depth"]) / max_depth)
 
 
 func _pick(pool: Array[PackedScene], rng: RandomNumberGenerator, depth: int, avoid: PackedScene) -> PackedScene:
@@ -375,15 +383,29 @@ func _pick(pool: Array[PackedScene], rng: RandomNumberGenerator, depth: int, avo
 	return options[rng.rand_weighted(PackedFloat32Array(weights))]
 
 
+## The roster's enemy for a spawn point (or stray) holding `hint`: the same
+## role, with a tier rolled from the site's odds. `depth` (0..1) leans it
+## tougher. Returns {"scene", "count"}, or {} when the role isn't allowed
+## here. Enemies not on the roster come back unchanged.
+func roster_pick(hint: PackedScene, rng: RandomNumberGenerator, depth: float = 0.0) -> Dictionary:
+	if hint == null:
+		return {}
+	var e := EnemyRoster.entry_for_path(hint.resource_path)
+	if e.is_empty():
+		return {"scene": hint, "count": 1}
+	if not (int(e.role) in enemy_roles):
+		return {}
+	var pick := EnemyRoster.entry(e.role, EnemyRoster.roll_tier(rng, enemy_tier_odds, depth))
+	return {"scene": EnemyRoster.scene_of(pick), "count": rng.randi_range(pick.pack.x, pick.pack.y)}
+
+
 ## Rolls enemy spawn points and collects beacons and the player start.
-func _scan(node: Node, rng: RandomNumberGenerator, enemy_parent: Node, is_start: bool) -> void:
+func _scan(node: Node, rng: RandomNumberGenerator, enemy_parent: Node, is_start: bool, depth: float) -> void:
 	for child in node.get_children():
 		if child is EnemySpawnPoint:
-			var enemy: ShipController = child.spawn(rng, enemy_parent, spawn_chance_bonus)
-			if enemy != null and enemy.threat_tier >= 2 and not allow_cutters:
-				enemy.free()
-			elif enemy != null:
-				enemies.append(enemy)
+			var pick := roster_pick(child.enemy, rng, depth)
+			if not pick.is_empty():
+				enemies.append_array(child.spawn(rng, enemy_parent, spawn_chance_bonus, pick.scene, pick.count))
 		elif child is ExtractionPoint:
 			extraction_points.append(child)
 		elif child is MineableAsteroid and not allow_void_crystals and child.ore_item != null \
@@ -399,7 +421,7 @@ func _scan(node: Node, rng: RandomNumberGenerator, enemy_parent: Node, is_start:
 			augment_caches.append(child)
 		elif is_start and child.name == &"PlayerStart":
 			player_start = (child as Node3D).global_position
-		_scan(child, rng, enemy_parent, is_start)
+		_scan(child, rng, enemy_parent, is_start, depth)
 
 
 func _add_floor(chunk: RiftChunk) -> void:
