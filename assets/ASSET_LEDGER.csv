@@ -1,40 +1,54 @@
 path,source,author,license,ai_generated,tool,notes
 assets/_ai_generated/ui/icon__AI.svg,generated,Claude,project-owned placeholder,yes,Claude (hand-written SVG),Placeholder project icon; replace with final icon
-assets/_ai_generated/audio/music_hub__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder music loop; replace with a final or open-source sound
-assets/_ai_generated/audio/music_rift__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder music loop; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_alarm__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_boost__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_cache__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_cannon__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_compass__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_drift_kick__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_enemy_shot__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_explosion_big__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_explosion_small__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_extracted__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_hit_hull__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_hit_shield__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_pickup__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_rock_chip__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_shield_break__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_torpedo__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_ui_click__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_ui_confirm__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_warp_in__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/models/cutter__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly model; replace with a Blender model
-assets/_ai_generated/models/drone__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly model; replace with a Blender model
-assets/_ai_generated/models/sloop__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly model; replace with a Blender model
-assets/_ai_generated/models/wreck__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly model; replace with a Blender model
-assets/_ai_generated/audio/sfx_fuse__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_charge__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_lance__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_broadside__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_blink__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/audio/sfx_mine_drop__AI.wav,generated,Claude,project-owned placeholder,yes,Claude (tools/make_sounds.py synth script),Placeholder sound effect; replace with a final or open-source sound
-assets/_ai_generated/models/spark_mite__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly enemy model; replace with a Blender model
-assets/_ai_generated/models/void_wasp__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly enemy model; replace with a Blender model
-assets/_ai_generated/models/corsair_lancer__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly enemy model; replace with a Blender model
-assets/_ai_generated/models/broadside_galleon__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly enemy model; replace with a Blender model
-assets/_ai_generated/models/scrap_hauler__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly enemy model; replace with a Blender model
-assets/_ai_generated/models/torpedo_ketch__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly enemy model; replace with a Blender model
-assets/_ai_generated/models/rift_warden__AI.obj,generated,Claude,project-owned placeholder,yes,Claude (tools/make_models.py),Placeholder low-poly enemy model; replace with a Blender model
+assets/audio/sfx_cannon.ogg,https://kenney.nl/assets/sci-fi-sounds (Sci-Fi Sounds),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""cannon"". Original file laserRetro_000.ogg"
+assets/audio/sfx_enemy_shot.ogg,https://kenney.nl/assets/sci-fi-sounds (Sci-Fi Sounds),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""enemy_shot"". Original file laserSmall_000.ogg"
+assets/audio/sfx_broadside.ogg,https://kenney.nl/assets/sci-fi-sounds (Sci-Fi Sounds),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""broadside"". Original file explosionCrunch_000.ogg"
+assets/audio/sfx_lance.ogg,https://kenney.nl/assets/sci-fi-sounds (Sci-Fi Sounds),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""lance"". Original file laserLarge_001.ogg"
+assets/audio/sfx_torpedo.ogg,https://kenney.nl/assets/sci-fi-sounds (Sci-Fi Sounds),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""torpedo"". Original file thrusterFire_000.ogg; trimmed to 0.8s with a fade-out (ffmpeg)"
+assets/audio/sfx_mine_drop.ogg,https://kenney.nl/assets/impact-sounds (Impact Sounds),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""mine_drop"". Original file impactMetal_medium_001.ogg"
+assets/audio/sfx_explosion_small.ogg,https://kenney.nl/assets/sci-fi-sounds (Sci-Fi Sounds),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""explosion_small"". Original file explosionCrunch_003.ogg"
+assets/audio/sfx_explosion_big.ogg,https://kenney.nl/assets/sci-fi-sounds (Sci-Fi Sounds),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""explosion_big"". Original file lowFrequency_explosion_000.ogg"
+assets/audio/sfx_hit_hull.ogg,https://kenney.nl/assets/sci-fi-sounds (Sci-Fi Sounds),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""hit_hull"". Original file impactMetal_001.ogg"
+assets/audio/sfx_hit_shield.ogg,https://kenney.nl/assets/sci-fi-sounds (Sci-Fi Sounds),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""hit_shield"". Original file forceField_000.ogg; trimmed to 0.45s with a fade-out (ffmpeg)"
+assets/audio/sfx_shield_break.ogg,https://kenney.nl/assets/impact-sounds (Impact Sounds),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""shield_break"". Original file impactGlass_heavy_002.ogg"
+assets/audio/sfx_rock_chip.ogg,https://kenney.nl/assets/impact-sounds (Impact Sounds),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""rock_chip"". Original file impactMining_000.ogg"
+assets/audio/sfx_pickup.ogg,https://kenney.nl/assets/interface-sounds (Interface Sounds),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""pickup"". Original file pluck_002.ogg"
+assets/audio/sfx_cache.ogg,https://kenney.nl/assets/sci-fi-sounds (Sci-Fi Sounds),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""cache"". Original file doorOpen_001.ogg"
+assets/audio/sfx_boost.ogg,https://kenney.nl/assets/sci-fi-sounds (Sci-Fi Sounds),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""boost"". Original file thrusterFire_003.ogg; trimmed to 0.8s with a fade-out (ffmpeg)"
+assets/audio/sfx_drift_kick.ogg,https://kenney.nl/assets/digital-audio (Digital Audio),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""drift_kick"". Original file phaserUp2.ogg"
+assets/audio/sfx_compass.ogg,https://kenney.nl/assets/digital-audio (Digital Audio),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""compass"". Original file powerUp7.ogg"
+assets/audio/sfx_alarm.ogg,https://kenney.nl/assets/digital-audio (Digital Audio),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""alarm"". Original file lowThreeTone.ogg"
+assets/audio/sfx_extracted.ogg,https://kenney.nl/assets/music-jingles (Music Jingles),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""extracted"". Original file jingles_STEEL00.ogg"
+assets/audio/sfx_warp_in.ogg,https://kenney.nl/assets/digital-audio (Digital Audio),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""warp_in"". Original file phaseJump1.ogg"
+assets/audio/sfx_ui_click.ogg,https://kenney.nl/assets/ui-audio (UI Audio),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""ui_click"". Original file click3.ogg"
+assets/audio/sfx_ui_confirm.ogg,https://kenney.nl/assets/interface-sounds (Interface Sounds),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""ui_confirm"". Original file confirmation_002.ogg"
+assets/audio/sfx_fuse.ogg,https://kenney.nl/assets/digital-audio (Digital Audio),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""fuse"". Original file zap2.ogg"
+assets/audio/sfx_charge.ogg,https://kenney.nl/assets/digital-audio (Digital Audio),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""charge"". Original file phaserUp4.ogg"
+assets/audio/sfx_blink.ogg,https://kenney.nl/assets/digital-audio (Digital Audio),Kenney (kenney.nl),CC0 1.0,no,,"Sound ""blink"". Original file phaseJump3.ogg"
+assets/audio/music_hub.ogg,https://opengameart.org/content/merchants-and-sea-salt,nbjdlukasabsolute (OpenGameArt),CC0 1.0,no,,"Hub (pirate port) music loop ""Merchants and Sea Salt"". Converted from WAV to OGG (ffmpeg)"
+assets/audio/music_rift.ogg,https://opengameart.org/content/space-graveyard-ambient-track,tinyworlds (OpenGameArt),CC0 1.0,no,,"Rift music loop ""Space Graveyard - Ambient Track"". Converted from WAV to OGG, +4.5 dB (ffmpeg)"
+assets/models/kenney_pirate_kit/License.txt,https://kenney.nl/assets/pirate-kit (Pirate Kit 2.1),Kenney (kenney.nl),CC0 1.0,no,,Pack license text
+assets/models/kenney_pirate_kit/ship-ghost.mtl,https://kenney.nl/assets/pirate-kit (Pirate Kit 2.1),Kenney (kenney.nl),CC0 1.0,no,,Material file for ship-ghost.obj
+assets/models/kenney_pirate_kit/ship-ghost.obj,https://kenney.nl/assets/pirate-kit (Pirate Kit 2.1),Kenney (kenney.nl),CC0 1.0,no,,Model for the rift warden
+assets/models/kenney_pirate_kit/ship-pirate-large.mtl,https://kenney.nl/assets/pirate-kit (Pirate Kit 2.1),Kenney (kenney.nl),CC0 1.0,no,,Material file for ship-pirate-large.obj
+assets/models/kenney_pirate_kit/ship-pirate-large.obj,https://kenney.nl/assets/pirate-kit (Pirate Kit 2.1),Kenney (kenney.nl),CC0 1.0,no,,Model for the broadside galleon
+assets/models/kenney_pirate_kit/ship-pirate-medium.mtl,https://kenney.nl/assets/pirate-kit (Pirate Kit 2.1),Kenney (kenney.nl),CC0 1.0,no,,Material file for ship-pirate-medium.obj
+assets/models/kenney_pirate_kit/ship-pirate-medium.obj,https://kenney.nl/assets/pirate-kit (Pirate Kit 2.1),Kenney (kenney.nl),CC0 1.0,no,,Model for the corsair lancer
+assets/models/kenney_pirate_kit/ship-pirate-small.mtl,https://kenney.nl/assets/pirate-kit (Pirate Kit 2.1),Kenney (kenney.nl),CC0 1.0,no,,Material file for ship-pirate-small.obj
+assets/models/kenney_pirate_kit/ship-pirate-small.obj,https://kenney.nl/assets/pirate-kit (Pirate Kit 2.1),Kenney (kenney.nl),CC0 1.0,no,,Model for the pirate cutter
+assets/models/kenney_pirate_kit/ship-small.mtl,https://kenney.nl/assets/pirate-kit (Pirate Kit 2.1),Kenney (kenney.nl),CC0 1.0,no,,Material file for ship-small.obj
+assets/models/kenney_pirate_kit/ship-small.obj,https://kenney.nl/assets/pirate-kit (Pirate Kit 2.1),Kenney (kenney.nl),CC0 1.0,no,,Model for the player sloop
+assets/models/kenney_pirate_kit/ship-wreck.mtl,https://kenney.nl/assets/pirate-kit (Pirate Kit 2.1),Kenney (kenney.nl),CC0 1.0,no,,Material file for ship-wreck.obj
+assets/models/kenney_pirate_kit/ship-wreck.obj,https://kenney.nl/assets/pirate-kit (Pirate Kit 2.1),Kenney (kenney.nl),CC0 1.0,no,,Model for the derelict wreck
+assets/models/kenney_pirate_kit/Textures/colormap.png,https://kenney.nl/assets/pirate-kit (Pirate Kit 2.1),Kenney (kenney.nl),CC0 1.0,no,,Shared colour palette texture for the pirate kit models
+assets/models/kenney_space_kit/License.txt,https://kenney.nl/assets/space-kit (Space Kit 2.0),Kenney (kenney.nl),CC0 1.0,no,,Pack license text
+assets/models/kenney_space_kit/craft_cargoB.mtl,https://kenney.nl/assets/space-kit (Space Kit 2.0),Kenney (kenney.nl),CC0 1.0,no,,Material file for craft_cargoB.obj
+assets/models/kenney_space_kit/craft_cargoB.obj,https://kenney.nl/assets/space-kit (Space Kit 2.0),Kenney (kenney.nl),CC0 1.0,no,,Model for the scrap hauler
+assets/models/kenney_space_kit/craft_miner.mtl,https://kenney.nl/assets/space-kit (Space Kit 2.0),Kenney (kenney.nl),CC0 1.0,no,,Material file for craft_miner.obj
+assets/models/kenney_space_kit/craft_miner.obj,https://kenney.nl/assets/space-kit (Space Kit 2.0),Kenney (kenney.nl),CC0 1.0,no,,Model for the torpedo ketch
+assets/models/kenney_space_kit/craft_racer.mtl,https://kenney.nl/assets/space-kit (Space Kit 2.0),Kenney (kenney.nl),CC0 1.0,no,,Material file for craft_racer.obj
+assets/models/kenney_space_kit/craft_racer.obj,https://kenney.nl/assets/space-kit (Space Kit 2.0),Kenney (kenney.nl),CC0 1.0,no,,Model for the spark mite
+assets/models/kenney_space_kit/craft_speederB.mtl,https://kenney.nl/assets/space-kit (Space Kit 2.0),Kenney (kenney.nl),CC0 1.0,no,,Material file for craft_speederB.obj
+assets/models/kenney_space_kit/craft_speederB.obj,https://kenney.nl/assets/space-kit (Space Kit 2.0),Kenney (kenney.nl),CC0 1.0,no,,Model for the scavenger drone
+assets/models/kenney_space_kit/craft_speederD.mtl,https://kenney.nl/assets/space-kit (Space Kit 2.0),Kenney (kenney.nl),CC0 1.0,no,,Material file for craft_speederD.obj
+assets/models/kenney_space_kit/craft_speederD.obj,https://kenney.nl/assets/space-kit (Space Kit 2.0),Kenney (kenney.nl),CC0 1.0,no,,Model for the void wasp

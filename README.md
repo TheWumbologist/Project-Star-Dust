@@ -53,9 +53,9 @@ In the combat arena (a test level) no enemies come on their own. Two dropdowns a
 
 Things to try: hold drift while turning so the ship slides. The sparks turn blue, then orange as the drift charges; let go for a speed kick in the direction you're pointing plus some boost fuel back. Ride the blue **wind streams** for extra speed, and boost into a target to **ram** it.
 
-## Look and sound (placeholders)
+## Look and sound
 
-The ships (player sloop, pirate cutter, scavenger drone) and the wreck are low-poly models built by `tools/make_models.py`; their materials live in `resources/materials/`. The rift's nebula backdrop, energy walls and lumpy rocks are shaders in `shaders/`. Sound effects and the two music loops (rift, hub) are synthesized by `tools/make_sounds.py`. Everything generated is tagged `__AI`, sits under `assets/_ai_generated/` and has a row in `assets/ASSET_LEDGER.csv`, so it can be found and replaced. To swap a sound, drop a new file over the same name (or add it to `OVERRIDES` in `scripts/audio/sfx.gd`). Music and sound volume sliders are in the pause menu.
+The ships and the wreck are CC0 models from Kenney: sailing ships from the [Pirate Kit](https://kenney.nl/assets/pirate-kit) (player sloop, pirate cutter, corsair lancer, broadside galleon, the ghost-ship rift warden, the wreck) and small craft from the [Space Kit](https://kenney.nl/assets/space-kit) (drones, spark mite, void wasp, scrap hauler, torpedo ketch) in `assets/models/`. Each ship scene scales and turns its model on the `Hull` node and recolours it with materials from `resources/materials/` (`kenney_ship_*.tres` tint the pirate kit's palette texture). The rift's nebula backdrop, energy walls and lumpy rocks are shaders in `shaders/`. Sound effects are CC0 Kenney sounds and the music loops are CC0 tracks from OpenGameArt, all in `assets/audio/` as `sfx_<name>.ogg` and `music_<name>.ogg`. Every file's source, author and license is in `assets/ASSET_LEDGER.csv`. To swap a sound, drop a new file over the same name (or add it to `OVERRIDES` in `scripts/audio/sfx.gd`); per-sound volumes are in `TRIM` there. Music and sound volume sliders are in the pause menu.
 
 ## Tuning the feel
 

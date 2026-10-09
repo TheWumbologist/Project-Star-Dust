@@ -12,9 +12,9 @@
 [ext_resource type="PackedScene" uid="uid://yh6ia4pyaayf" path="res://scenes/combat/explosion.tscn" id="11_boom"]
 [ext_resource type="Material" uid="uid://rl4415twtr7l" path="res://resources/materials/burnt_wood.tres" id="mat_burnt_wood"]
 [ext_resource type="Material" uid="uid://y8q6emcas1lb" path="res://resources/materials/dark_iron.tres" id="mat_dark_iron"]
-[ext_resource type="Material" uid="uid://ctld4h1acdyib" path="res://resources/materials/lantern_glow.tres" id="mat_lantern_glow"]
-[ext_resource type="Material" uid="uid://bk6fptpn5gpo3" path="res://resources/materials/pirate_hull.tres" id="mat_pirate_hull"]
-[ext_resource type="ArrayMesh" uid="uid://8o3jp1rq1po3" path="res://assets/_ai_generated/models/scrap_hauler__AI.obj" id="mdl"]
+[ext_resource type="Material" uid="uid://c1481fo4d6uq5" path="res://resources/materials/brass.tres" id="mat_brass"]
+[ext_resource type="Material" uid="uid://b0vdt8b6kk441" path="res://resources/materials/pirate_deck.tres" id="mat_pirate_deck"]
+[ext_resource type="ArrayMesh" uid="uid://c83lulvcnm1ys" path="res://assets/models/kenney_space_kit/craft_cargoB.obj" id="mdl"]
 [ext_resource type="PackedScene" uid="uid://qir4xh5kyr4o" path="res://scenes/combat/proximity_mine.tscn" id="p_0"]
 
 [sub_resource type="SphereShape3D" id="Shape_body"]
@@ -38,11 +38,12 @@ shape = SubResource("Shape_body")
 [node name="Visual" type="Node3D" parent="." unique_id=744093708]
 
 [node name="Hull" type="MeshInstance3D" parent="Visual" unique_id=1390443695]
+transform = Transform3D(1.9, 0, 0, 0, 1.9, 0, 0, 0, 1.9, 0, -0.6, 0)
 mesh = ExtResource("mdl")
 surface_material_override/0 = ExtResource("mat_burnt_wood")
-surface_material_override/1 = ExtResource("mat_lantern_glow")
-surface_material_override/2 = ExtResource("mat_pirate_hull")
-surface_material_override/3 = ExtResource("mat_dark_iron")
+surface_material_override/1 = ExtResource("mat_brass")
+surface_material_override/2 = ExtResource("mat_dark_iron")
+surface_material_override/3 = ExtResource("mat_pirate_deck")
 
 [node name="Input" type="Node" parent="." unique_id=1042724578]
 script = ExtResource("3_ai")

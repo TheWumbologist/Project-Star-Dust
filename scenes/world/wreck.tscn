@@ -1,9 +1,7 @@
 [gd_scene format=3 uid="uid://c1lvr2ehxndkf"]
 
-[ext_resource type="Material" uid="uid://rl4415twtr7l" path="res://resources/materials/burnt_wood.tres" id="mat_burnt_wood"]
-[ext_resource type="Material" uid="uid://y8q6emcas1lb" path="res://resources/materials/dark_iron.tres" id="mat_dark_iron"]
-[ext_resource type="Material" uid="uid://6au1lpf3d57b" path="res://resources/materials/torn_sail.tres" id="mat_torn_sail"]
-[ext_resource type="ArrayMesh" uid="uid://jfokh8l0tbln" path="res://assets/_ai_generated/models/wreck__AI.obj" id="mdl_wreck"]
+[ext_resource type="Material" path="res://resources/materials/kenney_ship_wreck.tres" id="mat_kenney_ship_wreck"]
+[ext_resource type="ArrayMesh" uid="uid://bn2t60gc4k1gy" path="res://assets/models/kenney_pirate_kit/ship-wreck.obj" id="mdl_wreck"]
 
 [sub_resource type="BoxShape3D" id="Shape_hull"]
 size = Vector3(5, 3, 9.5)
@@ -26,12 +24,9 @@ collision_mask = 0
 shape = SubResource("Shape_hull")
 
 [node name="Hull" type="MeshInstance3D" parent="." unique_id=16243014]
-transform = Transform3D(0.99, -0.139, 0, 0.139, 0.99, 0, 0, 0, 1, 0, -0.3, 2.8)
+transform = Transform3D(-0.9408, -0.1322, 0, -0.0793, 0.5645, 0, 0, 0, -0.95, 0, -0.8, 0)
 mesh = ExtResource("mdl_wreck")
-surface_material_override/0 = ExtResource("mat_dark_iron")
-surface_material_override/1 = ExtResource("mat_burnt_wood")
-surface_material_override/2 = ExtResource("mat_torn_sail")
-surface_material_override/3 = ExtResource("mat_burnt_wood")
+material_override = ExtResource("mat_kenney_ship_wreck")
 
 [node name="Ember1" type="MeshInstance3D" parent="." unique_id=481783501]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 1.4, 3)
