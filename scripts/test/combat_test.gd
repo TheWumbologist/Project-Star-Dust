@@ -1,11 +1,11 @@
 extends Node3D
 ## Combat and mining test arena (milestone 2). A debris field: shoot ore out
-## of asteroids, fight waves of scavenger drones and pirate cutters, and
-## fill the cargo hold. Waves are a testing aid; real rifts place their
-## enemies when generated. R restarts; Esc opens the pause menu.
+## of asteroids and fill the cargo hold. R restarts; Esc opens the pause menu.
 ##
-## Number keys 1-9 warp in one of the nine roster enemies (see
-## EnemyRoster) ahead of the ship, to try each one out.
+## No enemies come on their own. The ArenaTools dropdowns along the top
+## warp in any of the nine roster enemies (see EnemyRoster) and toggle
+## cheats; number keys 1-9 also warp in enemies. (The EncounterDirector's
+## waves are still there for tests, with auto_start off.)
 
 ## Seconds the roster hint banner stays up at the start.
 const HINT_TIME := 6.0
@@ -17,7 +17,10 @@ func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	var ui := get_node_or_null("GameUI") as GameUI
 	if ui != null:
-		ui.hud.show_banner.call_deferred("Keys 1-9 warp in roster enemies", HINT_TIME)
+		ui.hud.show_banner.call_deferred("Spawn enemies from the menu up top (F3) or keys 1-9", HINT_TIME)
+	var tools := get_node_or_null("ArenaTools") as ArenaTools
+	if tools != null:
+		tools.spawn_requested.connect(spawn_roster_enemy)
 
 
 func _unhandled_input(event: InputEvent) -> void:

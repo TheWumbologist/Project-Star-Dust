@@ -3,7 +3,8 @@ extends SceneTree
 ##
 ## Loads the real arena with the wave director paused, swaps the player's
 ## input for scripted intents, and checks mining, cargo, both weapons, both
-## enemy types, shields, death and respawn, and waves. Run from the project
+## enemy types, shields, death and respawn, the arena's cheat and spawn
+## dropdowns, and waves. Run from the project
 ## folder:
 ##   godot --headless --script res://tests/combat_test.gd
 ## Exit code 0 = all checks passed.
@@ -21,6 +22,7 @@ var _input: ScriptedInput
 var _level: Node3D
 var _ship: ShipController
 var _director: EncounterDirector
+var _waves_on_by_default: bool
 
 
 func _initialize() -> void:
@@ -30,6 +32,7 @@ func _initialize() -> void:
 func _run() -> void:
 	_level = load(SCENE).instantiate()
 	_director = _level.get_node("EncounterDirector") as EncounterDirector
+	_waves_on_by_default = _director.auto_start
 	_director.auto_start = false
 	root.add_child(_level)
 	current_scene = _level
@@ -47,6 +50,7 @@ func _run() -> void:
 	await _test_cutter()
 	await _test_cargo_limits()
 	await _test_death()
+	await _test_arena_tools()
 	await _test_waves()
 
 	# Free the arena first: live enemies would keep starting sounds after
@@ -254,6 +258,74 @@ func _test_death() -> void:
 	Hitstop.clear()
 	_ship.respawn(Vector3.ZERO)
 	_check(_ship.is_alive() and _ship.health.hull == _ship.health.max_hull, "a ship can be respawned with full hull")
+
+
+func _test_arena_tools() -> void:
+	_place(Vector3.ZERO)
+	_check(not _waves_on_by_default, "the arena doesn't send waves on its own")
+	var tools := _level.get_node("ArenaTools") as ArenaTools
+	var table := tools._spawn_panel
+	var tiles: Array[Node] = table.find_children("Spawn_*", "Button", true, false)
+	_check(tiles.size() == EnemyRoster.ENTRIES.size(), "the spawn menu has a tile per roster enemy (%d)" % tiles.size())
+	_check(not table.visible, "the spawn menu starts closed")
+	tools._spawn_button.button_pressed = true
+	await _frames(3)
+	_check(table.visible and not paused, "opening the spawn menu doesn't pause the game")
+
+	# Hovering the menu blocks the guns; clicking a tile warps in that enemy.
+	var tile := table.find_child("Spawn_void_wasp", true, false) as Button
+	var hover := InputEventMouseMotion.new()
+	hover.position = tile.get_global_rect().get_center()
+	hover.global_position = hover.position
+	root.push_input(hover, true) # In the arena's own (stretched) coordinates.
+	await process_frame
+	var player_input := PlayerShipInput.new()
+	_check(tools.is_pointer_over() and player_input._pointer_on_ui(_ship), "the cursor over the menu doesn't fire the guns")
+	player_input.free()
+	var before := _director.alive.size()
+	tile.pressed.emit()
+	await _frames(2)
+	var spawned := _director.alive.back() as ShipController if _director.alive.size() > before else null
+	_check(spawned != null and spawned.scene_file_path.ends_with("void_wasp.tscn"),
+		"clicking a tile warps in that enemy")
+	for enemy in _director.alive.duplicate():
+		enemy.queue_free()
+	hover.position = Vector2(5, 800)
+	hover.global_position = hover.position
+	root.push_input(hover, true)
+	tools._spawn_button.button_pressed = false
+	await _frames(2)
+	_check(not table.visible and not tools.is_pointer_over(), "the spawn menu closes again")
+
+	# Cheats.
+	ArenaTools.invulnerable = true
+	ArenaTools.unlimited_boost = true
+	ArenaTools.unlimited_torpedoes = true
+	await _frames(2)
+	_ship.take_damage(10000.0, null)
+	await _frames(2)
+	_check(_ship.is_alive() and _ship.health.hull == _ship.health.max_hull, "invulnerable ignores damage")
+	_input.steer = Vector3.FORWARD
+	_input.thrust = 1.0
+	_input.boost = true
+	_input.heavy = true
+	_input.aim = Vector3.FORWARD
+	var torpedoes: Array[int] = [0]
+	_ship.heavy.fired.connect(func(_p): torpedoes[0] += 1)
+	await _frames(240)
+	_check(_ship.is_boosting() and _ship.boost_fuel > 0.95, "unlimited boost keeps the tank full (%.2f)" % _ship.boost_fuel)
+	_check(torpedoes[0] > _ship.heavy.max_charges and _ship.heavy.charges == _ship.heavy.max_charges,
+		"unlimited torpedoes keeps the tube full (%d fired)" % torpedoes[0])
+	ArenaTools.invulnerable = false
+	ArenaTools.unlimited_boost = false
+	ArenaTools.unlimited_torpedoes = false
+	_input.reset()
+	_input.heavy = false
+	await _frames(2)
+	_ship.take_damage(5.0, null)
+	_check(_ship.health.hull + _ship.health.shield < _ship.health.max_hull + _ship.health.max_shield,
+		"turning invulnerable off lets damage through again")
+	_ship.health.reset()
 
 
 func _test_waves() -> void:

@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://bhb7npvyr2ok1" path="res://scenes/enemies/scavenger_drone.tscn" id="12_drone"]
 [ext_resource type="PackedScene" uid="uid://c0qk8vwdbwojd" path="res://scenes/enemies/pirate_cutter.tscn" id="13_cutter"]
 [ext_resource type="PackedScene" uid="uid://dotenp0gf0pxr" path="res://scenes/combat/warp_flash.tscn" id="14_warp"]
+[ext_resource type="Script" uid="uid://b1jyocjoc2uu4" path="res://scripts/ui/arena_tools.gd" id="15_tools"]
 
 [sub_resource type="Environment" id="Env"]
 background_mode = 1
@@ -140,7 +141,12 @@ script = ExtResource("11_director")
 drone_scene = ExtResource("12_drone")
 cutter_scene = ExtResource("13_cutter")
 warp_flash = ExtResource("14_warp")
+auto_start = false
 
 [node name="GameUI" parent="." unique_id=1318702957 node_paths=PackedStringArray("ship", "camera") instance=ExtResource("7_hud")]
 ship = NodePath("../PlayerShip")
 camera = NodePath("../RiftCamera")
+
+[node name="ArenaTools" type="CanvasLayer" parent="." unique_id=279219425 node_paths=PackedStringArray("ship")]
+script = ExtResource("15_tools")
+ship = NodePath("../PlayerShip")
